@@ -30,7 +30,6 @@ def exclude_op(excluded_keys):
 
 @click.command()
 @click.argument("database")
-# @click.option("--raw", "-r", is_flag=True)
 @click.option("--include-keys", "-i", "include")
 @click.option("--exclude-keys", "-e", "exclude")
 def stethoscope(database, include, exclude):

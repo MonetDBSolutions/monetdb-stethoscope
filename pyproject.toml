@@ -23,8 +23,9 @@ pydocstyle = "^4.0"
 yapf = "^0.28.0"
 python-language-server = {version = "^0.30.0", extras = ["all"]}
 pymonetdb = {path = "/home/kutsurak/work/monet/sources/pymonetdb/"}
-[tool.poetry.scritps]
-stethoscope = 'monetdb_profiler_tools.stethoscope:stethoscope'
+
+[tool.poetry.scripts]
+pystethoscope = 'monetdb_profiler_tools.stethoscope:stethoscope'
 
 [build-system]
 requires = ["poetry>=0.12"]
