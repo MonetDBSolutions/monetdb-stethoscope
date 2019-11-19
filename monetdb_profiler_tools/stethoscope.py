@@ -13,41 +13,56 @@ import monetdb_profiler_tools.filtering as ftools
 
 
 def format_object(dct):
-    """Format an object"""
+    """Format a dictionary"""
     print("[", end="")
     for k, v in dct.items():
         print("{}".format(v), end=",\t")
     print("]")
 
 
+def raw_format(obj):
+    """Print the argument"""
+    print(obj)
+
+
 def include_op(included_keys):
+    """Return a filter that only keeps the keys in `included_keys`."""
     return lambda x: ftools.filter_keys_include(x, included_keys)
 
 
 def exclude_op(excluded_keys):
+    """Return a filter that discards the keys in `excluded_keys`."""
     return lambda x: ftools.filter_keys_exclude(x, excluded_keys)
+
+
+def identity_op(input_object):
+    """Return the argument as is."""
+    return input_object
 
 
 @click.command()
 @click.argument("database")
 @click.option("--include-keys", "-i", "include")
 @click.option("--exclude-keys", "-e", "exclude")
-def stethoscope(database, include, exclude):
+@click.option("--raw", "-r", "raw", is_flag=True)
+def stethoscope(database, include, exclude, raw):
     """foo"""
     print(include)
     print(exclude)
     cnx = pymonetdb.ProfilerConnection()
     cnx.connect(database, username='monetdb', password='monetdb', heartbeat=0)
+    formatter = format_object
 
     if include:
-        includes = include.split(',')
-        operator = include_op(includes)
+        operator = include_op(include.split(','))
     elif exclude:
-        excludes = exclude.split(',')
-        operator = exclude_op(excludes)
+        operator = exclude_op(exclude.split(','))
     else:
-        operator = id
+        operator = identity_op
+
+    if raw:
+        formatter = raw_format
 
     while True:
         json_object = operator(json.loads(cnx.read_object()))
-        format_object(json_object)
+        formatter(json_object)
