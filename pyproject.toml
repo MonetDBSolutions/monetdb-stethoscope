@@ -8,6 +8,7 @@ authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
 python = "^3.6"
 click = "^7.0"
 funcy = "^1.13"
+pymonetdb = {path = "/home/kutsurak/work/src/monet/python/worktrees/pymdb_after_nov2019/"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
@@ -22,7 +23,6 @@ pycodestyle = "^2.5"
 pydocstyle = "^4.0"
 yapf = "^0.28.0"
 python-language-server = {version = "^0.30.0", extras = ["all"]}
-pymonetdb = {path = "/home/kutsurak/work/monet/sources/pymonetdb/"}
 
 [tool.poetry.scripts]
 pystethoscope = 'monetdb_profiler_tools.stethoscope:stethoscope'

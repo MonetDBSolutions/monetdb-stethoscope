@@ -108,7 +108,7 @@ python-versions = "*"
 version = "1.13"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -256,7 +256,7 @@ isort = ">=4.2.5,<5"
 mccabe = ">=0.6,<0.7"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Native MonetDB client Python API"
 name = "pymonetdb"
 optional = false
@@ -271,7 +271,7 @@ typing = "*"
 [package.source]
 reference = ""
 type = "directory"
-url = "/home/kutsurak/work/monet/sources/pymonetdb"
+url = "/home/kutsurak/work/src/monet/python/worktrees/pymdb_after_nov2019"
 
 [[package]]
 category = "dev"
@@ -349,7 +349,7 @@ python-versions = "*"
 version = "0.14.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -403,7 +403,7 @@ python-versions = "*"
 version = "1.4.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Type Hints for Python"
 name = "typing"
 optional = false
@@ -448,7 +448,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "9324a5428c793e541c358e40d4baa4173a0bc74c195bee74e4ba87cd927b7d91"
+content-hash = "f84359796ca31a71b499183a4441816cbbbc9140385c284903e4d4d23124e779"
 python-versions = "^3.6"
 
 [metadata.hashes]
