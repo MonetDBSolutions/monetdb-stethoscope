@@ -2,6 +2,17 @@
 
 * Introduction
 
+Stethoscope is a command line tool to filter and format MonetDB profiler
+streams. The MonetDB profiler emits two JSON objects, one at the start and one
+at the end of every MAL instruction executed.
+
+#+begin_src shell
+  pystethoscope --include pc,ctime,state
+#+end_src
+
 * Installation
+#+begin_src shell
+  pip3 install --user monetdb-profiler-tools
+#+end_src
 
 * Developer notes
