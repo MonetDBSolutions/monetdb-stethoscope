@@ -6,6 +6,26 @@
 "Tools useful for filtering JSON objects based on keys."
 
 
+# Filtering operators: Given one a list of keys return an operator that takes a
+# dictionary and returns a filtered version of it. We also include the identity
+# operator if we need no filtering at all.
+
+
+def include_filter(included_keys):
+    """Return a filter that only keeps the keys in `included_keys`."""
+    return lambda x: filter_keys_include(x, included_keys)
+
+
+def exclude_filter(excluded_keys):
+    """Return a filter that discards the keys in `excluded_keys`."""
+    return lambda x: filter_keys_exclude(x, excluded_keys)
+
+
+def identity_filter(input_object):
+    """Return the argument as is."""
+    return input_object
+
+
 def filter_keys_include(json_object, included_keys):
     """Create a new dictionary object by filtering a single given dictionary object
 including the keys specified in the iterable `included_keys`.
