@@ -2,12 +2,28 @@
 
 * Introduction
 
-Stethoscope is a command line tool to filter and format MonetDB profiler
+~pystethoscope~ is a command line tool to filter and format MonetDB profiler
 streams. The MonetDB profiler emits two JSON objects, one at the start and one
 at the end of every MAL instruction executed.
 
+Currently ~pystethoscope~ offers the following options:
+
+- ~--include-keys~ :: This option accepts a comma separated list of JSON keys to
+     display and discard the rest from the original object.
+- ~--exclude-keys~ :: This option accepts a comma separated list of JSON keys,
+     discards them from the original JSON object and displays the rest.
+- ~--formatter raw~ :: Display the objects as JSON entries
+- ~--formatter line~ :: Display the objects in the line format
+- ~--raw~ :: Do not filter, or format the incoming objects in any way. This
+             option overrides the include/exclude and formatter options.
+- ~--output /path/to/file~ :: Write the output to the given file. If this option
+     is not specified the output will be written in ~stdout~.
+
+Finally it takes as a required argument the name of database to connect
+to. Currently the server must be running on localhost.
+
 #+begin_src shell
-  pystethoscope --include pc,ctime,state
+  pystethoscope --include pc,ctime,state <database>
 #+end_src
 
 * Installation
@@ -16,3 +32,10 @@ at the end of every MAL instruction executed.
 #+end_src
 
 * Developer notes
+#+begin_src shell
+  pip3 install --user poetry
+  git clone
+  cd
+  poetry install
+  poetry run pystethoscope --help
+#+end_src
