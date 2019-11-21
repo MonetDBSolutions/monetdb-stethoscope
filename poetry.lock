@@ -108,7 +108,7 @@ python-versions = "*"
 version = "1.13"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -264,14 +264,8 @@ python-versions = "*"
 version = "1.2.1"
 
 [package.dependencies]
-future = "*"
 six = ">=1.12.0"
 typing = "*"
-
-[package.source]
-reference = ""
-type = "directory"
-url = "/home/kutsurak/work/src/monet/python/worktrees/pymdb_after_nov2019"
 
 [[package]]
 category = "dev"
@@ -448,7 +442,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "f84359796ca31a71b499183a4441816cbbbc9140385c284903e4d4d23124e779"
+content-hash = "f10794c15b96eb5b0e4ad3dcb6afa16516d4d775d7dd320cbdd905442034ae43"
 python-versions = "^3.6"
 
 [metadata.hashes]
@@ -478,7 +472,7 @@ pycodestyle = ["95a2219d12372f05704562a14ec30bc76b05a5b297b21a5dfe3f6fac3491ae56
 pydocstyle = ["04c84e034ebb56eb6396c820442b8c4499ac5eb94a3bda88951ac3dc519b6058", "66aff87ffe34b1e49bff2dd03a88ce6843be2f3346b0c9814410d34987fbab59"]
 pyflakes = ["17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0", "d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2"]
 pylint = ["7b76045426c650d2b0f02fc47c14d7934d17898779da95288a74c2a7ec440702", "856476331f3e26598017290fd65bebe81c960e806776f324093a46b76fb2d1c0"]
-pymonetdb = []
+pymonetdb = ["0e27358ce7c7c9c7a7753dce96a7aef5fd81ade023baf289bd19ee3bfaa56856", "e44cdcbd3e7de6e1e550a92aedd740a44fb9007090cf8003f5764416f87f371b"]
 pyparsing = ["20f995ecd72f2a1f4bf6b072b63b22e2eb457836601e76d6e5dfcd75436acc1f", "4ca62001be367f01bd3e92ecbb79070272a9d4964dce6a48a82ff0b8bc7e683a"]
 pytest = ["3f193df1cfe1d1609d4c583838bea3d532b18d6160fd3f55c9447fdca30848ec", "e246cf173c01169b9617fc07264b7b1316e78d7a650055235d6d897bc80d9660"]
 pytest-runner = ["5534b08b133ef9a5e2c22c7886a8f8508c95bb0b0bdc6cc13214f269c3c70d51", "96c7e73ead7b93e388c5d614770d2bae6526efd997757d3543fe17b557a0942b"]
