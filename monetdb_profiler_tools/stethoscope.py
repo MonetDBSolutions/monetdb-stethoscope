@@ -7,12 +7,15 @@
 profiler streams."""
 
 import json
+import logging
 import sys
 import click
 import pymonetdb
 from monetdb_profiler_tools.filtering import include_filter, exclude_filter
 from monetdb_profiler_tools.filtering import identity_filter
 from monetdb_profiler_tools.formatting import line_formatter, raw_format
+
+LOGGER = logging.getLogger(__name__)
 
 
 @click.command()
@@ -21,16 +24,22 @@ from monetdb_profiler_tools.formatting import line_formatter, raw_format
               help="A comma separated list of keys. Filter out all other keys.")
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
-@click.option("--formatter", "-f", "fmt", default="line")
+@click.option("--formatter", "-f", "fmt", default="raw")
 @click.option("--raw", "-r", "raw", is_flag=True)
 @click.option("--output", "-o", "outfile", default="stdout")
 def stethoscope(database, include, exclude, fmt, raw, outfile):
     """A flexible tool to manipulate MonetDB profiler streams"""
-    # TODO: log these messages
-    if include:
-        print("Include keys:", include)
-    if exclude:
-        print("Exclude keys:", exclude)
+
+    logging.basicConfig(level=logging.DEBUG)
+
+    LOGGER.debug("Input arguments")
+    LOGGER.debug("  Database: %s", database)
+    LOGGER.debug("  Include keys: %s", include)
+    LOGGER.debug("  Exclude keys: %s", exclude)
+    LOGGER.debug("  Formatter: %s", fmt)
+    LOGGER.debug("  Raw: %s", raw)
+    LOGGER.debug("  Output file: %s", outfile)
+
     cnx = pymonetdb.ProfilerConnection()
     cnx.connect(database, username='monetdb', password='monetdb', heartbeat=0)
 
@@ -41,13 +50,19 @@ def stethoscope(database, include, exclude, fmt, raw, outfile):
     else:
         operator = identity_filter
 
+    if fmt == "raw":
+        formatter = raw_format
     if fmt == "line":
         formatter = line_formatter
 
     if raw:
-        if include or exclude or fmt:
-            # TODO: log a warning about incompatible options
-            pass
+        if include:
+            LOGGER.warning("Ignoring include keys because --raw was specified")
+        if exclude:
+            LOGGER.warning("Ignoring exclude keys because --raw was specified")
+        if fmt and fmt != "raw":
+            LOGGER.warning("Ignoring formatter %s because --raw was specified", fmt)
+
         formatter = raw_format
         operator = identity_filter
 
