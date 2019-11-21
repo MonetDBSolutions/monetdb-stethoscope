@@ -20,7 +20,7 @@ from monetdb_profiler_tools.formatting import line_formatter, raw_format
               help="A comma separated list of keys. Filter out all other keys.")
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
-@click.option("--formatter", "-f", "fmt")
+@click.option("--formatter", "-f", "fmt", default="line")
 @click.option("--raw", "-r", "raw", is_flag=True)
 def stethoscope(database, include, exclude, fmt, raw):
     """A flexible tool to manipulate MonetDB profiler streams"""
