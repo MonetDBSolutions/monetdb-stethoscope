@@ -7,6 +7,7 @@
 profiler streams."""
 
 import json
+import sys
 import click
 import pymonetdb
 from monetdb_profiler_tools.filtering import include_filter, exclude_filter
@@ -22,10 +23,14 @@ from monetdb_profiler_tools.formatting import line_formatter, raw_format
               help="A comma separated list of keys to exclude")
 @click.option("--formatter", "-f", "fmt", default="line")
 @click.option("--raw", "-r", "raw", is_flag=True)
-def stethoscope(database, include, exclude, fmt, raw):
+@click.option("--output", "-o", "outfile", default="stdout")
+def stethoscope(database, include, exclude, fmt, raw, outfile):
     """A flexible tool to manipulate MonetDB profiler streams"""
-    print(include)
-    print(exclude)
+    # TODO: log these messages
+    if include:
+        print("Include keys:", include)
+    if exclude:
+        print("Exclude keys:", exclude)
     cnx = pymonetdb.ProfilerConnection()
     cnx.connect(database, username='monetdb', password='monetdb', heartbeat=0)
 
@@ -46,6 +51,10 @@ def stethoscope(database, include, exclude, fmt, raw):
         formatter = raw_format
         operator = identity_filter
 
+    out_file = sys.stdout
+    if outfile != "stdout":
+        out_file = open(outfile, "w")
+
     while True:
         json_object = operator(json.loads(cnx.read_object()))
-        formatter(json_object)
+        formatter(json_object, out_file)

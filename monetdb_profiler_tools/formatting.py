@@ -6,14 +6,14 @@
 """Utilities for formatting and outputting records."""
 
 
-def line_formatter(dct):
+def line_formatter(dct, output_file):
     """Format a dictionary"""
-    print("[", end="")
+    print("[", end="", file=output_file)
     for k, v in dct.items():
-        print("{}".format(v), end=",\t")
-    print("]")
+        print("{}".format(v), end=",\t", file=output_file)
+    print("]", file=output_file)
 
 
-def raw_format(obj):
+def raw_format(obj, output_file):
     """Print the argument"""
-    print(obj)
+    print(obj, file=output_file)
