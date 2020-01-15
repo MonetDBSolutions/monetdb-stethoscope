@@ -5,15 +5,33 @@
 
 """Utilities for formatting and outputting records."""
 
+import json
 
-def line_formatter(dct, output_file):
-    """Format a dictionary"""
-    print("[", end="", file=output_file)
+
+def line_formatter(dct, output_stream):
+    """Formats a dictionary `dct` into one line and prints it to the
+`output_stream`.
+
+Values in `dct` are written one after the other, separated by the string
+',\\t'. The whole line is surrounded by square brackets."""
+    print("[", end="", file=output_stream)
+    first = True
     for k, v in dct.items():
-        print("{}".format(v), end=",\t", file=output_file)
-    print("]", file=output_file)
+        if first:
+            print("{}".format(v), end="", file=output_stream)
+            first = False
+        else:
+            print(",\t{}".format(v), end="", file=output_stream)
+    print("]", file=output_stream)
 
 
-def raw_format(obj, output_file):
-    """Print the argument"""
-    print(obj, file=output_file)
+def raw_formatter(obj, output_stream):
+    """Prints the argument `obj` argument to the `output_stream` without further
+formatting."""
+    print(obj, file=output_stream)
+
+
+def json_formatter(dct, output_stream):
+    """Creates a JSON string from the given dictionary (`dct`) and prints it to the
+given `output_stream`."""
+    print(json.dumps(dct), file=output_stream)
