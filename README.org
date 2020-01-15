@@ -9,11 +9,11 @@ at the end of every MAL instruction executed.
 Currently ~pystethoscope~ offers the following options:
 
 + Filtering:
-  - ~--include-keys~ :: This option accepts a comma separated list of JSON keys to
-       display and discard the rest from the original object.
-  - ~--exclude-keys~ :: This option accepts a comma separated list of JSON keys,
-       discards them from the original JSON object and displays the rest.
-+ Formatting:
+  - ~--include-keys~ (~-i~):: This option accepts a comma separated list of JSON
+    keys to display and discard the rest from the original object.
+  - ~--exclude-keys~ (~-e~):: This option accepts a comma separated list of JSON
+    keys, discards them from the original JSON object and displays the rest.
++ Formatting ~--formatter~ (~-f~):
   - ~--formatter json~ :: Display the objects as JSON entries
   - ~--formatter line~ :: Display the objects in the line format
   - ~--formatter raw~ ::  Display the without any formatting at all
@@ -69,4 +69,5 @@ passed through to the next phases unchanged.
 
 *** Filtering
 With the parsed strings in memory, we can use dictionary keys to filter them. If
-the user specifies the ~--include-keys~
+the user specifies a list using the ~--include-keys~, keys that do not belong to
+that list will be removed from the
