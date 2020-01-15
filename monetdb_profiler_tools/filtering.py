@@ -15,17 +15,22 @@ LOGGER = logging.getLogger(__name__)
 
 
 def include_filter(included_keys):
-    """Return a filter that only keeps the keys in `included_keys`."""
+    """Returns a filter that only keeps the keys in `included_keys` list."""
     return lambda x: filter_keys_include(x, included_keys)
 
 
 def exclude_filter(excluded_keys):
-    """Return a filter that discards the keys in `excluded_keys`."""
+    """Returns a filter that discards the keys in `excluded_keys` list."""
     return lambda x: filter_keys_exclude(x, excluded_keys)
 
 
-def identity_filter(input_object):
-    """Return the argument as is."""
+def identity_filter():
+    """Returns a filter that does nothing."""
+    return identity_function
+
+
+def identity_function(input_object):
+    """Returns the argument as is."""
     return input_object
 
 

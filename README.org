@@ -8,22 +8,29 @@ at the end of every MAL instruction executed.
 
 Currently ~pystethoscope~ offers the following options:
 
-- ~--include-keys~ :: This option accepts a comma separated list of JSON keys to
-     display and discard the rest from the original object.
-- ~--exclude-keys~ :: This option accepts a comma separated list of JSON keys,
-     discards them from the original JSON object and displays the rest.
-- ~--formatter raw~ :: Display the objects as JSON entries
-- ~--formatter line~ :: Display the objects in the line format
-- ~--raw~ :: Do not filter, or format the incoming objects in any way. This
-             option overrides the include/exclude and formatter options.
-- ~--output /path/to/file~ :: Write the output to the given file. If this option
-     is not specified the output will be written in ~stdout~.
++ Filtering:
+  - ~--include-keys~ :: This option accepts a comma separated list of JSON keys to
+       display and discard the rest from the original object.
+  - ~--exclude-keys~ :: This option accepts a comma separated list of JSON keys,
+       discards them from the original JSON object and displays the rest.
++ Formatting:
+  - ~--formatter json~ :: Display the objects as JSON entries
+  - ~--formatter line~ :: Display the objects in the line format
+  - ~--formatter raw~ ::  Display the without any formatting at all
++ Miscellaneous:
+  - ~--raw~ :: Do not parse, filter, or format the incoming objects in any
+    way. This option overrides the include/exclude and formatter options. This
+    is mainly useful for debugging the output of the MonetDB profiler or for
+    collecting and passing the profiler information to other programs that cannot
+    connect themselves to ~mserver5~.
+  - ~--output /path/to/file~ :: Write the output to the given file. If this option
+       is not specified the output will be written in ~stdout~.
 
 Finally it takes as a required argument the name of database to connect
 to. Currently the server must be running on localhost.
 
 #+begin_src shell
-  pystethoscope --include pc,ctime,state <database>
+  pystethoscope --include-keys pc,ctime,state <database>
 #+end_src
 
 * Installation
@@ -31,7 +38,9 @@ to. Currently the server must be running on localhost.
   pip3 install --user monetdb-profiler-tools
 #+end_src
 
+
 * Developer notes
+** Usage
 #+begin_src shell
   pip3 install --user poetry
   git clone git@github.com:MonetDBSolutions/monetdb-profiler-tools.git
@@ -39,3 +48,25 @@ to. Currently the server must be running on localhost.
   poetry install
   poetry run pystethoscope --help
 #+end_src
+
+** Internals
+Stethoscope works in three distinct phases:
+1. Parsing
+2. Filtering
+3. Formatting and output
+
+*** Parsing
+In general, parsing refers to the process of converting an input string to a
+memory representation, that can be used for further computation. In this case
+the input string is the string representation of the JSON object the MonetDB
+server is emitting for each MAL instruction. The in memory representation is a
+Python dictionary. We are currently using the [[https://docs.python.org/3/library/json.html][JSON module]] from the Python
+standard library to parse the strings, but this can easily be replaced with any
+other implementation.
+
+If the user specifies the ~--raw~ then no parsing takes place, and the string is
+passed through to the next phases unchanged.
+
+*** Filtering
+With the parsed strings in memory, we can use dictionary keys to filter them. If
+the user specifies the ~--include-keys~
