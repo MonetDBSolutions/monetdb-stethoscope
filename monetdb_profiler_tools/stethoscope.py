@@ -15,6 +15,7 @@ from monetdb_profiler_tools.filtering import identity_filter
 from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
 from monetdb_profiler_tools.formatting import json_formatter
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
+from monetdb_profiler_tools.transformers import statement_reconstructor
 
 LOGGER = logging.getLogger(__name__)
 
@@ -81,7 +82,8 @@ def stethoscope(database, include, exclude, fmt, raw, outfile):
         try:
             s = cnx.read_object()
             d = parse_operator(s)
-            json_object = filter_operator(d)
+            json_object = statement_reconstructor(d)
+            json_object = filter_operator(json_object)
             formatter(json_object, out_file)
         except Exception as e:
             LOGGER.warn("Failed operating on %s (%s)", s, e)
