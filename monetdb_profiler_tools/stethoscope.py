@@ -15,7 +15,7 @@ from monetdb_profiler_tools.filtering import identity_filter
 from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
 from monetdb_profiler_tools.formatting import json_formatter
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
-from monetdb_profiler_tools.transformers import statement_reconstructor
+from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,15 +27,17 @@ LOGGER = logging.getLogger(__name__)
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
 @click.option("--formatter", "-f", "fmt", default="json")
+@click.option("--transformer", "-t", "trn", default="stmt")
 @click.option("--raw", "-r", "raw", is_flag=True)
 @click.option("--output", "-o", "outfile", default="stdout")
-def stethoscope(database, include, exclude, fmt, raw, outfile):
+def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
     LOGGER.debug("Input arguments")
     LOGGER.debug("  Database: %s", database)
+    LOGGER.debug("  Transformer: %s", trn)
     LOGGER.debug("  Include keys: %s", include)
     LOGGER.debug("  Exclude keys: %s", exclude)
     LOGGER.debug("  Formatter: %s", fmt)
@@ -49,6 +51,11 @@ def stethoscope(database, include, exclude, fmt, raw, outfile):
         parse_operator = json_parser()
     else:
         parse_operator = identity_parser()
+
+    if trn:
+        transformer = statement_transformer()
+    else:
+        transformer = identity_transformer()
 
     if include:
         filter_operator = include_filter(include.split(','))
@@ -82,7 +89,7 @@ def stethoscope(database, include, exclude, fmt, raw, outfile):
         try:
             s = cnx.read_object()
             d = parse_operator(s)
-            json_object = statement_reconstructor(d)
+            json_object = transformer(d)
             json_object = filter_operator(json_object)
             formatter(json_object, out_file)
         except Exception as e:
