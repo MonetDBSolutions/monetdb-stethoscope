@@ -6,6 +6,7 @@
 "Tools useful for filtering JSON objects based on keys."
 
 import logging
+from monetdb_profiler_tools.utilities import identity_function
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,11 +28,6 @@ def exclude_filter(excluded_keys):
 def identity_filter():
     """Returns a filter that does nothing."""
     return identity_function
-
-
-def identity_function(input_object):
-    """Returns the argument as is."""
-    return input_object
 
 
 def filter_keys_include(json_object, included_keys):

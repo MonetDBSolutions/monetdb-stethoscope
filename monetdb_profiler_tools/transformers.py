@@ -10,7 +10,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def statement_reconstructor(json_object):
+def statement_constructor(json_object):
     module = json_object.get("module")
     function = json_object.get("function")
 
@@ -86,3 +86,11 @@ def statement_reconstructor(json_object):
     rdict = dict(json_object)
     rdict['stmt'] = statement
     return rdict
+
+
+def statement_transformer():
+    return statement_constructor
+
+
+def identity_transformer():
+    return identity_function

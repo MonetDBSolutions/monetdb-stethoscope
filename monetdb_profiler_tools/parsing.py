@@ -6,7 +6,7 @@
 
 import json
 import logging
-from monetdb_profiler_tools.filtering import identity_function
+from monetdb_profiler_tools.utilities import identity_function
 
 LOGGER = logging.getLogger(__name__)
 
