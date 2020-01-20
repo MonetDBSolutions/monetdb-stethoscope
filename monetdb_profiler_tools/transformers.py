@@ -5,6 +5,7 @@
 
 """Module that implements transformers."""
 
+from monetdb_profiler_tools.utilities import identity_function
 import logging
 
 LOGGER = logging.getLogger(__name__)
