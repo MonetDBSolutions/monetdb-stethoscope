@@ -27,7 +27,7 @@ Currently ~pystethoscope~ offers the following options:
        is not specified the output will be written in ~stdout~.
 
 Finally it takes as a required argument the name of database to connect
-to. Currently the server must be running on localhost.
+to. Currently the server must be running on localhost. [WHY is this limitation?]
 
 #+begin_src shell
   pystethoscope --include-keys pc,ctime,state <database>
@@ -40,6 +40,8 @@ to. Currently the server must be running on localhost.
 
 
 * Developer notes
+[Why do I have to install poetry, what is its purpose?]
+
 ** Usage
 #+begin_src shell
   pip3 install --user poetry
