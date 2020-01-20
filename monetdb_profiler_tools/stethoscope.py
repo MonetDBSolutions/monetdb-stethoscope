@@ -16,6 +16,7 @@ from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
 from monetdb_profiler_tools.formatting import json_formatter
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
 from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
+from monetdb_profiler_tools.transformers import dummy_transformer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,10 +27,11 @@ LOGGER = logging.getLogger(__name__)
               help="A comma separated list of keys. Filter out all other keys.")
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
-@click.option("--formatter", "-f", "fmt", default="json")
-@click.option("--transformer", "-t", "trn", default="stmt")
-@click.option("--raw", "-r", "raw", is_flag=True)
-@click.option("--output", "-o", "outfile", default="stdout")
+@click.option("--raw", "-r", "raw", is_flag=True,
+              help='Copy what the server sends to the output. Incompatible with other options.')
+@click.option("--formatter", "-f", "fmt", multiple=True, help='json or line')
+@click.option("--transformer", "-t", "trn", multiple=True, help='stmt')
+@click.option("--output", "-o", "outfile", default="stdout", help='Output stream')
 def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
@@ -52,10 +54,17 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     else:
         parse_operator = identity_parser()
 
-    if trn:
-        transformer = statement_transformer()
-    else:
-        transformer = identity_transformer()
+    # LOGGER.debug("trn = %s", trn)
+    transformers = list()
+    for t in trn:
+        if t == 'statement':
+            transformers.append(statement_transformer())
+        elif t == 'dummy':
+            transformers.append(dummy_transformer())
+        else:
+            transformers.append(identity_transformer())
+
+    LOGGER.debug("transformers len = %d", len(transformers))
 
     if include:
         filter_operator = include_filter(include.split(','))
@@ -88,8 +97,13 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     while True:
         try:
             s = cnx.read_object()
-            d = parse_operator(s)
-            json_object = transformer(d)
+            json_object = parse_operator(s)
+            # LOGGER.debug("Parsed object = %s", json_object)
+            tcnt = 0
+            for t in transformers:
+                json_object = t(json_object)
+                # LOGGER.debug("tcnt = %d obj = %s", tcnt, json_object)
+                tcnt += 1
             json_object = filter_operator(json_object)
             formatter(json_object, out_file)
         except Exception as e:

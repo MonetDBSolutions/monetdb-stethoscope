@@ -93,5 +93,22 @@ def statement_transformer():
     return statement_constructor
 
 
+def dummy_transformer():
+    return dummy_constructor
+
+
+def dummy_constructor(json_object):
+    cnt = 0
+    keys = json_object.keys()
+    while f'L{cnt}' in keys:
+        cnt += 1
+
+    rdict = dict(json_object)
+    rdict[f'L{cnt}'] = 'dummy value'
+
+    return rdict
+
+
+
 def identity_transformer():
     return identity_function
