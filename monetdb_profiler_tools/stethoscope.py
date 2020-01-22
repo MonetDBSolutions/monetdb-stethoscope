@@ -16,7 +16,7 @@ from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
 from monetdb_profiler_tools.formatting import json_formatter, json_formatter_pretty
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
 from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
-from monetdb_profiler_tools.transformers import dummy_transformer
+from monetdb_profiler_tools.transformers import dummy_transformer, PrerequisiteTransformer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +58,8 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     for t in trn:
         if t == 'statement':
             transformers.append(statement_transformer())
+        elif t == 'prereqs':
+            transformers.append(PrerequisiteTransformer())
         elif t == 'dummy':
             transformers.append(dummy_transformer())
         else:

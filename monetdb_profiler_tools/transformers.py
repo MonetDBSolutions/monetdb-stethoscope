@@ -152,12 +152,28 @@ class PrerequisiteTransformer:
                 return
 
 
-    # TODO: implement
     def find_prerequisites(self, json_object):
-        return json_object
+        rdict = dict(json_object)
+        prereqs = list()
+
+        for v in json_object.get("args", []):
+            if v.get("ret"):
+                continue
+            var = v.get("var")
+            pc = self._var_to_pc.get(var)
+            if pc:
+                prereqs.append(pc)
+            else:
+                LOGGER.warn("Variable %s not in lookup table: %s",
+                            var,
+                            json_object)
+
+        if prereqs:
+            rdict["prereq"] = prereqs
+
+        return rdict
 
 
     def process_mal(self, json_object):
-        # install return a
-        self.install_values(json_object)
+        self.install_return_values(json_object)
         return self.find_prerequisites(json_object)
