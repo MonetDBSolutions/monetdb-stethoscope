@@ -6,6 +6,9 @@
 """Utilities for formatting and outputting records."""
 
 import json
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 
 def line_formatter(dct, output_stream):
@@ -34,4 +37,10 @@ formatting."""
 def json_formatter(dct, output_stream):
     """Creates a JSON string from the given dictionary (`dct`) and prints it to the
 given `output_stream`."""
-    print(json.dumps(dct), file=output_stream)
+    json.dump(dct, output_stream)
+    print()
+
+
+def json_formatter_pretty(dct, output_stream):
+    json.dump(dct, output_stream, indent=2)
+    print()

@@ -13,7 +13,7 @@ import pymonetdb
 from monetdb_profiler_tools.filtering import include_filter, exclude_filter
 from monetdb_profiler_tools.filtering import identity_filter
 from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
-from monetdb_profiler_tools.formatting import json_formatter
+from monetdb_profiler_tools.formatting import json_formatter, json_formatter_pretty
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
 from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
 from monetdb_profiler_tools.transformers import dummy_transformer
@@ -29,7 +29,7 @@ LOGGER = logging.getLogger(__name__)
               help="A comma separated list of keys to exclude")
 @click.option("--raw", "-r", "raw", is_flag=True,
               help='Copy what the server sends to the output. Incompatible with other options.')
-@click.option("--formatter", "-f", "fmt", multiple=True, help='json or line')
+@click.option("--formatter", "-f", "fmt", help='json, json_pretty, or line')
 @click.option("--transformer", "-t", "trn", multiple=True, help='stmt')
 @click.option("--output", "-o", "outfile", default="stdout", help='Output stream')
 def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
@@ -74,6 +74,8 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
 
     if fmt == "json":
         formatter = json_formatter
+    elif fmt == "json_pretty":
+        formatter = json_formatter_pretty
     elif fmt == "line":
         formatter = line_formatter
     else:
