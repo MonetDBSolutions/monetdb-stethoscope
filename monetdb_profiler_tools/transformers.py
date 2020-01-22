@@ -50,8 +50,8 @@ def statement_constructor(json_object):
             rets += ret_str
             ret_type += vtype
         else:
-            value = arg.get("value", None)
-            count = arg.get("count", None)
+            value = arg.get("value")
+            count = arg.get("count")
             default = default_values.get(vtype, "unknown")
             const = bool(arg.get("const", False))
 
@@ -109,6 +109,55 @@ def dummy_constructor(json_object):
     return rdict
 
 
-
 def identity_transformer():
     return identity_function
+
+
+class PrerequisiteTransformer:
+    def __init__(self):
+        self._var_to_pc = dict()
+
+    def __call__(self, json_object):
+        return self.process_mal(json_object)
+
+    def lookup(self, variable):
+        pc = self._var_to_pc.get(variable)
+        if pc is None:
+            LOGGER.debug("Variable %s not found in lookup table", variable)
+
+        return pc
+
+    def install(self, variable, pc):
+        if variable in self._var_to_pc:
+            LOGGER.warn("Variable %s already in lookup table: pc=%d",
+                        variable,
+                        self._var_to_pc[variable])
+            LOGGER.warn("This will produce incorrect prerequisites!")
+        self._var_to_pc[variable] = pc
+
+    def install_return_values(self, json_object):
+        for v in json_object.get('args', []):
+            # No more return values
+            if v.get("ret") is None:
+                break
+
+            pc = json_object.get("pc")
+            vname = v.get("var")
+
+            if pc and vname:
+                self.install(vname, pc)
+            else:
+                LOGGER.warn("pc or return variable undefined in %s", json_object)
+                LOGGER.warn("Ignoring")
+                return
+
+
+    # TODO: implement
+    def find_prerequisites(self, json_object):
+        return json_object
+
+
+    def process_mal(self, json_object):
+        # install return a
+        self.install_values(json_object)
+        return self.find_prerequisites(json_object)
