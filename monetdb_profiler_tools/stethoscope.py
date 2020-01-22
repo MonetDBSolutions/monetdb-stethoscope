@@ -54,7 +54,6 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     else:
         parse_operator = identity_parser()
 
-    # LOGGER.debug("trn = %s", trn)
     transformers = list()
     for t in trn:
         if t == 'statement':
@@ -96,15 +95,16 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
 
     while True:
         try:
+            # read
             s = cnx.read_object()
+            # parse
             json_object = parse_operator(s)
-            # LOGGER.debug("Parsed object = %s", json_object)
-            tcnt = 0
+            # transform
             for t in transformers:
                 json_object = t(json_object)
-                # LOGGER.debug("tcnt = %d obj = %s", tcnt, json_object)
-                tcnt += 1
             json_object = filter_operator(json_object)
+            # filter
+            # format
             formatter(json_object, out_file)
         except Exception as e:
             LOGGER.warn("Failed operating on %s (%s)", s, e)

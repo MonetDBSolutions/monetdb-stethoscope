@@ -17,6 +17,9 @@ Currently ~pystethoscope~ offers the following options:
   - ~--formatter json~ :: Display the objects as JSON entries
   - ~--formatter line~ :: Display the objects in the line format
   - ~--formatter raw~ ::  Display the without any formatting at all
++ Transformation ~--transformer~ (~-t~):
+  - ~--transformer statement~ :: generate MAL statements from the given information
+  - ~--transformer dummy~ :: Add a dummy value in the
 + Miscellaneous:
   - ~--raw~ :: Do not parse, filter, or format the incoming objects in any
     way. This option overrides the include/exclude and formatter options. This
