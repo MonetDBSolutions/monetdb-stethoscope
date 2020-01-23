@@ -27,12 +27,27 @@ LOGGER = logging.getLogger(__name__)
               help="A comma separated list of keys. Filter out all other keys.")
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
-@click.option("--raw", "-r", "raw", is_flag=True,
-              help='Copy what the server sends to the output. Incompatible with other options.')
-@click.option("--formatter", "-f", "fmt", help='json, json_pretty, or line')
-@click.option("--transformer", "-t", "trn", multiple=True, help='stmt')
+@click.option("--pipeline", "-p", "pipeline",
+              type=click.Choice([
+                  'raw'
+              ]),
+              default=None)
+@click.option("--formatter", "-f", "fmt",
+              type=click.Choice([
+                  'json',
+                  'json_pretty',
+                  'line'
+              ]),
+              help='json, json_pretty, or line')
+@click.option("--transformer", "-t", "trn", multiple=True,
+              type=click.Choice([
+                  'statement',
+                  'prereqs',
+                  'dummy',
+                  'identity'
+              ]))
 @click.option("--output", "-o", "outfile", default="stdout", help='Output stream')
-def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
+def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
@@ -43,18 +58,19 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     LOGGER.debug("  Include keys: %s", include)
     LOGGER.debug("  Exclude keys: %s", exclude)
     LOGGER.debug("  Formatter: %s", fmt)
-    LOGGER.debug("  Raw: %s", raw)
+    LOGGER.debug("  Pipeline: %s", pipeline)
     LOGGER.debug("  Output file: %s", outfile)
 
     cnx = pymonetdb.ProfilerConnection()
     cnx.connect(database, username='monetdb', password='monetdb', heartbeat=0)
 
-    if not raw:
+    if not pipeline:
         parse_operator = json_parser()
     else:
         parse_operator = identity_parser()
 
     transformers = list()
+
     for t in trn:
         if t == 'statement':
             transformers.append(statement_transformer())
@@ -62,8 +78,8 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
             transformers.append(PrerequisiteTransformer())
         elif t == 'dummy':
             transformers.append(dummy_transformer())
-        else:
-            transformers.append(identity_transformer())
+
+    transformers.append(identity_transformer())
 
     LOGGER.debug("transformers len = %d", len(transformers))
 
@@ -83,7 +99,7 @@ def stethoscope(database, include, exclude, fmt, trn, raw, outfile):
     else:
         formatter = raw_formatter
 
-    if raw:
+    if pipeline == 'raw':
         if include:
             LOGGER.warning("Ignoring include keys because --raw was specified")
         if exclude:
