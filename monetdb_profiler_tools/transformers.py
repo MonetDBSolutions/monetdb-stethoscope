@@ -6,6 +6,7 @@
 """Module that implements transformers."""
 
 from monetdb_profiler_tools.utilities import identity_function
+import json
 import logging
 
 LOGGER = logging.getLogger(__name__)
@@ -25,7 +26,6 @@ def statement_constructor(json_object):
             stmt = f'{operator} {program}()'
         else:
             stmt = f'{operator} {program}'
-
 
     default_values = {
         "int": 0,
@@ -116,9 +116,28 @@ def identity_transformer():
 class PrerequisiteTransformer:
     def __init__(self):
         self._var_to_pc = dict()
+        self._resolved_prereqs = dict()
 
     def __call__(self, json_object):
-        return self.process_mal(json_object)
+        state = json_object.get('state', 'NA')
+
+        if state == 'done':
+            pc = json_object.get('pc')
+            rdict = dict(json_object)
+            rdict['prereq'] = self._resolved_prereqs.get(pc, [])
+            return rdict
+        elif state != 'start':
+            return json_object
+
+        # Ignore function and end operators
+        ignore_ops = ['function', 'end']
+
+        op = json_object.get('operator')
+        if op and op in ignore_ops:
+            return json_object
+
+        self.install_return_values(json_object)
+        return self.find_prerequisites(json_object)
 
     def lookup(self, variable):
         pc = self._var_to_pc.get(variable)
@@ -151,14 +170,15 @@ class PrerequisiteTransformer:
                 LOGGER.warn("Ignoring")
                 return
 
-
     def find_prerequisites(self, json_object):
         rdict = dict(json_object)
         prereqs = list()
 
         for v in json_object.get("args", []):
-            if v.get("ret"):
+            # no need to handle return values and constants
+            if v.get("ret") or v.get('const') == 1:
                 continue
+
             var = v.get("var")
             pc = self._var_to_pc.get(var)
             if pc:
@@ -166,14 +186,11 @@ class PrerequisiteTransformer:
             else:
                 LOGGER.warn("Variable %s not in lookup table: %s",
                             var,
-                            json_object)
+                            json.dumps(json_object, indent=2))
 
         if prereqs:
+            pc = json_object.get('pc')
+            self._resolved_prereqs[pc] = prereqs
             rdict["prereq"] = prereqs
 
         return rdict
-
-
-    def process_mal(self, json_object):
-        self.install_return_values(json_object)
-        return self.find_prerequisites(json_object)
