@@ -55,7 +55,7 @@ def statement_constructor(json_object):
             default = default_values.get(vtype, "unknown")
             const = bool(arg.get("const", False))
 
-            if arg.get("arg") > ret_num:
+            if arg.get("arg", 0) > ret_num:
                 args += ','
 
             if const:
