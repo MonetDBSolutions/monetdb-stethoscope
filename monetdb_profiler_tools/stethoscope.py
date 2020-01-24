@@ -6,6 +6,7 @@
 """This is the implementation of stethoscope, a tool to interact with MonetDB
 profiler streams."""
 
+import json
 import logging
 import sys
 import click
@@ -127,4 +128,4 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             # format
             formatter(json_object, out_file)
         except Exception as e:
-            LOGGER.warn("Failed operating on %s (%s)", s, e)
+            LOGGER.warn("Failed operating on %s (%s)", json.dumps(json_object, indent=2), e)
