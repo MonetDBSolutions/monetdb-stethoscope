@@ -74,7 +74,7 @@ To be done
 The following formatters are currently available:
 
 - json :: Format the object as a valid JSON string.
-- json_pretty :: Format the object as a pretty JSON string.
+- json_pretty :: Format the object as a human readable valid JSON string.
 - line :: Present the values in the object in one line separated by the string
   ~,\t~ and enclosed in square brackets.
 
