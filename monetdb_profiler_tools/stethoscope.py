@@ -120,10 +120,12 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             s = cnx.read_object()
             # parse
             json_object = parse_operator(s)
+
             # transform
             for t in transformers:
                 json_object = t(json_object)
             json_object = filter_operator(json_object)
+
             # filter
             # format
             formatter(json_object, out_file)

@@ -4,10 +4,127 @@
 
 ~pystethoscope~ is a command line tool to filter and format MonetDB profiler
 streams. The MonetDB profiler emits two JSON objects, one at the start and one
-at the end of every MAL instruction executed.
+at the end of every MAL instruction executed. ~pystethoscope~ connects to a
+MonetDB server process, reads the objects emitted by the profiler and performs
+various transformations specified by the user.
 
-Currently ~pystethoscope~ offers the following options:
+Conceptually the user specifies transformation pipelines. The pipeline is
+applied to every JSON object emitted by the serve and has the following stages:
 
+- Reading :: After a connection to the MonetDB server is established,
+  ~pystethoscope~ reads one string from the connection.
+- Parsing :: The string (representing a JSON object) is first parsed into a
+  Python dictionary. The user (mostly) cannot affect the execution of this
+  stage.
+- Transforming :: The various user defined transformers are run on the Python
+  dictionary. Transformers add or remove key-value pairs from the dictionaries.
+- Filtering :: Filters remove whole objects from the stream based on a used
+  defined predicate.
+- Formatting :: Formatters change how the object is shown to the user.
+
+* COMMENT Installation
+#+begin_src shell
+  pip3 install --user monetdb-profiler-tools
+#+end_src
+
+* Usage
+The user provides the specification of the desired pipeline using the command
+line.
+
+- ~--transformer~ (~-t~) :: ~statement~, ~prereqs~, ~dummy~, ~identity~,
+  ~keep_keys~, and ~remove_keys~ . Can be specified multiple times.
+- ~--filter~ (~-F~) ::
+- ~--formatter~ (~-f~) :: ~json~, ~json_pretty~, and ~line~.
+
+Alternatively the user can specify a number of predefined pipelines using
+~--pipeline~ (~-p~). This option overrides all other given options.
+
+** Reading and Parsing
+Reading and parsing happen automatically in every pipeline, (with the exception
+of the ~raw~ pipeline as specified below), and as such the used does not have
+any power over it.
+
+** Transforming
+The user can specify a number of transformers that can change the content of the
+JSON objects. Most transformers add key-value pairs in objects. Currently
+~pystethoscope~ implements the following transformers:
+
+- statement (~-t statement~) :: Recreate a rendering of the MAL statement that
+  this object represents. This transformer adds the key ~stmt~ in the JSON
+  object with a string value that represents the MAL statement.
+- prereqs (~-t prereqs~) :: This transformer adds the key ~prereq~ in the JSON
+  object. Its value is a list of program counter values of MAL instructions that
+  need to be completed before the current instruction can be executed.
+- keep_keys (~-t keep_keys key1,key2,...~) :: This transformer takes a comma
+  separated list of keys and removes all other keys from the JSON object.
+- remove_keys (~-t remove_keys key1,key2,...~) :: This transformer takes a comma
+  separated list of keys and removes them from the JSON object.
+- identity (~-t identity~) :: This transformer leaves the object unchanged. In
+  itself this is not particularly useful to the user, but it is useful as a base
+  case for recursive operations.
+- dummy (~-t dummy~) :: This transformer adds the key ~L0~ with a value ~'dummy
+  value'~. This is used mostly for debugging.
+
+** Filtering
+To be done
+~-F drop_object key=value~
+~-F keep_object key=value~
+
+** Formatting
+The following formatters are currently available:
+
+- json :: Format the object as a valid JSON string.
+- json_pretty :: Format the object as a pretty JSON string.
+- line :: Present the values in the object in one line separated by the string
+  ~,\t~ and enclosed in square brackets.
+
+** Predefined pipelines
+The following are the predefined pipelines that ~pystethoscope~ currently has:
+
+- raw (~-p raw~) :: This pipeline is intended for accessing the raw output of
+  the MonetDB server's profiler. Using this pipeline will connect to the server
+  read strings and print them to the output stream. No other processing happens,
+  and specifically /no parsing takes place/.
+
+* Developer notes
+~pystethoscope~ is developed using [[https://python-poetry.org/][Poetry]], for dependency management and
+packaging.
+
+** Usage
+In order to use ~pystethoscope~ do the following:
+
+#+begin_src shell
+  pip3 install --user poetry
+  git clone git@github.com:MonetDBSolutions/monetdb-profiler-tools.git
+  cd monetdb-profiler-tools
+  poetry install
+  poetry run pystethoscope --help
+#+end_src
+
+** COMMENT Internals
+Stethoscope works in three distinct phases:
+1. Parsing
+2. Filtering
+3. Formatting and output
+
+*** Parsing
+In general, parsing refers to the process of converting an input string to a
+memory representation, that can be used for further computation. In this case
+the input string is the string representation of the JSON object the MonetDB
+server is emitting for each MAL instruction. The in memory representation is a
+Python dictionary. We are currently using the [[https://docs.python.org/3/library/json.html][JSON module]] from the Python
+standard library to parse the strings, but this can easily be replaced with any
+other implementation.
+
+If the user specifies the ~--raw~ then no parsing takes place, and the string is
+passed through to the next phases unchanged.
+
+*** Filtering
+With the parsed strings in memory, we can use dictionary keys to filter them. If
+the user specifies a list using the ~--include-keys~, keys that do not belong to
+that list will be removed from the
+
+* COMMENT Foo
 + Filtering:
   - ~--include-keys~ (~-i~):: This option accepts a comma separated list of JSON
     keys to display and discard the rest from the original object.
@@ -35,44 +152,3 @@ to. Currently the server must be running on localhost. [WHY is this limitation?]
 #+begin_src shell
   pystethoscope --include-keys pc,ctime,state <database>
 #+end_src
-
-* Installation
-#+begin_src shell
-  pip3 install --user monetdb-profiler-tools
-#+end_src
-
-
-* Developer notes
-[Why do I have to install poetry, what is its purpose?]
-
-** Usage
-#+begin_src shell
-  pip3 install --user poetry
-  git clone git@github.com:MonetDBSolutions/monetdb-profiler-tools.git
-  cd monetdb-profiler-tools
-  poetry install
-  poetry run pystethoscope --help
-#+end_src
-
-** Internals
-Stethoscope works in three distinct phases:
-1. Parsing
-2. Filtering
-3. Formatting and output
-
-*** Parsing
-In general, parsing refers to the process of converting an input string to a
-memory representation, that can be used for further computation. In this case
-the input string is the string representation of the JSON object the MonetDB
-server is emitting for each MAL instruction. The in memory representation is a
-Python dictionary. We are currently using the [[https://docs.python.org/3/library/json.html][JSON module]] from the Python
-standard library to parse the strings, but this can easily be replaced with any
-other implementation.
-
-If the user specifies the ~--raw~ then no parsing takes place, and the string is
-passed through to the next phases unchanged.
-
-*** Filtering
-With the parsed strings in memory, we can use dictionary keys to filter them. If
-the user specifies a list using the ~--include-keys~, keys that do not belong to
-that list will be removed from the
