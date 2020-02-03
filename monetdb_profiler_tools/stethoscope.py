@@ -46,6 +46,8 @@ LOGGER = logging.getLogger(__name__)
                   'statement',
                   'prereqs',
                   'obfuscate',
+                  'keep_keys',
+                  'remove_keys',
                   'dummy',
                   'identity'
               ]))

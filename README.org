@@ -55,9 +55,9 @@ JSON objects. Most transformers add key-value pairs in objects. Currently
 - prereqs (~-t prereqs~) :: This transformer adds the key ~prereq~ in the JSON
   object. Its value is a list of program counter values of MAL instructions that
   need to be completed before the current instruction can be executed.
-- keep_keys (~-t keep_keys key1,key2,...~) :: This transformer takes a comma
+- keep_keys (~-t keep_keys=key1,key2,...~) :: This transformer takes a comma
   separated list of keys and removes all other keys from the JSON object.
-- remove_keys (~-t remove_keys key1,key2,...~) :: This transformer takes a comma
+- remove_keys (~-t remove_keys=key1,key2,...~) :: This transformer takes a comma
   separated list of keys and removes them from the JSON object.
 - identity (~-t identity~) :: This transformer leaves the object unchanged. In
   itself this is not particularly useful to the user, but it is useful as a base
