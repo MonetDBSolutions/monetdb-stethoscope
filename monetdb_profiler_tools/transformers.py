@@ -194,3 +194,38 @@ class PrerequisiteTransformer:
             rdict["prereq"] = prereqs
 
         return rdict
+
+
+class ValueCensorTransformer:
+    def __init__(self):
+        # The types which we are censoring
+        self._types = [
+            # "bit",
+            "bte",
+            "sht",
+            "int",
+            "lng",
+            "hge",
+            "oid",
+            "flt",
+            "dbl",
+            "str",
+            "color",
+            "date",
+            "daytime",
+            "time",
+            "timestamp",
+            "timezone",
+            "blob",
+            "inet",
+            "url",
+            "json"
+        ]
+
+    def __call__(self, json_object):
+        rdict = dict(json_object)
+        for var in rdict.get("args", []):
+            if var.get("type", "void") in self._types and var.get("value", None):
+                var["value"] = "***"
+
+        return rdict

@@ -18,6 +18,7 @@ from monetdb_profiler_tools.formatting import json_formatter, json_formatter_pre
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
 from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
 from monetdb_profiler_tools.transformers import dummy_transformer, PrerequisiteTransformer
+from monetdb_profiler_tools.transformers import ValueCensorTransformer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ LOGGER = logging.getLogger(__name__)
               type=click.Choice([
                   'statement',
                   'prereqs',
+                  'obfuscate',
                   'dummy',
                   'identity'
               ]))
@@ -79,6 +81,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             transformers.append(PrerequisiteTransformer())
         elif t == 'dummy':
             transformers.append(dummy_transformer())
+        elif t == 'obfuscate':
+            transformers.append(ValueCensorTransformer())
 
     transformers.append(identity_transformer())
 
