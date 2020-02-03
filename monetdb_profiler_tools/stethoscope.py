@@ -74,14 +74,19 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
 
     transformers = list()
 
+    stmt = False
     for t in trn:
         if t == 'statement':
+            stmt = True
             transformers.append(statement_transformer())
         elif t == 'prereqs':
             transformers.append(PrerequisiteTransformer())
         elif t == 'dummy':
             transformers.append(dummy_transformer())
         elif t == 'obfuscate':
+            if stmt:
+                LOGGER.warn('statement transformer already added.')
+                LOGGER.warn('DATA WILL LEAK!')
             transformers.append(ValueCensorTransformer())
 
     transformers.append(identity_transformer())
