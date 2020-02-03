@@ -38,9 +38,9 @@ def json_formatter(dct, output_stream):
     """Creates a JSON string from the given dictionary (`dct`) and prints it to the
 given `output_stream`."""
     json.dump(dct, output_stream)
-    print()
+    print("", file=output_stream)
 
 
 def json_formatter_pretty(dct, output_stream):
     json.dump(dct, output_stream, indent=2)
-    print()
+    print("", file=output_stream)
