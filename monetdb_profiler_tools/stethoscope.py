@@ -129,5 +129,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             # filter
             # format
             formatter(json_object, out_file)
+        except pymonetdb.OperationalError as oe:
+            LOGGER.error("Got an Operational Error from the database: %s", oe)
+            break
         except Exception as e:
             LOGGER.warn("Failed operating on %s (%s)", json.dumps(json_object, indent=2), e)
