@@ -18,7 +18,7 @@ from monetdb_profiler_tools.formatting import json_formatter, json_formatter_pre
 from monetdb_profiler_tools.parsing import json_parser, identity_parser
 from monetdb_profiler_tools.transformers import statement_transformer, identity_transformer
 from monetdb_profiler_tools.transformers import dummy_transformer, PrerequisiteTransformer
-from monetdb_profiler_tools.transformers import ValueCensorTransformer
+from monetdb_profiler_tools.transformers import ValueObfuscateTransformer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             if stmt:
                 LOGGER.warn('statement transformer already added.')
                 LOGGER.warn('DATA WILL LEAK!')
-            transformers.append(ValueCensorTransformer())
+            transformers.append(ValueObfuscateTransformer())
 
     transformers.append(identity_transformer())
 

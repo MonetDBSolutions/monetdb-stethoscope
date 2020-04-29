@@ -196,7 +196,7 @@ class PrerequisiteTransformer:
         return rdict
 
 
-class ValueCensorTransformer:
+class ValueObfuscateTransformer:
     def __init__(self):
         # The types which we are censoring
         self._types = [
