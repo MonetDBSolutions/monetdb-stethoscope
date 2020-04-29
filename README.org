@@ -12,15 +12,16 @@ Conceptually the user specifies transformation pipelines. The pipeline is
 applied to every JSON object emitted by the serve and has the following stages:
 
 - Reading :: After a connection to the MonetDB server is established,
-  ~pystethoscope~ reads one string from the connection.
-- Parsing :: The string (representing a JSON object) is first parsed into a
-  Python dictionary. The user (mostly) cannot affect the execution of this
-  stage.
-- Transforming :: The various user defined transformers are run on the Python
+  ~pystethoscope~ reads one string, representing a JSON object, from the
+  connection.
+- Parsing :: The string is first parsed into a Python dictionary. The user
+  cannot affect the execution of this stage. (But take a look at raw pipeline
+  below).
+- Transforming :: The various user specified transformers are run on the Python
   dictionary. Transformers add or remove key-value pairs from the dictionaries.
 - Filtering :: Filters remove whole objects from the stream based on a used
-  defined predicate.
-- Formatting :: Formatters change how the object is shown to the user.
+  defined predicate. (/not yet implemented/)
+- Formatting :: Formatters change how the object is displayed to the user.
 
 * COMMENT Installation
 #+begin_src shell
@@ -29,11 +30,10 @@ applied to every JSON object emitted by the serve and has the following stages:
 
 * Usage
 The user provides the specification of the desired pipeline using the command
-line.
+line using the following options:
 
-- ~--transformer~ (~-t~) :: ~statement~, ~prereqs~, ~dummy~, ~identity~,
-  ~keep_keys~, and ~remove_keys~ . Can be specified multiple times.
-- ~--filter~ (~-F~) ::
+- ~--transformer~ (~-t~) :: ~statement~, ~prereqs~, ~obfuscate~, ~dummy~, and
+  ~identity~, . Can be specified multiple times.
 - ~--formatter~ (~-f~) :: ~json~, ~json_pretty~, and ~line~.
 
 Alternatively the user can specify a number of predefined pipelines using
@@ -41,50 +41,66 @@ Alternatively the user can specify a number of predefined pipelines using
 
 ** Reading and Parsing
 Reading and parsing happen automatically in every pipeline, (with the exception
-of the ~raw~ pipeline as specified below), and as such the used does not have
-any power over it.
+of the ~raw~ pipeline as specified below), and as such the user does not have
+any control over it.
 
 ** Transforming
 The user can specify a number of transformers that can change the content of the
 JSON objects. Most transformers add key-value pairs in objects. Currently
 ~pystethoscope~ implements the following transformers:
 
-- statement (~-t statement~) :: Recreate a rendering of the MAL statement that
+- statement (~-t statement~) :: Recreates a rendering of the MAL statement that
   this object represents. This transformer adds the key ~stmt~ in the JSON
   object with a string value that represents the MAL statement.
-- prereqs (~-t prereqs~) :: This transformer adds the key ~prereq~ in the JSON
-  object. Its value is a list of program counter values of MAL instructions that
-  need to be completed before the current instruction can be executed.
-- keep_keys (~-t keep_keys=key1,key2,...~) :: This transformer takes a comma
-  separated list of keys and removes all other keys from the JSON object.
-- remove_keys (~-t remove_keys=key1,key2,...~) :: This transformer takes a comma
-  separated list of keys and removes them from the JSON object.
+- prereqs (~-t prereqs~) :: Adds the key ~prereq~ in the JSON object. Its value
+  is a list of PC (program counter) values of MAL instructions that need to be
+  completed before the current instruction can start executing.
+- obfuscate (~-t obfuscate~) :: This transformer replaces all the literal values
+  in the JSON object with three asterisks. This *must* be declared before the
+  ~statement~ transformer otherwise the values will appear unchanged in the
+  reconstructed statement.
 - identity (~-t identity~) :: This transformer leaves the object unchanged. In
-  itself this is not particularly useful to the user, but it is useful as a base
-  case for recursive operations.
+  itself this is not particularly useful to the user, but it might be useful in
+  the future as a base case for recursive transformers and to denote the absence
+  of other operations.
 - dummy (~-t dummy~) :: This transformer adds the key ~L0~ with a value ~'dummy
   value'~. This is used mostly for debugging.
 
-** Filtering
-To be done
-~-F drop_object key=value~
-~-F keep_object key=value~
+*** Key inclusion and exclusion transformers
+There are two special transformers that take a list of keys as arguments.
+
+- ~--include-keys~ (~-i key1,key2,...~) :: This transformer takes a comma
+  separated list of keys and removes all other keys from the JSON object.
+- ~--exclude-keys~ (~-e key1,key2,...~) :: This transformer takes a comma
+  separated list of keys and removes them from the JSON object.
 
 ** Formatting
 The following formatters are currently available:
 
-- json :: Format the object as a valid JSON string.
-- json_pretty :: Format the object as a human readable valid JSON string.
-- line :: Present the values in the object in one line separated by the string
+- json (~-F json~) :: Formats the object as a valid JSON string.
+- json_pretty (~-F json_pretty~) :: Formats the object as a human readable valid
+  JSON string.
+- line (~-F line~) :: Presents the values in the object in one line separated by the string
   ~,\t~ and enclosed in square brackets.
+- raw (~-F raw~) :: Sends the object as is to the output stream. This usually uses the
+  default Python rendering for dictionaries. The exception to this rule is the
+  raw pipeline.
+
 
 ** Predefined pipelines
 The following are the predefined pipelines that ~pystethoscope~ currently has:
 
 - raw (~-p raw~) :: This pipeline is intended for accessing the raw output of
-  the MonetDB server's profiler. Using this pipeline will connect to the server
-  read strings and print them to the output stream. No other processing happens,
-  and specifically /no parsing takes place/.
+  the MonetDB server's profiler. When using this pipeline ~pystethoscope~ will
+  connect to the server read strings and print them to the output stream. No
+  other processing happens, and specifically /no parsing takes place/. This is
+  mainly useful for debugging the profiler module of the MonetDB server.
+
+** TODO Other arguments
+- database
+- username
+- password
+* TODO Examples
 
 * Developer notes
 ~pystethoscope~ is developed using [[https://python-poetry.org/][Poetry]], for dependency management and
@@ -129,7 +145,6 @@ passed through to the next phases unchanged.
 With the parsed strings in memory, we can use dictionary keys to filter them. If
 the user specifies a list using the ~--include-keys~, keys that do not belong to
 that list will be removed from the
-
 * COMMENT Foo
 + Filtering:
   - ~--include-keys~ (~-i~):: This option accepts a comma separated list of JSON
