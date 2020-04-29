@@ -34,11 +34,12 @@ LOGGER = logging.getLogger(__name__)
                   'raw'
               ]),
               default=None)
-@click.option("--formatter", "-f", "fmt",
+@click.option("--formatter", "-F", "fmt",
               type=click.Choice([
                   'json',
                   'json_pretty',
-                  'line'
+                  'line',
+                  'raw'
               ]),
               help='json, json_pretty, or line')
 @click.option("--transformer", "-t", "trn", multiple=True,
@@ -46,8 +47,8 @@ LOGGER = logging.getLogger(__name__)
                   'statement',
                   'prereqs',
                   'obfuscate',
-                  'keep_keys',
-                  'remove_keys',
+                  # 'keep_keys',
+                  # 'remove_keys',
                   'dummy',
                   'identity'
               ]))
@@ -96,11 +97,11 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
     LOGGER.debug("transformers len = %d", len(transformers))
 
     if include:
-        filter_operator = include_filter(include.split(','))
+        key_filter_operator = include_filter(include.split(','))
     elif exclude:
-        filter_operator = exclude_filter(exclude.split(','))
+        key_filter_operator = exclude_filter(exclude.split(','))
     else:
-        filter_operator = identity_filter()
+        key_filter_operator = identity_filter()
 
     if fmt == "json":
         formatter = json_formatter
@@ -135,7 +136,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
             # transform
             for t in transformers:
                 json_object = t(json_object)
-            json_object = filter_operator(json_object)
+            json_object = key_filter_operator(json_object)
 
             # filter
             # format
