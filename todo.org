@@ -1,0 +1,18 @@
+* Inbox
+** TODO Update documentation
+:LOGBOOK:
+CLOCK: [2020-04-29 Wed 12:06]
+:END:
+
+- [X] Update installation instructions
+- [ ] documentation
+
+[[file:~/work/src/monet/python/monetdb_profiler_tools/README.org::*Transforming][Transforming]]
+
+** TODO Talk to Gijs about [[https://github.com/gijzelaerr/pymonetdb/pull/68][PR#68]]
+
+** TODO Examine critically the default settings
+
+** TODO Release on PyPI
+
+** TODO Examine and document the obfuscation
