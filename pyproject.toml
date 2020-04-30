@@ -8,7 +8,7 @@ authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
 python = "^3.6"
 click = "^7.0"
 funcy = "^1.13"
-pymonetdb = {path = "/home/kutsurak/work/src/monet/python/pymonetdb/worktrees/profiler_changes", develop = true}
+pymonetdb = "^1.3.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"

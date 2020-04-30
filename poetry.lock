@@ -429,19 +429,15 @@ toml = ">=0.7.1"
 [[package]]
 category = "main"
 description = "Native MonetDB client Python API"
-develop = true
 name = "pymonetdb"
 optional = false
 python-versions = "*"
-version = "2.0.0"
+version = "1.3.1"
 
 [package.dependencies]
 future = "*"
-
-[package.source]
-reference = ""
-type = "directory"
-url = "/home/kutsurak/work/src/monet/python/pymonetdb/worktrees/profiler_changes"
+six = ">=1.12.0"
+typing = "*"
 
 [[package]]
 category = "dev"
@@ -566,7 +562,7 @@ python-versions = "*"
 version = "0.14.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -641,6 +637,14 @@ python-versions = "*"
 version = "1.4.1"
 
 [[package]]
+category = "main"
+description = "Type Hints for Python"
+name = "typing"
+optional = false
+python-versions = "*"
+version = "3.7.4.1"
+
+[[package]]
 category = "dev"
 description = "Ultra fast JSON encoder and decoder for Python"
 marker = "platform_system != \"Windows\""
@@ -713,7 +717,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "6e3ba9e4edd9cf3b0cbca67602118749285b4862e813b59fc1fc8c61464bc670"
+content-hash = "60ccd03d29ee9a6bba429018d5906e362f0437f4983b1a59a37844222d92a0e9"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -918,7 +922,10 @@ pylint = [
     {file = "pylint-2.5.0-py3-none-any.whl", hash = "sha256:bd556ba95a4cf55a1fc0004c00cf4560b1e70598a54a74c6904d933c8f3bd5a8"},
     {file = "pylint-2.5.0.tar.gz", hash = "sha256:588e114e3f9a1630428c35b7dd1c82c1c93e1b0e78ee312ae4724c5e1a1e0245"},
 ]
-pymonetdb = []
+pymonetdb = [
+    {file = "pymonetdb-1.3.1-py2.py3-none-any.whl", hash = "sha256:63ee43820c99752af8617402515aab09f581da4008530fec713a52c1815e8581"},
+    {file = "pymonetdb-1.3.1.tar.gz", hash = "sha256:d515e455e123960fd6a019eebc5d34252b23f3d36367689535bdd1e383ef3700"},
+]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
@@ -986,6 +993,11 @@ typed-ast = [
     {file = "typed_ast-1.4.1-cp38-cp38-win_amd64.whl", hash = "sha256:fc0fea399acb12edbf8a628ba8d2312f583bdbdb3335635db062fa98cf71fca4"},
     {file = "typed_ast-1.4.1-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:d43943ef777f9a1c42bf4e552ba23ac77a6351de620aa9acf64ad54933ad4d34"},
     {file = "typed_ast-1.4.1.tar.gz", hash = "sha256:8c8aaad94455178e3187ab22c8b01a3837f8ee50e09cf31f1ba129eb293ec30b"},
+]
+typing = [
+    {file = "typing-3.7.4.1-py2-none-any.whl", hash = "sha256:c8cabb5ab8945cd2f54917be357d134db9cc1eb039e59d1606dc1e60cb1d9d36"},
+    {file = "typing-3.7.4.1-py3-none-any.whl", hash = "sha256:f38d83c5a7a7086543a0f649564d661859c5146a85775ab90c0d2f93ffaa9714"},
+    {file = "typing-3.7.4.1.tar.gz", hash = "sha256:91dfe6f3f706ee8cc32d38edbbf304e9b7583fb37108fef38229617f8b3eba23"},
 ]
 ujson = [
     {file = "ujson-1.35.tar.gz", hash = "sha256:f66073e5506e91d204ab0c614a148d5aa938bdbf104751be66f8ad7a222f5f86"},
