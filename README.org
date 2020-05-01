@@ -112,6 +112,7 @@ In order to install ~pystethoscope~ do the following:
 #+begin_src shell
   pip3 install --user poetry
   git clone git@github.com:MonetDBSolutions/monetdb-profiler-tools.git
+  cd monetdb-profiler-tools
   poetry install
   poetry run pystethoscope --help
 #+end_src
