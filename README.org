@@ -1,4 +1,5 @@
 #+TITLE: MonetDB Profiler Tools
+[[https://github.com/MonetDBSolutions/monetdb-profiler-tools/workflows/Test%20pystethoscope/badge.svg?branch=master][Test pystethoscope]]
 
 * Introduction
 
