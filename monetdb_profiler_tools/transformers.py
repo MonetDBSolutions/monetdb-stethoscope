@@ -13,6 +13,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 def statement_constructor(json_object):
+    """Reconstruct a MAL statement from the given profiler object."""
+
     module = json_object.get("module")
     function = json_object.get("function")
 
@@ -87,14 +89,6 @@ def statement_constructor(json_object):
     rdict = dict(json_object)
     rdict['stmt'] = statement
     return rdict
-
-
-def statement_transformer():
-    return statement_constructor
-
-
-def dummy_transformer():
-    return dummy_constructor
 
 
 def dummy_constructor(json_object):
