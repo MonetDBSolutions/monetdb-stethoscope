@@ -63,7 +63,8 @@ LOGGER = logging.getLogger(__name__)
 @click.option("--password", "-P", prompt="Password", hide_input=True,
               help="The password used to connect to the database."
               " If this option is not specified the user will be prompted.")
-def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile, username, password):
+def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
+                username, password):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
@@ -101,7 +102,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile, usernam
         elif t == 'obfuscate':
             transformers.append(ValueObfuscateTransformer())
             if stmt:
-                print(stmt_idx, idx)
+                # To prevent a data leak exchange the obfuscate with the
+                # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         idx += 1
 

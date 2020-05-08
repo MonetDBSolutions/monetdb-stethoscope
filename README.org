@@ -16,8 +16,8 @@ applied to every JSON object emitted by the serve and has the following stages:
   ~pystethoscope~ reads one string, representing a JSON object, from the
   connection.
 - Parsing :: The string is first parsed into a Python dictionary. The user
-  cannot affect the execution of this stage. (But take a look at raw pipeline
-  below).
+  cannot affect the execution of this stage. (But take a look at the ~raw~
+  pipeline below).
 - Transforming :: The various user specified transformers are run on the Python
   dictionary. Transformers add or remove key-value pairs from the dictionaries.
 - Filtering :: Filters remove whole objects from the stream based on a used
@@ -34,7 +34,7 @@ The user provides the specification of the desired pipeline using the command
 line using the following options:
 
 - ~--transformer~ (~-t~) :: ~statement~, ~prereqs~, ~obfuscate~, ~dummy~, and
-  ~identity~, . Can be specified multiple times.
+  ~identity~. Can be specified multiple times.
 - ~--formatter~ (~-f~) :: ~json~, ~json_pretty~, and ~line~.
 
 Alternatively the user can specify a number of predefined pipelines using
@@ -54,12 +54,10 @@ JSON objects. Most transformers add key-value pairs in objects. Currently
   this object represents. This transformer adds the key ~stmt~ in the JSON
   object with a string value that represents the MAL statement.
 - prereqs (~-t prereqs~) :: Adds the key ~prereq~ in the JSON object. Its value
-  is a list of PC (program counter) values of MAL instructions that need to be
+  is a list of program counter values (see section [[MAL profiler JSON format]]) of MAL instructions that need to be
   completed before the current instruction can start executing.
 - obfuscate (~-t obfuscate~) :: This transformer replaces all the literal values
-  in the JSON object with three asterisks. This *must* be declared before the
-  ~statement~ transformer otherwise the values will appear unchanged in the
-  reconstructed statement.
+  in the JSON object with three asterisks.
 - identity (~-t identity~) :: This transformer leaves the object unchanged. In
   itself this is not particularly useful to the user, but it might be useful in
   the future as a base case for recursive transformers and to denote the absence
@@ -97,11 +95,87 @@ The following are the predefined pipelines that ~pystethoscope~ currently has:
   other processing happens, and specifically /no parsing takes place/. This is
   mainly useful for debugging the profiler module of the MonetDB server.
 
-** TODO Other arguments
-- database
-- username
-- password
-* TODO Examples
+** Other arguments
+- database :: The name of the database to connect to.
+- username (~--username/-u username~) :: The name of the user for the database connection.
+  The default value is ~monetdb~.
+- password (~--password/-P password~) :: The password to be used for the database
+  connection. If this option is not specified, ~pystethoscope~ will prompt its
+  user for a password.
+ 
+* MAL profiler JSON format
+The JSON objects emitted by the MonetDB profiler may contain the following
+fields:
+
+- version :: The MonetDB server version. If it is an unreleased version it
+  includes the commit id.
+- user :: The id of the user running the queries
+- clk :: nanoseconds since the UNIX epoch
+- mclk :: nanoseconds since the start of the MonetDB server
+- thread :: The id of the thread that executes this instruction
+- program :: The full name of the MAL block containing this instruction
+- pc :: The program counter
+- tag :: The identifier of the MAL block containing this instruction
+- module :: The name of the MAL module that defines this instruction
+- function :: The name of the MAL block containing this instruction
+- operator :: The MAL language operator that defines this MAL block
+- session :: A UUID that identifies the MonetDB server process
+- state :: What is the execution state for this instruction
+- args :: An array containing information about the variables used as arguments
+  and return values of this instruction
+- ret/arg :: The index of the variable in the sequence of return
+  values/arguments
+- var :: The name of the variable
+- type :: The type of the variable
+- const :: 1 if the variable is a constant, known at query compile time, or 0
+  otherwise
+- value :: The value of the variable
+- eol ::
+- used ::
+- fixed ::
+- udf ::
+
+Additionally if the variable's type is BAT, then a number of extra fields may be
+shown:
+
+- view :: "true" if the BAT is a view, "false" otherwise
+- parent ::
+- seqbase ::
+- persistence :: "persistent" or "transient"
+- sorted :: 1 if the values in the bat are sorted in ascending order, 0 otherwise
+- revsorted :: 1 if the values it the bat are sorted in descending order, 0 otherwise
+- nonil :: 1 if the BAT does *not* contain nil values
+- nil :: 1 if the BAT contains nil values
+- bid ::
+- key ::
+- file :: the filename of the file that contains the BAT if it is persistent
+- count :: how many values are there in the BAT
+
+
+Note: The combination of the fields ~session~, ~tag~, and ~pc~ identifies
+uniquely a single MAL instruction. The combination of ~session~, ~tag~, ~pc~ and
+~state~, identifies uniquely a single JSON object
+
+* Examples
+In the following examples we will be connecting to a database named ~demo~,
+with user ~monetdb~, and password ~monetdb~:
+
+Create JSON objects containing only the fields ~pc~, ~clk~ and ~state~
+#+begin_src shell
+  pystethoscope -u monetdb -P monetdb --include-keys pc,clk,state demo
+#+end_src
+
+Show the executed statements, with timestamps for the start and the end of the execution.
+#+BEGIN_SRC shell
+  pystethoscope -u monetdb -P monetdb --transformer statement --formatter line --include-keys stmt,clk,state demo
+#+END_SRC
+
+The same as above but hide the values in the plan
+#+BEGIN_SRC shell
+  pystethoscope -u monetdb -P monetdb --transformer statement --transformer obfuscate --formatter line --include-keys stmt,clk,state demo
+#+END_SRC
+
+Pretty print the JSON object after adding statements and prerequisites
 
 * Developer notes
 ~pystethoscope~ is developed using [[https://python-poetry.org/][Poetry]], for dependency management and
@@ -128,53 +202,3 @@ development version of ~pystethoscope~, before that date you need to update:
   poetry update
 #+END_SRC
 
-** COMMENT Internals
-Stethoscope works in three distinct phases:
-1. Parsing
-2. Filtering
-3. Formatting and output
-
-*** Parsing
-In general, parsing refers to the process of converting an input string to a
-memory representation, that can be used for further computation. In this case
-the input string is the string representation of the JSON object the MonetDB
-server is emitting for each MAL instruction. The in memory representation is a
-Python dictionary. We are currently using the [[https://docs.python.org/3/library/json.html][JSON module]] from the Python
-standard library to parse the strings, but this can easily be replaced with any
-other implementation.
-
-If the user specifies the ~--raw~ then no parsing takes place, and the string is
-passed through to the next phases unchanged.
-
-*** Filtering
-With the parsed strings in memory, we can use dictionary keys to filter them. If
-the user specifies a list using the ~--include-keys~, keys that do not belong to
-that list will be removed from the
-* COMMENT Foo
-+ Filtering:
-  - ~--include-keys~ (~-i~):: This option accepts a comma separated list of JSON
-    keys to display and discard the rest from the original object.
-  - ~--exclude-keys~ (~-e~):: This option accepts a comma separated list of JSON
-    keys, discards them from the original JSON object and displays the rest.
-+ Formatting ~--formatter~ (~-f~):
-  - ~--formatter json~ :: Display the objects as JSON entries
-  - ~--formatter line~ :: Display the objects in the line format
-  - ~--formatter raw~ ::  Display the without any formatting at all
-+ Transformation ~--transformer~ (~-t~):
-  - ~--transformer statement~ :: generate MAL statements from the given information
-  - ~--transformer dummy~ :: Add a dummy value in the
-+ Miscellaneous:
-  - ~--raw~ :: Do not parse, filter, or format the incoming objects in any
-    way. This option overrides the include/exclude and formatter options. This
-    is mainly useful for debugging the output of the MonetDB profiler or for
-    collecting and passing the profiler information to other programs that cannot
-    connect themselves to ~mserver5~.
-  - ~--output /path/to/file~ :: Write the output to the given file. If this option
-       is not specified the output will be written in ~stdout~.
-
-Finally it takes as a required argument the name of database to connect
-to. Currently the server must be running on localhost. [WHY is this limitation?]
-
-#+begin_src shell
-  pystethoscope --include-keys pc,ctime,state <database>
-#+end_src
