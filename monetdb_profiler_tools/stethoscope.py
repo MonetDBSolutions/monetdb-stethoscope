@@ -23,7 +23,9 @@ from monetdb_profiler_tools.transformers import dummy_constructor
 LOGGER = logging.getLogger(__name__)
 
 
-@click.command()
+@click.command(context_settings=dict(
+    help_option_names=["-h", "--help"]
+))
 @click.argument("database")
 @click.option("--include-keys", "-i", "include",
               help="A comma separated list of keys. Filter out all other keys.")
@@ -33,6 +35,7 @@ LOGGER = logging.getLogger(__name__)
               type=click.Choice([
                   'raw'
               ]),
+              help="Predefined pipelines. Overrides all other options.",
               default=None)
 @click.option("--formatter", "-F", "fmt",
               type=click.Choice([
@@ -41,7 +44,7 @@ LOGGER = logging.getLogger(__name__)
                   'line',
                   'raw'
               ]),
-              help='json, json_pretty, or line')
+              help="json, json_pretty, or line")
 @click.option("--transformer", "-t", "trn", multiple=True,
               type=click.Choice([
                   'statement',
@@ -52,8 +55,8 @@ LOGGER = logging.getLogger(__name__)
                   'dummy',
                   'identity'
               ]))
-@click.option("--output", "-o", "outfile", default="stdout", help='Output stream')
-def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile):
+@click.option("--output", "-o", "outfile",
+              default="stdout", help="Output stream")
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
