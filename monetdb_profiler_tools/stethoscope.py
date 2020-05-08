@@ -57,6 +57,13 @@ LOGGER = logging.getLogger(__name__)
               ]))
 @click.option("--output", "-o", "outfile",
               default="stdout", help="Output stream")
+@click.option("--username", "-u", "username",
+              default="monetdb", help="The username used to connect to"
+              " the database.")
+@click.option("--password", "-P", prompt="Password", hide_input=True,
+              help="The password used to connect to the database."
+              " If this option is not specified the user will be prompted.")
+def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile, username, password):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
@@ -71,7 +78,7 @@ LOGGER = logging.getLogger(__name__)
     LOGGER.debug("  Output file: %s", outfile)
 
     cnx = pymonetdb.ProfilerConnection()
-    cnx.connect(database, username='monetdb', password='monetdb', heartbeat=0)
+    cnx.connect(database, username=username, password=password, heartbeat=0)
 
     if not pipeline:
         parse_operator = json_parser()
