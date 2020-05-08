@@ -148,8 +148,8 @@ shown:
 - nil :: 1 if the BAT contains nil values
 - bid ::
 - key ::
-- file :: the filename of the file that contains the BAT if it is persistent
-- count :: how many values are there in the BAT
+- file :: The filename of the file that contains the BAT if it is persistent
+- count :: How many values are there in the BAT
 
 
 Note: The combination of the fields ~session~, ~tag~, and ~pc~ identifies
