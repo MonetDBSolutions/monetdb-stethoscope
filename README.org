@@ -10,7 +10,7 @@ MonetDB server process, reads the objects emitted by the profiler and performs
 various transformations specified by the user.
 
 Conceptually the user specifies transformation pipelines. The pipeline is
-applied to every JSON object emitted by the serve and has the following stages:
+applied to every JSON object emitted by the server and has the following stages:
 
 - Reading :: After a connection to the MonetDB server is established,
   ~pystethoscope~ reads one string, representing a JSON object, from the
