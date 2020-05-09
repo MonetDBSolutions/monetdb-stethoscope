@@ -3,8 +3,8 @@
 
 * Introduction
 
-~pystethoscope~ is a command line tool to filter and format MonetDB profiler
-streams. The MonetDB profiler emits two JSON objects, one at the start and one
+~pystethoscope~ is a command line tool to filter and format the events coming from the
+MonetDB profiler. The MonetDB profiler emits two JSON objects, one at the start and one
 at the end of every MAL instruction executed. ~pystethoscope~ connects to a
 MonetDB server process, reads the objects emitted by the profiler and performs
 various transformations specified by the user.
@@ -130,10 +130,10 @@ fields:
 - const :: 1 if the variable is a constant, known at query compile time, or 0
   otherwise
 - value :: The value of the variable
-- eol ::
-- used ::
-- fixed ::
-- udf ::
+- eol :: The end-of-life (end-of-scope) of a variable in a MAL program
+- used :: Internal marker to identify if the variable is used.
+- fixed :: The argument type is frozen, i.e. not an :any type.
+- udf :: The argument is a User-Defined-Function.
 
 Additionally if the variable's type is BAT, then a number of extra fields may be
 shown:
