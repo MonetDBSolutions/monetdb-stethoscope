@@ -131,7 +131,7 @@ fields:
   otherwise
 - value :: The value of the variable
 - eol :: The end-of-life (end-of-scope) of a variable in a MAL program
-- used :: Internal marker to identify if the variable is used.
+- used :: Internal marker to identify if the variable is used elsewhere.
 - fixed :: The argument type is frozen, i.e. not an :any type.
 - udf :: The argument is a User-Defined-Function.
 
