@@ -31,7 +31,7 @@ LOGGER = logging.getLogger(__name__)
               help="A comma separated list of keys. Filter out all other keys.")
 @click.option("--exclude-keys", "-e", "exclude",
               help="A comma separated list of keys to exclude")
-@click.option("--pipeline", "-p", "pipeline",
+@click.option("--pipeline", "-l", "pipeline",
               type=click.Choice([
                   'raw'
               ]),
@@ -63,8 +63,14 @@ LOGGER = logging.getLogger(__name__)
 @click.option("--password", "-P", prompt="Password", hide_input=True,
               help="The password used to connect to the database."
               " If this option is not specified the user will be prompted.")
+@click.option("--host", "-H", "host", default="localhost",
+              help="The host where the MonetDB server is running.")
+@click.option("--port", "-p", "port", default=50000,
+              help="The port on which the MonetDB server is listening.")
+@click.option("--heartbeat", "-b", default=0,
+              help="The heartbeat frequency in milliseconds.")
 def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
-                username, password):
+                username, password, host, port, heartbeat):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
@@ -79,7 +85,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
     LOGGER.debug("  Output file: %s", outfile)
 
     cnx = pymonetdb.ProfilerConnection()
-    cnx.connect(database, username=username, password=password, heartbeat=0)
+    cnx.connect(database, username=username, password=password,
+                heartbeat=heartbeat, hostname=host, port=port)
 
     if not pipeline:
         parse_operator = json_parser()
