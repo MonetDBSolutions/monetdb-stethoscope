@@ -1,10 +1,10 @@
-#+TITLE: The MonetDB Events Profiler Tool
+#+TITLE: The MonetDB Profiler Tool
 [[https://github.com/MonetDBSolutions/monetdb-profiler-tools/workflows/Test%20pystethoscope/badge.svg?branch=master]]
 
 * Introduction
 
 ~pystethoscope~ is a command line tool to filter and format the events coming
-from the MonetDB profiler. The MonetDB profiler emits two JSON objects, one at
+from the MonetDB profiler. This profiler emits two JSON objects, one at
 the start and one at the end of every MAL instruction executed. ~pystethoscope~
 connects to a MonetDB server process, reads the objects emitted by the profiler
 and performs various transformations specified by the user.
@@ -27,13 +27,13 @@ applied to every JSON object emitted by the server and has the following stages:
 * Installation
 Installation is done via pip:
 #+begin_src shell
-  pip install monetdb-profiler-tools
+  pip install monetdb-profiler
 #+end_src
 
 This project is compatible with Python >= 3.6.
 
 We recommend the use of virtual environments (see [[https://realpython.com/python-virtual-environments-a-primer/][this primer]] if you are
-unfamiliar) for installing and using ~monetdb-profiler-tools~.
+unfamiliar) for installing and using ~monetdb-profiler~.
 
 * Usage
 The general syntax to use ~pystethoscope~ is:
