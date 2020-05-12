@@ -172,13 +172,13 @@ shown:
 Finally there are a number of fields that have been used for debugging the
 profiler itself or the MonetDB server more generally. These include:
 
-- parent  :: for views the BAT it depends on.
-- seqbase :: the value of the first oid in a BAT.
-- bid :: index in the BAT buffer pool.
-- key :: the column contains unique values.
-- used :: detect superflous variables in the MAL plans.
-- fixed :: freeze the type of a variable.
-- udf :: user-defined implementation.
+- parent  :: For views the BAT it depends on.
+- seqbase :: The value of the first oid in a BAT.
+- bid :: Index in the BAT buffer pool.
+- key :: The column contains unique values.
+- used :: Detect superflous variables in the MAL plans.
+- fixed :: Freeze the type of a variable.
+- udf :: User-defined implementation.
 
 These fields might be dropped or changed in future releases of MonetDB and
 applications should NOT depend on them.
