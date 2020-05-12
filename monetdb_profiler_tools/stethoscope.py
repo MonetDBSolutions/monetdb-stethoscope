@@ -131,13 +131,15 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
         formatter = raw_formatter
 
     if pipeline == 'raw':
-        if include:
-            LOGGER.warning("Ignoring include keys because --raw was specified")
-        if exclude:
-            LOGGER.warning("Ignoring exclude keys because --raw was specified")
-        if fmt and fmt != "json":
-            LOGGER.warning("Ignoring formatter %s because --raw was specified", fmt)
+        if include or exclude:
+            LOGGER.warning("Ignoring key filter operation because --raw was specified")
+        if fmt:
+            LOGGER.warning("Ignoring formatter because --raw was specified")
+        if transformers:
+            LOGGER.warning("Ignoring transformers because --raw was specified")
 
+        transformers = list()
+        key_filter_operator = identity_filter()
         formatter = raw_formatter
 
     out_file = sys.stdout
