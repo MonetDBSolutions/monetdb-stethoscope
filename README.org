@@ -1,4 +1,4 @@
-#+TITLE: MonetDB Profiler Tools
+#+TITLE: The MonetDB Events Profiler Tool
 [[https://github.com/MonetDBSolutions/monetdb-profiler-tools/workflows/Test%20pystethoscope/badge.svg?branch=master]]
 
 * Introduction
