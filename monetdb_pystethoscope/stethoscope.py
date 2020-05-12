@@ -11,14 +11,14 @@ import logging
 import sys
 import click
 import pymonetdb
-from monetdb_profiler_tools.filtering import include_filter, exclude_filter
-from monetdb_profiler_tools.filtering import identity_filter
-from monetdb_profiler_tools.formatting import line_formatter, raw_formatter
-from monetdb_profiler_tools.formatting import json_formatter, json_formatter_pretty
-from monetdb_profiler_tools.parsing import json_parser, identity_parser
-from monetdb_profiler_tools.transformers import PrerequisiteTransformer
-from monetdb_profiler_tools.transformers import ValueObfuscateTransformer, statement_constructor
-from monetdb_profiler_tools.transformers import dummy_constructor
+from monetdb_pystethoscope.filtering import include_filter, exclude_filter
+from monetdb_pystethoscope.filtering import identity_filter
+from monetdb_pystethoscope.formatting import line_formatter, raw_formatter
+from monetdb_pystethoscope.formatting import json_formatter, json_formatter_pretty
+from monetdb_pystethoscope.parsing import json_parser, identity_parser
+from monetdb_pystethoscope.transformers import PrerequisiteTransformer
+from monetdb_pystethoscope.transformers import ValueObfuscateTransformer, statement_constructor
+from monetdb_pystethoscope.transformers import dummy_constructor
 
 LOGGER = logging.getLogger(__name__)
 

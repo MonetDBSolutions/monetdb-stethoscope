@@ -3,7 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-from monetdb_profiler_tools import __version__
+from monetdb_pystethoscope import __version__
 
 
 def test_version():

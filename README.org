@@ -1,5 +1,5 @@
 #+TITLE: The MonetDB Profiler Tool
-[[https://github.com/MonetDBSolutions/monetdb-profiler-tools/workflows/Test%20pystethoscope/badge.svg?branch=master]]
+[[https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master]]
 
 * Introduction
 
@@ -32,13 +32,13 @@ applied to every JSON object emitted by the server and has the following stages:
 * Installation
 Installation is done via pip:
 #+begin_src shell
-  pip install monetdb-profiler
+  pip install monetdb-pystethoscope
 #+end_src
 
 This project is compatible with Python >= 3.6.
 
 We recommend the use of virtual environments (see [[https://realpython.com/python-virtual-environments-a-primer/][this primer]] if you are
-unfamiliar) for installing and using ~monetdb-profiler~.
+unfamiliar) for installing and using ~monetdb-pystethoscope~.
 
 * Usage
 The general syntax to use ~pystethoscope~ is:
@@ -226,8 +226,8 @@ In order to install ~pystethoscope~ do the following:
 
 #+begin_src shell
   pip3 install --user poetry
-  git clone git@github.com:MonetDBSolutions/monetdb-profiler-tools.git
-  cd monetdb-profiler-tools
+  git clone git@github.com:MonetDBSolutions/monetdb-pystethoscope.git
+  cd monetdb-pystethoscope
   poetry install
   poetry run pystethoscope --help
 #+end_src
@@ -237,7 +237,7 @@ connect transparently to the MonetDB server. If you have installed the
 development version of ~pystethoscope~, before that date you need to update:
 
 #+BEGIN_SRC shell
-  cd monetdb-profiler-tools
+  cd monetdb-pystethoscope
   git pull
   poetry update
 #+END_SRC

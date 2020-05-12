@@ -5,7 +5,7 @@
 
 """Module that implements transformers."""
 
-from monetdb_profiler_tools.utilities import identity_function
+from monetdb_pystethoscope.utilities import identity_function
 import json
 import logging
 

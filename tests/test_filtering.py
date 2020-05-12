@@ -5,7 +5,7 @@
 
 """Tests for the filtering module"""
 
-from monetdb_profiler_tools import filtering
+from monetdb_pystethoscope import filtering
 
 
 def test_filter_keys_include():

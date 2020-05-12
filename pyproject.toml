@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "monetdb_profiler_tools"
+name = "monetdb_pystethoscope"
 version = "0.1.0"
 description = ""
 authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
@@ -26,7 +26,7 @@ python-language-server = {version = "^0.30.0", extras = ["all"]}
 ipython = "^7.11.1"
 
 [tool.poetry.scripts]
-pystethoscope = 'monetdb_profiler_tools.stethoscope:stethoscope'
+pystethoscope = 'monetdb_pystethoscope.stethoscope:stethoscope'
 
 [build-system]
 requires = ["poetry>=0.12"]
