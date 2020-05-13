@@ -10,7 +10,12 @@ Welcome to pystethoscope's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   introduction
+   installation
+   usage
+   mal_reference
+   examples
+   dev_notes
 
 Indices and tables
 ==================
