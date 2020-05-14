@@ -16,6 +16,7 @@ Welcome to pystethoscope's documentation!
    mal_reference
    examples
    dev_notes
+   authors
 
 Indices and tables
 ==================
