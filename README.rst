@@ -1,4 +1,4 @@
-https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
+|ActionsBadge|_
 
 Introduction
 ============
@@ -53,3 +53,6 @@ Documentation
 =============
 
 For more detailed documentation please see the documentation on `read the docs <https://monetdb-pystethoscope.readthedocs.org>`__.
+
+.. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
+.. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-pystethoscope/actions
