@@ -12,7 +12,7 @@ Create JSON objects containing only the fields ``pc``, ``clk`` and ``state``
 
    pystethoscope -u monetdb -P monetdb --include-keys pc,clk,state demo
 
-.. sourcecode::
+::
 
    {'clk': 1589451196601447, 'pc': 0, 'state': 'start'}
    {'clk': 1589451196601520, 'pc': 1, 'state': 'start'}
@@ -109,7 +109,7 @@ of the execution.
 
    pystethoscope -u monetdb -P monetdb --transformer statement --formatter line --include-keys stmt,clk,state demo
 
-.. sourcecode::
+::
 
    [1589451477965109,	start,	function user.s4_0();]
    [1589451477965167,	start,	querylog.define(X_1=0@0:void,"select * from _tables;":str,"default_pipe":str,55:int);]
@@ -205,7 +205,7 @@ The same as above but hide the values in the plan
 
    pystethoscope -u monetdb -P monetdb --transformer statement --transformer obfuscate --formatter line --include-keys stmt,clk,state demo
 
-.. sourcecode::
+::
 
    [1589451636932943,	start,	function user.s4_0();]
    [1589451636933017,	start,	querylog.define(X_1=0@0:void,***:str,***:str,***:int);]
@@ -301,7 +301,7 @@ Pretty print the JSON object after adding statements and prerequisites
 
    pystethoscope -u monetdb -P monetdb -t statement -t prereqs -F json_pretty demo
 
-.. sourcecode::
+::
 
    {
      "version": "11.37.2 (hg id: 9176fe5083 (git)+)",
