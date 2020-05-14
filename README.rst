@@ -1,4 +1,4 @@
-|ActionsBadge|_
+|ActionsBadge|_ |DocsBadge|_
 
 Introduction
 ============
@@ -53,7 +53,9 @@ Documentation
 =============
 
 For more detailed documentation please see the documentation on `readthedocs
-<https://monetdb-pystethoscope.readthedocs.org>`__.
+<https://monetdb-pystethoscope.readthedocs.io/en/latest/>`__.
 
 .. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
 .. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-pystethoscope/actions
+.. |DocsBadge| image:: https://readthedocs.org/projects/monetdb-pystethoscope/badge/?version=latest
+.. _DocsBadge: https://monetdb-pystethoscope.readthedocs.io/en/latest/?badge=latest
