@@ -1,14 +1,16 @@
 [tool.poetry]
 name = "monetdb_pystethoscope"
 version = "0.1.0"
-description = ""
+description = "MonetDB profiler connection tool"
+readme = "README.rst"
 authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
+repository = "https://github.com/MonetDBSolutions/monetdb-pystethoscope"
 
 [tool.poetry.dependencies]
 python = "^3.6"
 click = "^7.0"
-funcy = "^1.13"
 pymonetdb = "^1.3.1"
+# funcy = "^1.13"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
