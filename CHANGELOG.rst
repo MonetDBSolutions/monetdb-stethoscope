@@ -5,9 +5,11 @@ Changelog <https://keepachangelog.com/en/1.0.0/>`__, and this project
 adheres to `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
-[Unreleased]
-============
+`Unreleased`_
+=============
 
+`0.1.0`_ - 2020-05-14
+=====================
 Added
 -----
 
@@ -29,3 +31,6 @@ Added
 
    Predefined pipelines
       -  raw
+
+.. Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.0..HEAD
+.. 0.1.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/releases/tag/v0.1.0
