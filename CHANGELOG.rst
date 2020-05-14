@@ -7,6 +7,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Removed
+-------
+
+- Unneeded dependency to `funcy`.
 
 `0.1.0`_ - 2020-05-14
 =====================
