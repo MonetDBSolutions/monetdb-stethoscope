@@ -5,10 +5,8 @@
 
 
 import json
-import logging
+import sys
 from monetdb_pystethoscope.utilities import identity_function
-
-LOGGER = logging.getLogger(__name__)
 
 
 def parser_wrapper(json_str):
@@ -16,7 +14,7 @@ def parser_wrapper(json_str):
     try:
         return json.loads(json_str)
     except Exception as e:
-        LOGGER.warn("Parsing failed for %s (%s)", json_str, e)
+        print(f"Parsing failed for {json_str} ({e})", file=sys.stderr)
         return dict()
 
 

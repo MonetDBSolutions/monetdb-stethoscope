@@ -5,10 +5,8 @@
 
 "Tools useful for filtering JSON objects based on keys."
 
-import logging
+import sys
 from monetdb_pystethoscope.utilities import identity_function
-
-LOGGER = logging.getLogger(__name__)
 
 # Filtering operators: Given one a list of keys return an operator that takes a
 # dictionary and returns a filtered version of it. We also include the identity
@@ -39,7 +37,7 @@ including the keys specified in the iterable `included_keys`.
     ret = {k: v for (k, v) in json_object.items() if k in included_keys}
     for i in included_keys:
         if i not in ret:
-            LOGGER.warning("Key %s not found in the JSON object", i)
+            print(f"Key {i} not found in the JSON object", file=sys.stderr)
     return ret
 
 

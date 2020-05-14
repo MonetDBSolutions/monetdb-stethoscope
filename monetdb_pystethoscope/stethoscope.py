@@ -7,7 +7,6 @@
 profiler streams."""
 
 import json
-import logging
 import sys
 import click
 import pymonetdb
@@ -19,8 +18,6 @@ from monetdb_pystethoscope.parsing import json_parser, identity_parser
 from monetdb_pystethoscope.transformers import PrerequisiteTransformer
 from monetdb_pystethoscope.transformers import ValueObfuscateTransformer, statement_constructor
 from monetdb_pystethoscope.transformers import dummy_constructor
-
-LOGGER = logging.getLogger(__name__)
 
 
 @click.command(context_settings=dict(
@@ -71,20 +68,11 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                 username, password, host, port):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
-
-    LOGGER.debug("Input arguments")
-    LOGGER.debug("  Database: %s", database)
-    LOGGER.debug("  Transformer: %s", trn)
-    LOGGER.debug("  Include keys: %s", include)
-    LOGGER.debug("  Exclude keys: %s", exclude)
-    LOGGER.debug("  Formatter: %s", fmt)
-    LOGGER.debug("  Pipeline: %s", pipeline)
-    LOGGER.debug("  Output file: %s", outfile)
-
     cnx = pymonetdb.ProfilerConnection()
     cnx.connect(database, username=username, password=password,
                 hostname=host, port=port, heartbeat=0)
+
+    print(f"Connected to the database: {database}", file=sys.stderr)
 
     if not pipeline:
         parse_operator = json_parser()
@@ -112,8 +100,6 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         idx += 1
 
-    LOGGER.debug("transformers len = %d", len(transformers))
-
     if include:
         key_filter_operator = include_filter(include.split(','))
     elif exclude:
@@ -132,11 +118,11 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
 
     if pipeline == 'raw':
         if include or exclude:
-            LOGGER.warning("Ignoring key filter operation because --raw was specified")
+            print("Ignoring key filter operation because --raw was specified", file=sys.stderr)
         if fmt:
-            LOGGER.warning("Ignoring formatter because --raw was specified")
+            print("Ignoring formatter because --raw was specified", file=sys.stderr)
         if transformers:
-            LOGGER.warning("Ignoring transformers because --raw was specified")
+            print("Ignoring transformers because --raw was specified", file=sys.stderr)
 
         transformers = list()
         key_filter_operator = identity_filter()
@@ -162,7 +148,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
             # format
             formatter(json_object, out_file)
         except pymonetdb.OperationalError as oe:
-            LOGGER.error("Got an Operational Error from the database: %s", oe)
+            print(f"Got an Operational Error from the database: {oe}", file=sys.stderr)
             break
         except Exception as e:
-            LOGGER.warn("Failed operating on %s (%s)", json.dumps(json_object, indent=2), e)
+            bad_obj = json.dumps(json_object, indent=2)
+            print(f"Failed operating on {bad_obj} ({e})", file=sys.stderr)

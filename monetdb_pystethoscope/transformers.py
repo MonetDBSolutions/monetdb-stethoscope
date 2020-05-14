@@ -5,11 +5,9 @@
 
 """Module that implements transformers."""
 
-from monetdb_pystethoscope.utilities import identity_function
 import json
-import logging
-
-LOGGER = logging.getLogger(__name__)
+import sys
+from monetdb_pystethoscope.utilities import identity_function
 
 
 def statement_constructor(json_object):
@@ -136,16 +134,15 @@ class PrerequisiteTransformer:
     def lookup(self, variable):
         pc = self._var_to_pc.get(variable)
         if pc is None:
-            LOGGER.debug("Variable %s not found in lookup table", variable)
+            print(f"Variable {variable} not found in lookup table", file=sys.stderr)
 
         return pc
 
     def install(self, variable, pc):
         if variable in self._var_to_pc:
-            LOGGER.warn("Variable %s already in lookup table: pc=%d",
-                        variable,
-                        self._var_to_pc[variable])
-            LOGGER.warn("This will produce incorrect prerequisites!")
+            print(f"Variable {variable} already in lookup table: pc={self._var_to_pc[variable]}",
+                  file=sys.stderr)
+            print(f"This will produce incorrect prerequisites!", file=sys.stderr)
         self._var_to_pc[variable] = pc
 
     def install_return_values(self, json_object):
@@ -160,8 +157,8 @@ class PrerequisiteTransformer:
             if pc and vname:
                 self.install(vname, pc)
             else:
-                LOGGER.warn("pc or return variable undefined in %s", json_object)
-                LOGGER.warn("Ignoring")
+                print(f"pc or return variable undefined in {json_object}", file=sys.stderr)
+                print(f"Ignoring", file=sys.stderr)
                 return
 
     def find_prerequisites(self, json_object):
@@ -178,9 +175,8 @@ class PrerequisiteTransformer:
             if pc:
                 prereqs.append(pc)
             else:
-                LOGGER.warn("Variable %s not in lookup table: %s",
-                            var,
-                            json.dumps(json_object, indent=2))
+                print(f"Variable {var} not in lookup table: {json.dumps(json_object, indent=2)}",
+                      file=sys.stderr)
 
         if prereqs:
             pc = json_object.get('pc')

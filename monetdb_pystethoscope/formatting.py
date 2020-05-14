@@ -6,9 +6,7 @@
 """Utilities for formatting and outputting records."""
 
 import json
-import logging
-
-LOGGER = logging.getLogger(__name__)
+import sys
 
 
 def line_formatter(dct, output_stream):
