@@ -20,8 +20,8 @@ Alternatively the user can specify a number of predefined pipelines using
 ``--pipeline`` (``-l``) (see section :ref:`section-predefined-pipelines`). This
 option overrides all other given options.
 
-Connection options
-------------------
+Connection and filesystem options
+---------------------------------
 
 database
    The name of the database to connect to. This argument is mandatory.
@@ -32,6 +32,9 @@ password (``--password/-P password``)
    The password to be used for the database connection. If this option
    is not specified, ``pystethoscope`` will prompt the user for a
    password.
+output (``--output/-o filename``)
+   The file where ``pystethoscope`` will write its output. If this is omitted,
+   the output will be written to the standard output.
 
 Reading and Parsing
 -------------------
