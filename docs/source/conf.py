@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'pystethoscope'
-copyright = '2020, Panagiotis Koutsourakis'
+copyright = '2020, MonetDB Solutions'
 author = 'Panagiotis Koutsourakis'
 
 # The full version, including alpha/beta/rc tags

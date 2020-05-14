@@ -56,6 +56,10 @@ statement
    transformer adds the key ``stmt`` in the JSON object with a string value that
    represents the MAL statement.
 
+   .. warning::
+
+      This transformer will not work with MonetDB server versions earlier than Jun2020.
+
 prereqs
    Adds the key ``prereq`` in the JSON object. Its value is a list of program
    counter values (see section :ref:`section-mal-reference`) of MAL instructions
@@ -64,6 +68,10 @@ prereqs
 obfuscate
    This transformer replaces all the literal values in the JSON object with
    three asterisks.
+
+   .. warning::
+
+      This transformer will not work with MonetDB server versions earlier than Jun2020.
 
 identity
    This transformer leaves the object unchanged. In itself this is not
@@ -120,3 +128,7 @@ raw
    stream. No other processing happens, and specifically *no parsing
    takes place*. This is mainly useful for debugging the profiler module
    of the MonetDB server.
+
+   .. note::
+
+      The ``raw`` pipeline can be used with earlier than Jun2020 versions of MonetDB.
