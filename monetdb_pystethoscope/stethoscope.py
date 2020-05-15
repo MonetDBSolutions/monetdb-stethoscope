@@ -64,6 +64,7 @@ from monetdb_pystethoscope.transformers import dummy_constructor
               help="The host where the MonetDB server is running.")
 @click.option("--port", "-p", "port", default=50000,
               help="The port on which the MonetDB server is listening.")
+@click.version_option(message="MonetDB profiling tool\n%(prog)s, version %(version)s")
 def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                 username, password, host, port):
     """A flexible tool to manipulate MonetDB profiler streams"""
