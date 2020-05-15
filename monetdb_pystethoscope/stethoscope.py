@@ -73,7 +73,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
     cnx.connect(database, username=username, password=password,
                 hostname=host, port=port, heartbeat=0)
 
-    print(f"Connected to the database: {database}", file=sys.stderr)
+    print("Connected to the database: {}".format(database), file=sys.stderr)
 
     if not pipeline:
         parse_operator = json_parser()
@@ -149,8 +149,12 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
             # format
             formatter(json_object, out_file)
         except pymonetdb.OperationalError as oe:
-            print(f"Got an Operational Error from the database: {oe}", file=sys.stderr)
+            print("Got an Operational Error from the database: {}".format(oe),
+                  file=sys.stderr)
             break
         except Exception as e:
-            bad_obj = json.dumps(json_object, indent=2)
-            print(f"Failed operating on {bad_obj} ({e})", file=sys.stderr)
+            print("Failed operating on {} ({})"
+                  .format(
+                      json.dumps(json_object, indent=2),
+                      e),
+                  file=sys.stderr)

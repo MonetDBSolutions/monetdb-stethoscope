@@ -20,12 +20,12 @@ def statement_constructor(json_object):
     operator = json_object.get("operator")
 
     if operator is None:
-        stmt = f"{module}.{function}"
+        stmt = "{}.{}".format(module, function)
     else:
         if operator == 'function':
-            stmt = f'{operator} {program}()'
+            stmt = '{} {}()'.format(operator, program)
         else:
-            stmt = f'{operator} {program}'
+            stmt = '{} {}'.format(operator, program)
 
     default_values = {
         "int": 0,
@@ -45,7 +45,7 @@ def statement_constructor(json_object):
                 rets += ','
                 ret_type += ','
 
-            ret_str = f'{var_name}:{vtype}'
+            ret_str = "{var_name}:{vtype}".format(var_name, vtype)
             ret_num += 1
             rets += ret_str
             ret_type += vtype
@@ -59,30 +59,30 @@ def statement_constructor(json_object):
                 args += ','
 
             if const:
-                arg_str = f"{value}:{vtype}"
+                arg_str = "{}:{}".format(value, vtype)
             elif value is not None:
-                arg_str = f"{var_name}={value}:{vtype}"
+                arg_str = "{}={}:{}".format(var_name, value, vtype)
             elif count is None:
-                arg_str = f"{var_name}={default}:{vtype}"
+                arg_str = "{}={}:{}".format(var_name, default, vtype)
             else:
-                arg_str = f"{var_name}=[{count}]:{vtype}"
+                arg_str = "{}=[{}]:{}".format(var_name, count, vtype).format(var_name, count, vtype)
             args += arg_str
 
     if operator is not None:
-        statement = f'{stmt}'
+        statement = stmt
         if operator == 'function':
             if ret_num == 1:
-                statement += f":{ret_type};"
+                statement += ":{};".format(ret_type)
             elif ret_num > 1:
-                statement += f":({ret_type});"
+                statement += ":({});".format(ret_type)
             else:
                 statement += ';'
     elif ret_num == 0:
-        statement = f'{stmt}({args});'
+        statement = "{stmt}({args});".format(stmt, args)
     elif ret_num == 1:
-        statement = f'{rets} := {stmt}({args});'
+        statement = "{} := {}({});".format(rets, stmt, args)
     else:
-        statement = f'({rets}) := {stmt}({args});'
+        statement = "({}) := {}({});".format(rets, stmt, args)
 
     rdict = dict(json_object)
     rdict['stmt'] = statement
@@ -92,11 +92,11 @@ def statement_constructor(json_object):
 def dummy_constructor(json_object):
     cnt = 0
     keys = json_object.keys()
-    while f'L{cnt}' in keys:
+    while 'L{}'.format(cnt) in keys:
         cnt += 1
 
     rdict = dict(json_object)
-    rdict[f'L{cnt}'] = 'dummy value'
+    rdict['L{}'.format(cnt)] = 'dummy value'
 
     return rdict
 
@@ -134,15 +134,17 @@ class PrerequisiteTransformer:
     def lookup(self, variable):
         pc = self._var_to_pc.get(variable)
         if pc is None:
-            print(f"Variable {variable} not found in lookup table", file=sys.stderr)
+            print("Variable {} not found in lookup table".format(variable),
+                  file=sys.stderr)
 
         return pc
 
     def install(self, variable, pc):
         if variable in self._var_to_pc:
-            print(f"Variable {variable} already in lookup table: pc={self._var_to_pc[variable]}",
+            print("Variable {} already in lookup table: pc={}"
+                  .format(variable, self._var_to_pc[variable]),
                   file=sys.stderr)
-            print(f"This will produce incorrect prerequisites!", file=sys.stderr)
+            print("This will produce incorrect prerequisites!", file=sys.stderr)
         self._var_to_pc[variable] = pc
 
     def install_return_values(self, json_object):
@@ -157,8 +159,10 @@ class PrerequisiteTransformer:
             if pc and vname:
                 self.install(vname, pc)
             else:
-                print(f"pc or return variable undefined in {json_object}", file=sys.stderr)
-                print(f"Ignoring", file=sys.stderr)
+                print("pc or return variable undefined in {}"
+                      .format(json_object),
+                      file=sys.stderr)
+                print("Ignoring", file=sys.stderr)
                 return
 
     def find_prerequisites(self, json_object):
@@ -175,7 +179,8 @@ class PrerequisiteTransformer:
             if pc:
                 prereqs.append(pc)
             else:
-                print(f"Variable {var} not in lookup table: {json.dumps(json_object, indent=2)}",
+                print("Variable {} not in lookup table: {}"
+                      .format(var, json.dumps(json_object, indent=2)),
                       file=sys.stderr)
 
         if prereqs:
