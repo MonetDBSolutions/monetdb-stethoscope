@@ -14,7 +14,8 @@ def parser_wrapper(json_str):
     try:
         return json.loads(json_str)
     except Exception as e:
-        print(f"Parsing failed for {json_str} ({e})", file=sys.stderr)
+        print("Parsing failed for {} ({})".format(json_str, e),
+              file=sys.stderr)
         return dict()
 
 

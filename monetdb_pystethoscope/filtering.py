@@ -37,7 +37,8 @@ including the keys specified in the iterable `included_keys`.
     ret = {k: v for (k, v) in json_object.items() if k in included_keys}
     for i in included_keys:
         if i not in ret:
-            print(f"Key {i} not found in the JSON object", file=sys.stderr)
+            print("Key {} not found in the JSON object".format(i),
+                  file=sys.stderr)
     return ret
 
 
