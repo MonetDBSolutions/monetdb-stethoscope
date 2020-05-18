@@ -27,6 +27,7 @@ Removed
 Added
 -----
 -  pystethoscope tool with the following features:
+
    Transformers
       -  statement
       -  prereqs
