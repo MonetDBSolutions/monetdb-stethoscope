@@ -45,7 +45,7 @@ def statement_constructor(json_object):
                 rets += ','
                 ret_type += ','
 
-            ret_str = "{var_name}:{vtype}".format(var_name, vtype)
+            ret_str = "{}:{}".format(var_name, vtype)
             ret_num += 1
             rets += ret_str
             ret_type += vtype
@@ -78,7 +78,7 @@ def statement_constructor(json_object):
             else:
                 statement += ';'
     elif ret_num == 0:
-        statement = "{stmt}({args});".format(stmt, args)
+        statement = "{}({});".format(stmt, args)
     elif ret_num == 1:
         statement = "{} := {}({});".format(rets, stmt, args)
     else:
