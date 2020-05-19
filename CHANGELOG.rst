@@ -7,6 +7,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Fixed
+-----
+- A bug in the statement constructor (`#13
+  <https://github.com/MonetDBSolutions/monetdb-pystethoscope/issues/13>`__)
 
 `0.1.2`_ - 2020-05-15
 =====================
