@@ -109,6 +109,7 @@ class PrerequisiteTransformer:
     def __init__(self):
         self._var_to_pc = dict()
         self._resolved_prereqs = dict()
+        self._ignore_ops = ['function', 'end']
 
     def __call__(self, json_object):
         state = json_object.get('state', 'NA')
@@ -119,13 +120,12 @@ class PrerequisiteTransformer:
             rdict['prereq'] = self._resolved_prereqs.get(pc, [])
             return rdict
         elif state != 'start':
+            print("PrerequisiteTransformer cannot handle state {}"
+                  .format(state), file=sys.stderr)
             return json_object
 
-        # Ignore function and end operators
-        ignore_ops = ['function', 'end']
-
         op = json_object.get('operator')
-        if op and op in ignore_ops:
+        if op and op in self._ignore_ops:
             return json_object
 
         self.install_return_values(json_object)
