@@ -11,6 +11,11 @@ Fixed
 -----
 - A bug in the statement constructor (`#13
   <https://github.com/MonetDBSolutions/monetdb-pystethoscope/issues/13>`__)
+Added
+-----
+- An API for connecting to the MonetDB server profiler.
+  This should be backported to pymonetdb in the future.
+- Some more tests
 
 `0.1.2`_ - 2020-05-15
 =====================
