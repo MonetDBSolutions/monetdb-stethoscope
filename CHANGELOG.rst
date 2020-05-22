@@ -16,6 +16,7 @@ Added
 - An API for connecting to the MonetDB server profiler.
   This should be backported to pymonetdb in the future.
 - Some more tests
+- Coverage reports
 
 `0.1.2`_ - 2020-05-15
 =====================
