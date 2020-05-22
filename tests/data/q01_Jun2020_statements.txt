@@ -80,7 +80,7 @@ sql.bind(X_60=[0]:bat[:sht],X_4=0:int,"sys":str,"_tables":str,"access":str,1:int
 sql.projectdelta(X_71=[0]:bat[:sht],C_5=[86]:bat[:oid],X_58=[86]:bat[:sht],X_61=[0]:bat[:oid],X_62=[0]:bat[:sht],X_60=[0]:bat[:sht]);
 sql.projectdelta(X_71=[86]:bat[:sht],C_5=[86]:bat[:oid],X_58=[86]:bat[:sht],X_61=[0]:bat[:oid],X_62=[0]:bat[:sht],X_60=[0]:bat[:sht]);
 sql.resultSet(X_72=0:int,X_73=[8]:bat[:str],X_74=[8]:bat[:str],X_75=[8]:bat[:str],X_76=[8]:bat[:int],X_77=[8]:bat[:int],X_64=[86]:bat[:int],X_65=[86]:bat[:str],X_66=[86]:bat[:int],X_67=[86]:bat[:str],X_68=[86]:bat[:sht],X_69=[86]:bat[:bit],X_70=[86]:bat[:sht],X_71=[86]:bat[:sht]);
-sql.resultSet(X_72=4:int,X_73=[8]:bat[:str],X_74=[8]:bat[:str],X_75=[8]:bat[:str],X_76=[8]:bat[:int],X_77=[8]:bat[:int],X_64=[86]:bat[:int],X_65=[86]:bat[:str],X_66=[86]:bat[:int],X_67=[86]:bat[:str],X_68=[86]:bat[:sht],X_69=[86]:bat[:bit],X_70=[86]:bat[:sht],X_71=[86]:bat[:sht]);
+sql.resultSet(X_72=2:int,X_73=[8]:bat[:str],X_74=[8]:bat[:str],X_75=[8]:bat[:str],X_76=[8]:bat[:int],X_77=[8]:bat[:int],X_64=[86]:bat[:int],X_65=[86]:bat[:str],X_66=[86]:bat[:int],X_67=[86]:bat[:str],X_68=[86]:bat[:sht],X_69=[86]:bat[:bit],X_70=[86]:bat[:sht],X_71=[86]:bat[:sht]);
 end user.s4_1
 end user.s4_1
 function user.s4_1();

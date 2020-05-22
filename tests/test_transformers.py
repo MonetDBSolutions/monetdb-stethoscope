@@ -23,7 +23,6 @@ def reconstructed_statements():
         return f.readlines()
 
 
-@pytest.mark.skip
 def test_stmt_constructor(profiler_json_objects, reconstructed_statements):
     for obj, stmt in zip(profiler_json_objects, reconstructed_statements):
         assert transformers.statement_constructor(obj)['stmt'] == stmt.strip()
