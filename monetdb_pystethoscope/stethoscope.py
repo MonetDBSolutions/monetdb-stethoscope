@@ -9,7 +9,7 @@ profiler streams."""
 import json
 import sys
 import click
-import pymonetdb
+from monetdb_pystethoscope.connection.api import StethoscopeProfilerConnection, OperationalError
 from monetdb_pystethoscope.filtering import include_filter, exclude_filter
 from monetdb_pystethoscope.filtering import identity_filter
 from monetdb_pystethoscope.formatting import line_formatter, raw_formatter
@@ -69,7 +69,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                 username, password, host, port):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
-    cnx = pymonetdb.ProfilerConnection()
+    cnx = StethoscopeProfilerConnection()
     cnx.connect(database, username=username, password=password,
                 hostname=host, port=port, heartbeat=0)
 
@@ -148,7 +148,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
             # filter
             # format
             formatter(json_object, out_file)
-        except pymonetdb.OperationalError as oe:
+        except OperationalError as oe:
             print("Got an Operational Error from the database: {}".format(oe),
                   file=sys.stderr)
             break
