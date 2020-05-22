@@ -7,7 +7,6 @@
 
 import json
 import sys
-from monetdb_pystethoscope.utilities import identity_function
 
 
 def statement_constructor(json_object):
@@ -99,10 +98,6 @@ def dummy_constructor(json_object):
     rdict['L{}'.format(cnt)] = 'dummy value'
 
     return rdict
-
-
-def identity_transformer():
-    return identity_function
 
 
 class PrerequisiteTransformer:
