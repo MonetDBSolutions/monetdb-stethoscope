@@ -1,4 +1,4 @@
-|ActionsBadge|_ |DocsBadge|_ |CoverageBadge|_
+|PyPIBadge|_ |ActionsBadge|_ |DocsBadge|_ |CoverageBadge|_
 
 Introduction
 ============
@@ -62,3 +62,5 @@ For more detailed documentation please see the documentation on `readthedocs
 .. _DocsBadge: https://monetdb-pystethoscope.readthedocs.io/en/latest/?badge=latest
 .. |CoverageBadge| image:: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope/branch/master/graph/badge.svg
 .. _CoverageBadge: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope
+.. |PyPIBadge| image:: https://img.shields.io/pypi/v/monetdb-pystethoscope.svg
+.. _PyPIBadge: https://pypi.org/project/monetdb-pystethoscope/
