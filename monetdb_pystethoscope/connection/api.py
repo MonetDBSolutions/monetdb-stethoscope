@@ -38,7 +38,7 @@ class StethoscopeProfilerConnection(object):
         elif r.startswith("{") and len(self._buffer) == 0:
             self._buffer = r
         else:
-            raise ProgrammingError("bad response when connecting to the profiler: %s" % r)
+            raise OperationalError("bad response when connecting to the profiler: %s" % r)
 
     def connect(self, database, username="monetdb", password="monetdb", hostname=None, port=50000, heartbeat=0):
         self._heartbeat = heartbeat
