@@ -3,4 +3,4 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'

@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+
+`0.1.3`_ - 25-05-2020
+=====================
 Fixed
 -----
 - A bug in the statement constructor (`#13
@@ -55,7 +58,8 @@ Added
    Predefined pipelines
       -  raw
 
-.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.2...HEAD
+.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.3...HEAD
+.. _0.1.3: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.2...v0.1.3
 .. _0.1.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.1...v0.1.2
 .. _0.1.1: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.0...v0.1.1
 .. _0.1.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/releases/tag/v0.1.0
