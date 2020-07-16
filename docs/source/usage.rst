@@ -89,11 +89,11 @@ Key inclusion and exclusion transformers
 There are two special transformers that take a list of keys as
 arguments:
 
-``--include-keys`` (``-i key1,key2,...``)
-   This transformer takes a comma separated list of keys and removes all
+``--include-keys`` (``-i key1 key2 ...``)
+   This transformer takes a space separated list of keys and removes all
    other keys from the JSON object.
 ``--exclude-keys`` (``-e key1,key2,...``)
-   This transformer takes a comma separated list of keys and removes
+   This transformer takes a space separated list of keys and removes
    them from the JSON object.
 
 Formatting
