@@ -8,7 +8,8 @@ profiler streams."""
 
 import json
 import sys
-import click
+import argparse
+from monetdb_pystethoscope import __version__
 from monetdb_pystethoscope.connection.api import StethoscopeProfilerConnection, OperationalError
 from monetdb_pystethoscope.filtering import include_filter, exclude_filter
 from monetdb_pystethoscope.filtering import identity_filter
@@ -20,62 +21,16 @@ from monetdb_pystethoscope.transformers import ValueObfuscateTransformer, statem
 from monetdb_pystethoscope.transformers import dummy_constructor
 
 
-@click.command(context_settings=dict(
-    help_option_names=["-h", "--help"]
-))
-@click.argument("database")
-@click.option("--include-keys", "-i", "include",
-              help="A comma separated list of keys. Filter out all other keys.")
-@click.option("--exclude-keys", "-e", "exclude",
-              help="A comma separated list of keys to exclude")
-@click.option("--pipeline", "-l", "pipeline",
-              type=click.Choice([
-                  'raw'
-              ]),
-              help="Predefined pipelines. Overrides all other options.",
-              default=None)
-@click.option("--formatter", "-F", "fmt",
-              type=click.Choice([
-                  'json',
-                  'json_pretty',
-                  'line',
-                  'raw'
-              ]),
-              help="json, json_pretty, or line")
-@click.option("--transformer", "-t", "trn", multiple=True,
-              type=click.Choice([
-                  'statement',
-                  'prereqs',
-                  'obfuscate',
-                  # 'keep_keys',
-                  # 'remove_keys',
-                  'dummy',
-                  'identity'
-              ]))
-@click.option("--output", "-o", "outfile",
-              default="stdout", help="Output stream")
-@click.option("--username", "-u", "username",
-              default="monetdb", help="The username used to connect to"
-              " the database.")
-@click.option("--password", "-P", prompt="Password", hide_input=True,
-              help="The password used to connect to the database."
-              " If this option is not specified the user will be prompted.")
-@click.option("--host", "-H", "host", default="localhost",
-              help="The host where the MonetDB server is running.")
-@click.option("--port", "-p", "port", default=50000,
-              help="The port on which the MonetDB server is listening.")
-@click.version_option(message="MonetDB profiling tool\n%(prog)s, version %(version)s")
-def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
-                username, password, host, port):
+def stethoscope(args):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
     cnx = StethoscopeProfilerConnection()
-    cnx.connect(database, username=username, password=password,
-                hostname=host, port=port, heartbeat=0)
+    cnx.connect(args.database, username=args.username, password=args.password,
+                hostname=args.hostname, port=args.port, heartbeat=0)
 
-    print("Connected to the database: {}".format(database), file=sys.stderr)
+    print("Connected to the database: {}".format(args.database), file=sys.stderr)
 
-    if not pipeline:
+    if not args.pipeline:
         parse_operator = json_parser()
     else:
         parse_operator = identity_parser()
@@ -84,7 +39,7 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
 
     stmt = False
     idx = 0
-    for t in trn:
+    for t in args.transformer:
         if t == 'statement':
             stmt = True
             stmt_idx = idx
@@ -101,26 +56,26 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         idx += 1
 
-    if include:
-        key_filter_operator = include_filter(include.split(','))
-    elif exclude:
-        key_filter_operator = exclude_filter(exclude.split(','))
+    if args.include_keys:
+        key_filter_operator = include_filter(args.include_keys)
+    elif args.exclude_keys:
+        key_filter_operator = exclude_filter(args.exclude_keys)
     else:
         key_filter_operator = identity_filter()
 
-    if fmt == "json":
+    if args.formatter == "json":
         formatter = json_formatter
-    elif fmt == "json_pretty":
+    elif args.formatter == "json_pretty":
         formatter = json_formatter_pretty
-    elif fmt == "line":
+    elif args.formatter == "line":
         formatter = line_formatter
     else:
         formatter = raw_formatter
 
-    if pipeline == 'raw':
-        if include or exclude:
+    if args.pipeline == 'raw':
+        if args.include or args.exclude:
             print("Ignoring key filter operation because --raw was specified", file=sys.stderr)
-        if fmt:
+        if args.formatter:
             print("Ignoring formatter because --raw was specified", file=sys.stderr)
         if transformers:
             print("Ignoring transformers because --raw was specified", file=sys.stderr)
@@ -130,8 +85,8 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
         formatter = raw_formatter
 
     out_file = sys.stdout
-    if outfile != "stdout":
-        out_file = open(outfile, "w")
+    if args.output != "stdout":
+        out_file = open(args.output, "w")
 
     while True:
         try:
@@ -158,3 +113,47 @@ def stethoscope(database, include, exclude, fmt, trn, pipeline, outfile,
                       json.dumps(json_object, indent=2),
                       e),
                   file=sys.stderr)
+
+
+def main():
+    desc = "MonetDB profiling tool\n{} version {}".format(sys.argv[0], __version__)
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('database', help='The database to connect to')
+    parser.add_argument('-i', '--include-keys', nargs='*',
+                        help='A list of keys to keep.')
+    parser.add_argument('-e', '--exclude-keys', nargs='*',
+                        help='A list of keys to exclude.')
+    parser.add_argument('-l', '--pipeline', choices=['raw'],
+                        help='Predefined pipelines. Overrides all other options.')
+    parser.add_argument('-F', '--formatter',
+                        choices=[
+                            'json',
+                            'json_pretty',
+                            'line',
+                            'raw'
+                        ], help='The formatter used to display the values.')
+    parser.add_argument('-t', '--transformer', nargs='*',
+                        choices=[
+                            'statement',
+                            'prereqs',
+                            'obfuscate',
+                            'dummy',
+                            'identity'
+                        ],
+                        help="foo")
+    parser.add_argument('-o', '--output', default="stdout", help="Output stream")
+    parser.add_argument('-u', '--username', default="monetdb",
+                        help="The username used to connect to the database")
+    parser.add_argument('-H', '--hostname', default="localhost",
+                        help="The hostname used to connect to the database")
+    parser.add_argument('-P', '--password', default="monetdb",
+                        help="The password used to connect to the database")
+    parser.add_argument('-p', '--port', default=50000,
+                        help="The port on which the MonetDB server is listening.")
+
+    arguments = parser.parse_args()
+    stethoscope(arguments)
+
+
+if __name__ == '__main__':
+    main()
