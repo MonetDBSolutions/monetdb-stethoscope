@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Removed
+-------
+- Dependency on click
 
 `0.1.3`_ - 2020-05-25
 =====================
