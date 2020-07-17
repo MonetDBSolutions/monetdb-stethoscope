@@ -25,13 +25,15 @@ Connection and filesystem options
 
 database
    The name of the database to connect to. This argument is mandatory.
+
 username (``--username/-u username``)
    The name of the user for the database connection. The default value
    is ``monetdb``.
+
 password (``--password/-P password``)
-   The password to be used for the database connection. If this option
-   is not specified, ``pystethoscope`` will prompt the user for a
-   password.
+   The password to be used for the database connection. The default value
+   is ``monetdb``.
+
 output (``--output/-o filename``)
    The file where ``pystethoscope`` will write its output. If this is omitted,
    the output will be written to the standard output.
