@@ -7,9 +7,14 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Added
+-----
+- ``monetdb_pystethoscope.api`` module that gathers all the public API.
+- The docstrings to the documentation.
+
 Removed
 -------
-- Dependency on click
+- Dependency on click.
 
 `0.1.3`_ - 2020-05-25
 =====================
