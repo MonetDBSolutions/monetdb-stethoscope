@@ -10,15 +10,7 @@ import json
 import sys
 import argparse
 from monetdb_pystethoscope import __version__
-from monetdb_pystethoscope.connection.api import StethoscopeProfilerConnection, OperationalError
-from monetdb_pystethoscope.filtering import include_filter, exclude_filter
-from monetdb_pystethoscope.filtering import identity_filter
-from monetdb_pystethoscope.formatting import line_formatter, raw_formatter
-from monetdb_pystethoscope.formatting import json_formatter, json_formatter_pretty
-from monetdb_pystethoscope.parsing import json_parser, identity_parser
-from monetdb_pystethoscope.transformers import PrerequisiteTransformer
-from monetdb_pystethoscope.transformers import ValueObfuscateTransformer, statement_constructor
-from monetdb_pystethoscope.transformers import dummy_constructor
+from monetdb_pystethoscope.api import *
 
 
 def stethoscope(args):
