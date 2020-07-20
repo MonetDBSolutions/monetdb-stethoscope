@@ -3,6 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
+"""Tools used for parsing the MonetDB profiler output"""
 
 import json
 import sys

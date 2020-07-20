@@ -3,7 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-"""Module that implements transformers."""
+"""Tools for changing (adding information) the profiler objects."""
 
 import json
 import sys
@@ -101,6 +101,8 @@ def dummy_constructor(json_object):
 
 
 class PrerequisiteTransformer:
+    """Add a list of PCs of prerequisite instructions."""
+
     def __init__(self):
         self._var_to_pc = dict()
         self._resolved_prereqs = dict()
@@ -187,6 +189,8 @@ class PrerequisiteTransformer:
 
 
 class ValueObfuscateTransformer:
+    """Replace every literal value in the plan with three asterisks."""
+
     def __init__(self):
         # The types which we are censoring
         self._types = [
