@@ -2,7 +2,7 @@ name: Release pystethoscope
 on:
   push:
     tags:
-      - *
+      - v*
 
 jobs:
   release-job:
