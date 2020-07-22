@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Added
+-----
+- A github workflow to upload automatically to PyPI on tagging
 
 `0.2.0`_ - 2020-07-22
 =====================
