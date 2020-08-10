@@ -10,22 +10,22 @@ import json
 import sys
 import argparse
 from monetdb_pystethoscope import __version__
-from monetdb_pystethoscope.api import *
+import monetdb_pystethoscope.api as api
 
 
 def stethoscope(args):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
-    cnx = StethoscopeProfilerConnection()
+    cnx = api.StethoscopeProfilerConnection()
     cnx.connect(args.database, username=args.username, password=args.password,
                 hostname=args.hostname, port=args.port, heartbeat=0)
 
     print("Connected to the database: {}".format(args.database), file=sys.stderr)
 
     if not args.pipeline:
-        parse_operator = json_parser()
+        parse_operator = api.json_parser()
     else:
-        parse_operator = identity_parser()
+        parse_operator = api.identity_parser()
 
     transformers = list()
 
@@ -35,13 +35,13 @@ def stethoscope(args):
         if t == 'statement':
             stmt = True
             stmt_idx = idx
-            transformers.append(statement_constructor)
+            transformers.append(api.statement_constructor)
         elif t == 'prereqs':
-            transformers.append(PrerequisiteTransformer())
+            transformers.append(api.PrerequisiteTransformer())
         elif t == 'dummy':
-            transformers.append(dummy_constructor)
+            transformers.append(api.dummy_constructor)
         elif t == 'obfuscate':
-            transformers.append(ValueObfuscateTransformer())
+            transformers.append(api.ValueObfuscateTransformer())
             if stmt:
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
@@ -49,20 +49,20 @@ def stethoscope(args):
         idx += 1
 
     if args.include_keys:
-        key_filter_operator = include_filter(args.include_keys)
+        key_filter_operator = api.include_filter(args.include_keys)
     elif args.exclude_keys:
-        key_filter_operator = exclude_filter(args.exclude_keys)
+        key_filter_operator = api.exclude_filter(args.exclude_keys)
     else:
-        key_filter_operator = identity_filter()
+        key_filter_operator = api.identity_filter()
 
     if args.formatter == "json":
-        formatter = json_formatter
+        formatter = api.json_formatter
     elif args.formatter == "json_pretty":
-        formatter = json_formatter_pretty
+        formatter = api.json_formatter_pretty
     elif args.formatter == "line":
-        formatter = line_formatter
+        formatter = api.line_formatter
     else:
-        formatter = raw_formatter
+        formatter = api.raw_formatter
 
     if args.pipeline == 'raw':
         if args.include_keys or args.exclude_keys:
@@ -73,8 +73,8 @@ def stethoscope(args):
             print("Ignoring transformers because --raw was specified", file=sys.stderr)
 
         transformers = list()
-        key_filter_operator = identity_filter()
-        formatter = raw_formatter
+        key_filter_operator = api.identity_filter()
+        formatter = api.raw_formatter
 
     out_file = sys.stdout
     if args.output != "stdout":
@@ -95,7 +95,7 @@ def stethoscope(args):
             # filter
             # format
             formatter(json_object, out_file)
-        except OperationalError as oe:
+        except api.OperationalError as oe:
             print("Got an Operational Error from the database: {}".format(oe),
                   file=sys.stderr)
             break
