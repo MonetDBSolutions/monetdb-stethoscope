@@ -65,7 +65,7 @@ def stethoscope(args):
         formatter = raw_formatter
 
     if args.pipeline == 'raw':
-        if args.include or args.exclude:
+        if args.include_keys or args.exclude_keys:
             print("Ignoring key filter operation because --raw was specified", file=sys.stderr)
         if args.formatter:
             print("Ignoring formatter because --raw was specified", file=sys.stderr)
