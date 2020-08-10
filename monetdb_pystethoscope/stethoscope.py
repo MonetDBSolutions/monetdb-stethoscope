@@ -132,7 +132,7 @@ def main():
                             'dummy',
                             'identity'
                         ],
-                        help="foo")
+                        help="The transformers to add to the pipeline")
     parser.add_argument('-o', '--output', default="stdout", help="Output stream")
     parser.add_argument('-u', '--username', default="monetdb",
                         help="The username used to connect to the database")
