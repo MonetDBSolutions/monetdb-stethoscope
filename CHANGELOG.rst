@@ -9,7 +9,12 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 =============
 Added
 -----
-- A github workflow to upload automatically to PyPI on tagging
+- A github workflow to upload automatically to PyPI on tagging.
+- Help string for the ``transformers`` option.
+
+Fixed
+-----
+- A reference to non existing arguments that prevented startup.
 
 `0.2.0`_ - 2020-07-22
 =====================
