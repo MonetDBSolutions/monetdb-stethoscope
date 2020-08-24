@@ -16,3 +16,4 @@ from monetdb_pystethoscope.parsing import *
 from monetdb_pystethoscope.filtering import *
 from monetdb_pystethoscope.transformers import *
 from monetdb_pystethoscope.formatting import *
+from monetdb_pystethoscope.obfuscation import *

@@ -49,6 +49,10 @@ def stethoscope(args):
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
+        elif t == 'obfuscate_new':
+            transformers.append(api.ObfuscateTransformer())
+            if stmt:
+                (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         else:
             print("Unknown transformer {}. Ignoring.", file=sys.stderr)
             continue
@@ -135,6 +139,7 @@ def main():
                             'statement',
                             'prereqs',
                             'obfuscate',
+                            'obfuscate_new'
                             'dummy',
                             'identity'
                         ],
