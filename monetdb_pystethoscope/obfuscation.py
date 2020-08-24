@@ -192,9 +192,6 @@ countries = [
 
 class ObfuscateTransformer:
     """The default is to replace every literal value in the plan with three asterisks."""
-    schema_mapping= {}
-    table_mapping= {}
-    column_mapping= {}
 
     def __init__(self):
         # The types which we are censoring
@@ -220,28 +217,31 @@ class ObfuscateTransformer:
             "url",
             "json"
         ]
+        self.schema_mapping = dict()
+        self.table_mapping = dict()
+        self.column_mapping = dict()
 
     # obfuscation is MAL instruction specific
     def __call__(self, json_object):
         rdict = dict(json_object)
+        vars = rdict.get("args", [])
 
         # map schema information
         if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
-            var[2]["value"] = self.obfuscate_schema(var[2]["value"])
-            var[3]["value"] = self.obfuscate_table(var[3]["value"])
-            var[4]["value"] = self.obfuscate_column(var[4]["value"])
-            continue
+            vars[2]["value"] = self.obfuscate_schema(vars[2]["value"])
+            vars[3]["value"] = self.obfuscate_table(vars[3]["value"])
+            vars[4]["value"] = self.obfuscate_column(vars[4]["value"])
 
         # map selections and arithmetics
         elif rdict['module'] == 'algebra' and rdict['function'] == 'thetaselect':
-            var[3]["value"] = self.obfuscate_data(var[3]["value"], var[3]["type"])
+            vars[3]["value"] = self.obfuscate_data(vars[3]["value"], vars[3]["type"])
 
         elif rdict['module'] == 'algebra' and rdict['function'] == 'select':
-            var[3]["value"] = self.obfuscate_data(var[3]["value"], var[3]["type"])
-            var[4]["value"] = self.obfuscate_data(var[4]["value"], var[4]["type"])
+            vars[3]["value"] = self.obfuscate_data(vars[3]["value"], vars[3]["type"])
+            vars[4]["value"] = self.obfuscate_data(vars[4]["value"], vars[4]["type"])
 
         else:
-            for var in rdict.get("args", []):
+            for var in vars:
                 # hide the table information
                 alias = var.get("alias")
                 s, t, c = alias.split('.')
