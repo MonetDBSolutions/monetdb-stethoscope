@@ -213,7 +213,8 @@ class ValueObfuscateTransformer:
             "blob",
             "inet",
             "url",
-            "json"
+            "json",
+            "uuid"
         ]
 
     def __call__(self, json_object):

@@ -14,7 +14,9 @@ Added
 
 Fixed
 -----
-- A reference to non existing arguments that prevented startup.
+- A reference to non existing arguments that prevented startup (#18).
+- A data leak under the obfuscation transformer when exceptions happened.
+- A data leak under the obfuscation transformer of UUIDs.
 
 `0.2.0`_ - 2020-07-22
 =====================

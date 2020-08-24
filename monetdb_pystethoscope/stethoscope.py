@@ -76,11 +76,14 @@ def stethoscope(args):
 
     if args.pipeline == 'raw':
         if args.include_keys or args.exclude_keys:
-            print("Ignoring key filter operation because --raw was specified", file=sys.stderr)
+            print("Ignoring key filter operation because --raw was specified",
+                  file=sys.stderr)
         if args.formatter:
-            print("Ignoring formatter because --raw was specified", file=sys.stderr)
+            print("Ignoring formatter because --raw was specified",
+                  file=sys.stderr)
         if transformers:
-            print("Ignoring transformers because --raw was specified", file=sys.stderr)
+            print("Ignoring transformers because --raw was specified",
+                  file=sys.stderr)
 
         transformers = list()
         key_filter_operator = api.identity_filter()
@@ -109,10 +112,16 @@ def stethoscope(args):
             print("Got an Operational Error from the database: {}".format(oe),
                   file=sys.stderr)
             break
+        except json.JSONDecodeError as pe:
+            print("Parse error while parsing {} ({})"
+                  .format(
+                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
+                      pe),
+                  file=sys.stderr)
         except Exception as e:
             print("Failed operating on {} ({})"
                   .format(
-                      json.dumps(json_object, indent=2),
+                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
                       e),
                   file=sys.stderr)
 
@@ -133,7 +142,9 @@ def main():
                             'json_pretty',
                             'line',
                             'raw'
-                        ], help='The formatter used to display the values.')
+                        ],
+                        default='raw',
+                        help='The formatter used to display the values.')
     parser.add_argument('-t', '--transformer', nargs='*',
                         choices=[
                             'statement',
