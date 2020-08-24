@@ -40,12 +40,18 @@ def stethoscope(args):
             transformers.append(api.PrerequisiteTransformer())
         elif t == 'dummy':
             transformers.append(api.dummy_constructor)
+        elif t == 'identity':
+            # Do nothing
+            continue
         elif t == 'obfuscate':
             transformers.append(api.ValueObfuscateTransformer())
             if stmt:
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
+        else:
+            print("Unknown transformer {}. Ignoring.", file=sys.stderr)
+            continue
         idx += 1
 
     if args.include_keys:
@@ -132,6 +138,7 @@ def main():
                             'dummy',
                             'identity'
                         ],
+                        default=[],
                         help="The transformers to add to the pipeline")
     parser.add_argument('-o', '--output', default="stdout", help="Output stream")
     parser.add_argument('-u', '--username', default="monetdb",
