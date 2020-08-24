@@ -108,10 +108,16 @@ def stethoscope(args):
             print("Got an Operational Error from the database: {}".format(oe),
                   file=sys.stderr)
             break
+        except json.JSONDecodeError as pe:
+            print("Parse error while parsing {} ({})"
+                  .format(
+                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
+                      pe),
+                  file=sys.stderr)
         except Exception as e:
             print("Failed operating on {} ({})"
                   .format(
-                      json.dumps(json_object, indent=2),
+                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
                       e),
                   file=sys.stderr)
 
