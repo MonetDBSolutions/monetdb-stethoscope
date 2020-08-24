@@ -1,19 +1,19 @@
 import random
 
 planets = [
-	'Mercury',
-	'Venus',
-	'Earth',
-	'Mars',
-	'Jupiter',
-	'Saturn',
-	'Uranus',
-	'Neptune',
-	'Pluto'
-    ]
+    'Mercury',
+    'Venus',
+    'Earth',
+    'Mars',
+    'Jupiter',
+    'Saturn',
+    'Uranus',
+    'Neptune',
+    'Pluto'
+]
 
 # Only small, single word country names are used for obfuscation
-countries= [
+countries = [
     'Afghanistan',
     'Albania',
     # 'American_Samoa',
@@ -187,7 +187,7 @@ countries= [
     'Vietnam',
     'Wallis_and_Futuna',
     'Yemen',
-    ]
+]
 
 
 class ObfuscateTransformer:
@@ -226,7 +226,7 @@ class ObfuscateTransformer:
         rdict = dict(json_object)
 
         # map schema information
-        if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] = 'bind_idx'):
+        if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
             var[2]["value"] = self.obfuscate_schema(var[2]["value"])
             var[3]["value"] = self.obfuscate_table(var[3]["value"])
             var[4]["value"] = self.obfuscate_column(var[4]["value"])
@@ -239,40 +239,39 @@ class ObfuscateTransformer:
         elif rdict['module'] == 'algebra' and rdict['function'] == 'select':
             var[3]["value"] = self.obfuscate_data(var[3]["value"], var[3]["type"])
             var[4]["value"] = self.obfuscate_data(var[4]["value"], var[4]["type"])
-        
+
         else:
             for var in rdict.get("args", []):
                 # hide the table information
                 alias = var.get("alias")
-                s,t,c = alias.split('.')
+                s, t, c = alias.split('.')
                 s = self.obfuscate_schema(s)
                 t = self.obfuscate_table(s)
                 c = self.obfuscate_column(s)
-                var["alias"] = '.'.join([s,t,c])
+                var["alias"] = '.'.join([s, t, c])
         return rdict
 
-    def obfuscate_schema(original):
-        if original in schema_mapping:
-            return schema_mapping[original]
+    def obfuscate_schema(self, original):
+        if original in self.schema_mapping:
+            return self.schema_mapping[original]
         picked = random.choose(planets)
-        schema_mapping.update({original: picked})
+        self.schema_mapping[original] = picked
         del planets[picked]
         return picked
 
-    def obfuscate_table(original):
-        if original in table_mapping:
-            return table_mapping[original]
+    def obfuscate_table(self, original):
+        if original in self.table_mapping:
+            return self.table_mapping[original]
         picked = random.choose(countries)
-        table_mapping.update({original: picked})
-        del planets[picked]
+        self.table_mapping[original] = picked
+        del countries[picked]
         return picked
 
-
-    def obfuscate_column(original):
-        if original in column_mapping:
-            return column_mapping[original]
-        picked = "col_"+str(len(column_mapping))
-        column_mapping.update({original: picked})
+    def obfuscate_column(self, original):
+        if original in self.column_mapping:
+            return self.column_mapping[original]
+        picked = "col_"+str(len(self.column_mapping))
+        self.column_mapping[original] = picked
         return picked
 
     def obfuscate_data(original, tpe):
