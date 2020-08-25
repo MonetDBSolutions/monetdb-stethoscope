@@ -150,7 +150,7 @@ def main():
                             'statement',
                             'prereqs',
                             'obfuscate',
-                            'obfuscate_new'
+                            'obfuscate_new',
                             'dummy',
                             'identity'
                         ],
