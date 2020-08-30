@@ -116,11 +116,12 @@ class ObfuscateTransformer:
             for var in varlist:
                 # hide the table information
                 alias = var.get("alias")
-                s, t, c = alias.split('.')
-                s = self.obfuscate_schema(s)
-                t = self.obfuscate_table(s)
-                c = self.obfuscate_column(s)
-                var["alias"] = '.'.join([s, t, c])
+                if alias:
+                    s, t, c = alias.split('.')
+                    s = self.obfuscate_schema(s)
+                    t = self.obfuscate_table(s)
+                    c = self.obfuscate_column(s)
+                    var["alias"] = '.'.join([s, t, c])
         return rdict
 
     def obfuscate_object(self, original, kind):
