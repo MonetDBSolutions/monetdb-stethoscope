@@ -18,7 +18,7 @@ This method is supported by the stethoscope using the -T masking option.
 The disadvantage of data masking is that too much is shielded for post-analysis of the system behavior.
 A better solution is to use one-way functions, which are also the cornerstone for all
 encryption techniques. In general, it is a function of the form f(x)= s * y, where 's' is
-considered the secret key. Only if you have more than on pair (x,f(x) it can be broken.
+considered the secret key. Only if you have a pair (x,f(x) it can be broken.
 To reduce the impact of this out of bound leakage oa the secret key, its value is
 a fresh random number chosen at the start of the trace. Using multiple keys, geared
 at a class of values further reduce the potential of leakage.
