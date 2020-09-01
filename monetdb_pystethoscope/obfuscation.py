@@ -7,31 +7,31 @@
 The purpose of data obfuscation is to not show data values or SQL object identifiers
 to the outside user. Although relevant mostly for end-user interaction with
 a result set, it can also be applied to the events spit out by MonetDB for
-post analysis.
+post session analysis and system monitoring.
 
 For a good introduction to data obfuscation techniques consider
 http://blough.ece.gatech.edu/research/papers/ieeesp04.pdf
 
-Complete data obfuscation is best implemented with simply masking all literals in a trace a pattern, e.g. ***
-This method is supported by the stethoscope using the -T masking option.
+Complete data obfuscation is best implemented with simply masking all literals in a query plan a pattern, e.g. ***
+This method is supported by the stethoscope using the -t obfuscation option.
 
 The disadvantage of data masking is that too much is shielded for post-analysis of the system behavior.
 A better solution is to use one-way functions, which are also the cornerstone for all
 encryption techniques. In general, it is a function of the form f(x)= s * y, where 's' is
 considered the secret key. Only if you have a pair (x,f(x) it can be broken.
-To reduce the impact of this out of bound leakage oa the secret key, its value is
+To reduce the impact of this out of bound leakage of the secret key, its value is
 a fresh random number chosen at the start of the trace. Using multiple keys, geared
 at a class of values further reduce the potential of leakage.
 
 Furthermore, this mapping is only applied to data that originates in the
 database or can be derived from the database by applying an expression.
 In its simpliest form a data item is processed by a function that respects
-the properties of the underlying domain type, but makes it practially impossible
+the properties of the underlying domain type, but makes it practically impossible
 to invert the original value from the message.
 
 The new obfuscation scheme designed here relies on two elements.
 1) DDL obfuscation. Which maps all SQL schema objects to a non-informative alternative.
-For example, the column reference finances.personal.salary is mapped to a patter
+For example, the column reference finances.personal.salary is mapped to a pattern
 schema<S>.table<T>.Column<C> where S,T,C are randomized numbers, whose validity
 only holds for a single stethoscope run.
 
@@ -99,17 +99,20 @@ class ObfuscateTransformer:
 
         # map schema information
         if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
-            varlist[2]["value"] = self.obfuscate_schema(varlist[2]["value"])
-            varlist[3]["value"] = self.obfuscate_table(varlist[3]["value"])
-            varlist[4]["value"] = self.obfuscate_column(varlist[4]["value"])
+            varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
+            varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
+            varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
 
         # map selections and arithmetics
         elif rdict['module'] == 'algebra' and rdict['function'] == 'thetaselect':
-            varlist[3]["value"] = self.obfuscate_data(varlist[3]["value"], varlist[3]["type"])
+            varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
 
         elif rdict['module'] == 'algebra' and rdict['function'] == 'select':
-            varlist[3]["value"] = self.obfuscate_data(varlist[3]["value"], varlist[3]["type"])
-            varlist[4]["value"] = self.obfuscate_data(varlist[4]["value"], varlist[4]["type"])
+            varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
+            varlist[4]["value"] = self.obfuscate_data(varlist[4].get("value"), varlist[4].get("type"))
+        elif rdict['module'] == 'batcalc':
+            varlist[1]["value"] = self.obfuscate_data(varlist[1].get("value"), varlist[3].get("type"))
+            varlist[2]["value"] = self.obfuscate_data(varlist[2].get("value"), varlist[4].get("type"))
 
         # extend the list with other classes of MAL operations
         else:
@@ -122,9 +125,13 @@ class ObfuscateTransformer:
                     t = self.obfuscate_table(s)
                     c = self.obfuscate_column(s)
                     var["alias"] = '.'.join([s, t, c])
+                if 'value' in var:
+                    var['value'] = self.obfuscate_data(var.get("value"), var.get("type"))
         return rdict
 
     def obfuscate_object(self, original, kind):
+        if not original:
+            return kind
         name = kind[:3] + original
         if name in self.mapping:
             return self.mapping[name]
@@ -146,13 +153,20 @@ class ObfuscateTransformer:
     def obfuscate_procedure(self, original):
         return self.obfuscate_object(original, 'procedure')
 
+    def obfuscate_string(self, original):
+        if not original:
+            return '***'
+        return '*' * len(original)
+
     def obfuscate_data(self, original, tpe):
         if tpe not in self.mapping:
             self.mapping.update({tpe: random.randint() % 37})
         if tpe == ':str':
-            picked = '***'
-        else:
+            picked = self.obfuscate_string(original)
+        elif tpe in [ "bte", "sht", "int", "lng", "hge", "oid", "flt", "dbl" ]:
             picked = original * self.mapping[tpe]
+        else:
+            picked = '***'
         return picked
 
     def obfuscate_sql(self, original):
