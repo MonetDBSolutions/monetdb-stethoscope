@@ -53,13 +53,13 @@ def stethoscope(args):
         elif t == 'identity':
             # Do nothing
             continue
-        elif t == 'obfuscate':
+        elif t == 'mask':
             transformers.append(api.ValueObfuscateTransformer())
             if stmt:
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
-        elif t == 'obfuscate_new':
+        elif t == 'obfuscate':
             transformers.append(api.ObfuscateTransformer())
             if stmt:
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
@@ -164,8 +164,8 @@ def main():
                         choices=[
                             'statement',
                             'prereqs',
+                            'mask',
                             'obfuscate',
-                            'obfuscate_new',
                             'dummy',
                             'identity'
                         ],

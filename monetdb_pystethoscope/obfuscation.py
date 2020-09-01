@@ -56,12 +56,8 @@ import random
 
 class ObfuscateTransformer:
     """The default is to replace every literal value in the plan with three asterisks."""
-    obfuscate = {}
+    secrets = {}
     mapping = {}
-    schema_mapping = {}
-    table_mapping = {}
-    column_mapping = {}
-    object_mapping = {}
 
     def __init__(self):
         # The types which we are censoring
@@ -88,9 +84,6 @@ class ObfuscateTransformer:
             "json",
             "uuid"
         ]
-        self.schema_mapping = dict()
-        self.table_mapping = dict()
-        self.column_mapping = dict()
 
     # obfuscation is MAL instruction specific
     def __call__(self, json_object):
@@ -98,45 +91,38 @@ class ObfuscateTransformer:
         varlist = rdict.get("args", [])
 
         # map schema information
-        if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
-            varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
-            varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
-            varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
-
-        # map selections and arithmetics
-        elif rdict['module'] == 'algebra' and rdict['function'] == 'thetaselect':
-            varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
-        elif rdict['module'] == 'algebra' and rdict['function'] == 'select':
-            varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
-            varlist[4]["value"] = self.obfuscate_data(varlist[4].get("value"), varlist[4].get("type"))
-        elif rdict['module'] == 'batcalc':
-            varlist[1]["value"] = self.obfuscate_data(varlist[1].get("value"), varlist[3].get("type"))
-            varlist[2]["value"] = self.obfuscate_data(varlist[2].get("value"), varlist[4].get("type"))
+        if 'module' in rdict:
+            if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
+                varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
+                varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
+                varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
+                return
 
         # extend the list with other classes of MAL operations
-        else:
-            for var in varlist:
-                # hide the table information
-                alias = var.get("alias")
-                if alias:
-                    s, t, c = alias.split('.')
-                    s = self.obfuscate_schema(s)
-                    t = self.obfuscate_table(s)
-                    c = self.obfuscate_column(s)
-                    var["alias"] = '.'.join([s, t, c])
-                if 'value' in var:
-                    var['value'] = self.obfuscate_data(var.get("value"), var.get("type"))
+        for var in varlist:
+            # hide the table information
+            alias = var.get("alias")
+            if alias:
+                s, t, c = alias.split('.')
+                s = self.obfuscate_schema(s)
+                t = self.obfuscate_table(s)
+                c = self.obfuscate_column(s)
+                var["alias"] = '.'.join([s, t, c])
+            if 'value' in var:
+                var.update({'value': self.obfuscate_data(var.get("value"), var.get("type"))})
         return rdict
 
     def obfuscate_object(self, original, kind):
         if not original:
             return kind
-        name = kind[:3] + original
+        if kind not in self.secrets:
+            self.secrets.update({kind: random.randint(0, 11)})
+        name = str(kind[:3]) + str(original)
         if name in self.mapping:
             return self.mapping[name]
-        picked = self.obfuscate[kind]
-        self.mapping[name] = f"{kind}{picked}"
-        self.obfuscate[kind] = self.obfuscate[kind] + 1
+        picked = kind[:3] + str(self.secrets[kind])
+        self.mapping[name] = picked
+        self.secrets[kind] = self.secrets[kind] + 1
         return picked
 
     # Obfuscation of the SQL objects
@@ -155,20 +141,31 @@ class ObfuscateTransformer:
     def obfuscate_string(self, original):
         # keep the length of the string, map all non-white characters
         if 'string' not in self.mapping:
-            secret = random.shuffle('abcdefghijklmnopqrstuvwxyz')
-            self.mapping.update({'string':secret})
+            secret = list('abcdefghijklmnopqrstuvwxyz')
+            random.shuffle(secret)
+            self.mapping.update({'string': secret})
         if not original:
-            return '***'
+            return ''
         secret = self.mapping['string']
-        return ''.join(secret[i % len(secret)] for i in original)
+        new = ''.join([secret[ord(c) % len(secret)] for c in original])
+        random.shuffle(secret)
+        self.mapping.update({'string': secret})
+        return new
 
     def obfuscate_data(self, original, tpe):
+        if not tpe:
+            return '****'
         if tpe not in self.mapping:
-            self.mapping.update({tpe: random.randint() % 37})
-        if tpe == ':str':
+            self.mapping.update({tpe: random.randint(0, 37)})
+
+        if original in ['null', 'true', 'false']:
+            return original
+        if tpe in ['str', 'uuid']:
             picked = self.obfuscate_string(original)
-        elif tpe in [ "bte", "sht", "int", "lng", "hge", "flt", "dbl" ]:
-            picked = original * self.mapping[tpe]
+        elif tpe in [ "bte", "sht", "int", "lng", "hge"]:
+            picked = int(original) * self.mapping[tpe]
+        elif tpe in ["flt", "dbl"]:
+            picked = float(original) * self.mapping[tpe]
         elif tpe in ["oid", "void"]:
             picked = original
         else:
@@ -176,5 +173,5 @@ class ObfuscateTransformer:
         return picked
 
     def obfuscate_sql(self, original):
-        # parse the SQL statement and replace sensitive componenta
+        # parse the SQL statement and replace sensitive components
         return '***'
