@@ -67,13 +67,17 @@ prereqs
    counter values (see section :ref:`section-mal-reference`) of MAL instructions
    that need to be completed before the current instruction can start executing.
 
-obfuscate
+
+mask
    This transformer replaces all the literal values in the JSON object with
    three asterisks.
 
    .. warning::
 
       This transformer will not work with MonetDB server versions earlier than Jun2020.
+
+obfuscate
+    This transformer uses one-way functions to replace numeric values, alphabet reshuffings for strings, and replaces DDL objects with dummy names.
 
 identity
    This transformer leaves the object unchanged. In itself this is not
