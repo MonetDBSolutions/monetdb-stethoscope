@@ -97,7 +97,8 @@ class ObfuscateTransformer:
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
                 return
-            if rdict['module'] == 'sql' and (rdict['function'] in ['tid', 'append', 'emptybindidx', 'emptybind']):
+            if rdict['module'] == 'sql' and \
+                    rdict['function'] in ['tid', 'append', 'delete', 'emptybindidx', 'emptybind']:
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 if len(varlist) > 4:
@@ -113,7 +114,9 @@ class ObfuscateTransformer:
                 if len(varlist) > 3:
                     varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
                 return
-
+            if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
+                varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
+                varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
         # extend the list with other classes of MAL operations
         for var in varlist:
             # hide the table information
@@ -169,7 +172,7 @@ class ObfuscateTransformer:
         return new
 
     def obfuscate_data(self, original, tpe):
-        if not tpe:
+        if not tpe or not original:
             return '****'
         if tpe not in self.mapping:
             self.mapping.update({tpe: random.randint(0, 37)})
