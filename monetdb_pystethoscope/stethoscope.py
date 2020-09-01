@@ -16,11 +16,21 @@ import monetdb_pystethoscope.api as api
 def stethoscope(args):
     """A flexible tool to manipulate MonetDB profiler streams"""
 
-    cnx = api.StethoscopeProfilerConnection()
-    cnx.connect(args.database, username=args.username, password=args.password,
-                hostname=args.hostname, port=args.port, heartbeat=0)
 
-    print("Connected to the database: {}".format(args.database), file=sys.stderr)
+    inputfile = None
+    if args.input:
+        try:
+            inputfile = open(args.input, "r")
+        except IOError as msg:
+            print(f"Could not open '{args.input}'")
+            exit(-1)
+    if not inputfile:
+        cnx = api.StethoscopeProfilerConnection()
+        cnx.connect(args.database, username=args.username, password=args.password,
+                    hostname=args.hostname, port=args.port, heartbeat=0)
+        print("Connected to the database: {}".format(args.database), file=sys.stderr)
+    else:
+        cnx = None
 
     if not args.pipeline:
         parse_operator = api.json_parser()
@@ -93,10 +103,14 @@ def stethoscope(args):
     if args.output != "stdout":
         out_file = open(args.output, "w")
 
+
     while True:
         try:
-            # read
-            s = cnx.read_object()
+            # read object from source
+            if inputfile:
+                s = inputfile.readline()
+            else:
+                s = cnx.read_object()
             # parse
             json_object = parse_operator(s)
 
@@ -129,7 +143,7 @@ def stethoscope(args):
 def main():
     desc = "MonetDB profiling tool\n{} version {}".format(sys.argv[0], __version__)
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('database', help='The database to connect to')
+    parser.add_argument('-d','--database', help='The database to connect to')
     parser.add_argument('-i', '--include-keys', nargs='*',
                         help='A list of keys to keep.')
     parser.add_argument('-e', '--exclude-keys', nargs='*',
@@ -157,6 +171,7 @@ def main():
                         default=[],
                         help="The transformers to add to the pipeline")
     parser.add_argument('-o', '--output', default="stdout", help="Output stream")
+    parser.add_argument('-I', '--input', type=str, default=None, help="Read previously recorded stream")
     parser.add_argument('-u', '--username', default="monetdb",
                         help="The username used to connect to the database")
     parser.add_argument('-H', '--hostname', default="localhost",
