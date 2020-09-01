@@ -97,6 +97,21 @@ class ObfuscateTransformer:
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
                 return
+            if rdict['module'] == 'sql' and (rdict['function'] in ['tid', 'append', 'emptybindidx', 'emptybind']):
+                varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
+                varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
+                if len(varlist) > 4:
+                    varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
+                return
+            if rdict['module'] == 'sql' and rdict['function'] == 'clear_table':
+                varlist[1]["value"] = self.obfuscate_schema(varlist[1].get("value"))
+                varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
+                return
+            if rdict['module'] == 'sql' and rdict['function'] == 'deltas':
+                varlist[1]["value"] = self.obfuscate_schema(varlist[1].get("value"))
+                varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
+                if len(varlist) > 3:
+                    varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
 
         # extend the list with other classes of MAL operations
         for var in varlist:
