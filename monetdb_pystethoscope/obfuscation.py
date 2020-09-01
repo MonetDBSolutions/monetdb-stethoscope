@@ -112,7 +112,8 @@ class ObfuscateTransformer:
                 varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
                 if len(varlist) > 3:
                     varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
-
+                return
+            
         # extend the list with other classes of MAL operations
         for var in varlist:
             # hide the table information
