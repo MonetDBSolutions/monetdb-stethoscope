@@ -109,6 +109,8 @@ def stethoscope(args):
             # read object from source
             if inputfile:
                 s = inputfile.readline()
+                if not s:
+                    break
             else:
                 s = cnx.read_object()
             # parse
