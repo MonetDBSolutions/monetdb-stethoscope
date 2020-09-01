@@ -106,7 +106,6 @@ class ObfuscateTransformer:
         # map selections and arithmetics
         elif rdict['module'] == 'algebra' and rdict['function'] == 'thetaselect':
             varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
-
         elif rdict['module'] == 'algebra' and rdict['function'] == 'select':
             varlist[3]["value"] = self.obfuscate_data(varlist[3].get("value"), varlist[3].get("type"))
             varlist[4]["value"] = self.obfuscate_data(varlist[4].get("value"), varlist[4].get("type"))
@@ -154,17 +153,24 @@ class ObfuscateTransformer:
         return self.obfuscate_object(original, 'procedure')
 
     def obfuscate_string(self, original):
+        # keep the length of the string, map all non-white characters
+        if 'string' not in self.mapping:
+            secret = random.shuffle('abcdefghijklmnopqrstuvwxyz')
+            self.mapping.update({'string':secret})
         if not original:
             return '***'
-        return '*' * len(original)
+        secret = self.mapping['string']
+        return ''.join(secret[i % len(secret)] for i in original)
 
     def obfuscate_data(self, original, tpe):
         if tpe not in self.mapping:
             self.mapping.update({tpe: random.randint() % 37})
         if tpe == ':str':
             picked = self.obfuscate_string(original)
-        elif tpe in [ "bte", "sht", "int", "lng", "hge", "oid", "flt", "dbl" ]:
+        elif tpe in [ "bte", "sht", "int", "lng", "hge", "flt", "dbl" ]:
             picked = original * self.mapping[tpe]
+        elif tpe in ["oid", "void"]:
+            picked = original
         else:
             picked = '***'
         return picked

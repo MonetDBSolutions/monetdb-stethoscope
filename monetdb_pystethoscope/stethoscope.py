@@ -22,7 +22,7 @@ def stethoscope(args):
         try:
             inputfile = open(args.input, "r")
         except IOError as msg:
-            print(f"Could not open '{args.input}'")
+            print(f"Could not open '{args.input}':{msg}")
             exit(-1)
     if not inputfile:
         cnx = api.StethoscopeProfilerConnection()
@@ -103,7 +103,6 @@ def stethoscope(args):
     if args.output != "stdout":
         out_file = open(args.output, "w")
 
-
     while True:
         try:
             # read object from source
@@ -145,7 +144,7 @@ def stethoscope(args):
 def main():
     desc = "MonetDB profiling tool\n{} version {}".format(sys.argv[0], __version__)
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-d','--database', help='The database to connect to')
+    parser.add_argument('-d', '--database', help='The database to connect to')
     parser.add_argument('-i', '--include-keys', nargs='*',
                         help='A list of keys to keep.')
     parser.add_argument('-e', '--exclude-keys', nargs='*',
