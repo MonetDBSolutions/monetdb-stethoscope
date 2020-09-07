@@ -115,7 +115,22 @@ class ObfuscateTransformer:
                     varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
                 return
             if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
-                varlist[3]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[3].get("value"))
+                varlist[3]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[2].get("type"))
+
+            # selection operators are based on used-defined data
+            if rdict['module'] == 'algebra' and rdict['function'] in ['thetaselect']:
+                varlist[3]["value"] = self.obfuscate_variable(varlist[3].get("value"), varlist[3].get("type"))
+            if rdict['module'] == 'algebra' and rdict['function'] in ['select'] and len(varlist) == 7:
+                varlist[2]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[2].get("type"))
+                varlist[3]["value"] = self.obfuscate_variable(varlist[3].get("value"), varlist[3].get("type"))
+            if rdict['module'] == 'algebra' and rdict['function'] in ['select'] and len(varlist) == 8:
+                varlist[3]["value"] = self.obfuscate_variable(varlist[3].get("value"), varlist[3].get("type"))
+                varlist[4]["value"] = self.obfuscate_variable(varlist[4].get("value"), varlist[4].get("type"))
+            if rdict['module'] == 'algebra' and rdict['function'] in ['find']:
+                varlist[2]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[2].get("type"))
+            if rdict['module'] == 'algebra' and rdict['function'] in ['project'] and varlist[2].get("const") == 1:
+                varlist[2]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[2].get("type"))
+
         # extend the list with other classes of MAL operations
         for var in varlist:
             # hide the table information
