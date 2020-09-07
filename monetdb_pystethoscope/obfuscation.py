@@ -90,7 +90,7 @@ class ObfuscateTransformer:
         rdict = dict(json_object)
         varlist = rdict.get("args", [])
 
-        # map schema information
+        # map schema information, everything that comes directly from the SQL layer is suspect
         if 'module' in rdict:
             if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
@@ -115,8 +115,7 @@ class ObfuscateTransformer:
                     varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
                 return
             if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
-                varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
-                varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
+                varlist[3]["value"] = self.obfuscate_variable(varlist[2].get("value"), varlist[3].get("value"))
         # extend the list with other classes of MAL operations
         for var in varlist:
             # hide the table information
@@ -127,9 +126,12 @@ class ObfuscateTransformer:
                 t = self.obfuscate_table(s)
                 c = self.obfuscate_column(s)
                 var["alias"] = '.'.join([s, t, c])
+        return rdict
+
+    def obfuscate_full(self, varlist):
+        for var in varlist:
             if 'value' in var:
                 var.update({'value': self.obfuscate_data(var.get("value"), var.get("type"))})
-        return rdict
 
     def obfuscate_object(self, original, kind):
         if not original:
@@ -155,6 +157,12 @@ class ObfuscateTransformer:
         return self.obfuscate_object(original, 'column')
 
     def obfuscate_procedure(self, original):
+        return self.obfuscate_object(original, 'procedure')
+
+    def obfuscate_variable(self, varname, original):
+        # only a limited number of variables are allowed to expose their value
+        if varname in ['optimizer', 'sql_debug', 'debug']:
+            return original
         return self.obfuscate_object(original, 'procedure')
 
     def obfuscate_string(self, original):
