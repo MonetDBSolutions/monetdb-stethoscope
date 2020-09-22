@@ -239,7 +239,6 @@ class ObfuscateTransformer:
             print('OBFUSCATE FILE ', original, res)
         return res
 
-
     def obfuscate_variable(self, arg):
         # only a limited number of variables are allowed to expose their value
         original = arg['value']
@@ -249,7 +248,6 @@ class ObfuscateTransformer:
         if ObfuscateTransformer.debug:
             print('OBFUSCATE VARIABLE ', original, res)
         return res
-
 
     def obfuscate_string(self, original):
         # keep the length of the string, map all non-white characters
