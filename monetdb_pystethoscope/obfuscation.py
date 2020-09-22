@@ -50,12 +50,18 @@ Beware, the stethoscope only sees the data presented in the queries, which
 may not even reflect an item in the database. As such, it is more about
 obfuscation of the kind of queries posed to the system at stake.
 
+WARNING the output of the obfuscation should not include recognizable 'filename' with
+system paths, 'alias' with recognizable schema information, 'sql.bind' should not
+show schema information, ... values in selections and likeselect should not be
+recognizable.
+
 """
 import random
 
 
 class ObfuscateTransformer:
     """The default is to replace every literal value in the plan with three asterisks."""
+    debug = False
     secrets = {}
     mapping = {}
 
@@ -88,6 +94,8 @@ class ObfuscateTransformer:
     # obfuscation is MAL instruction specific
     def __call__(self, json_object):
         rdict = dict(json_object)
+        if ObfuscateTransformer.debug:
+            print("OBFUSCATE", rdict)
         varlist = rdict.get("args", [])
 
         # map schema information, everything that comes directly from the SQL layer is suspect
@@ -96,42 +104,74 @@ class ObfuscateTransformer:
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
-                return
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'sql' and \
                     rdict['function'] in ['tid', 'append', 'delete', 'emptybindidx', 'emptybind']:
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 if len(varlist) > 4:
                     varlist[4]["value"] = self.obfuscate_column(varlist[4].get("value"))
-                return
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'sql' and rdict['function'] == 'clear_table':
                 varlist[1]["value"] = self.obfuscate_schema(varlist[1].get("value"))
                 varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
-                return
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'sql' and rdict['function'] == 'deltas':
                 varlist[1]["value"] = self.obfuscate_schema(varlist[1].get("value"))
                 varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
                 if len(varlist) > 3:
                     varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
-                return
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
                 varlist[3]["value"] = self.obfuscate_variable(varlist[2])
+                rdict['args'] = varlist
+                return rdict
 
             # selection operators are based on used-defined data
             if rdict['module'] == 'algebra' and rdict['function'] in ['thetaselect']:
-                varlist[3]["value"] = self.obfuscate_data(varlist[3])
+                if len(varlist) == 4:
+                    varlist[2]["value"] = self.obfuscate_data(varlist[3])
+                else:
+                    varlist[3]["value"] = self.obfuscate_data(varlist[3])
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'algebra' and rdict['function'] in ['select'] and len(varlist) == 7:
                 varlist[2]["value"] = self.obfuscate_data(varlist[2])
                 varlist[3]["value"] = self.obfuscate_data(varlist[3])
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'algebra' and rdict['function'] in ['select'] and len(varlist) == 8:
                 varlist[3]["value"] = self.obfuscate_data(varlist[3])
                 varlist[4]["value"] = self.obfuscate_data(varlist[4])
-            if rdict['module'] == 'algebra' and rdict['function'] in ['find']:
+                rdict['args'] = varlist
+                return rdict
+            if rdict['module'] == 'algebra' and rdict['function'] in ['find', 'project']:
                 varlist[2]["value"] = self.obfuscate_data(varlist[2])
+                rdict['args'] = varlist
+                return rdict
             if rdict['module'] == 'algebra' and rdict['function'] in ['project'] and varlist[2].get("const") == 1:
                 varlist[2]["value"] = self.obfuscate_data(varlist[2])
+                rdict['args'] = varlist
+                return rdict
+            if rdict['module'] == 'algebra' and rdict['function'] in ['likeselect']:
+                varlist[3]["value"] = self.obfuscate_data(varlist[3])
+                rdict['args'] = varlist
+                return
+            if rdict['module'] == 'algebra' and \
+                    rdict['function'] in ['calc', 'batmmath', 'mmath', 'batstr', 'inspect'] and \
+                    rdict['type'] != 'uuid':
+                vl = []
+                for var in varlist:
+                    vl.append(self.obfuscate_data(var))
+                rdict['args'] = vl
+                return rdict
 
         # extend the list with other classes of MAL operations
+        vl = []
         for var in varlist:
             # hide the table information
             alias = var.get("alias")
@@ -141,6 +181,11 @@ class ObfuscateTransformer:
                 t = self.obfuscate_table(s)
                 c = self.obfuscate_column(s)
                 var["alias"] = '.'.join([s, t, c])
+            filename = var.get("file")
+            if filename:
+                var["file"] = self.obfuscate_file(filename)
+            vl.append(var)
+        rdict['args'] = vl
         return rdict
 
     def obfuscate_full(self, varlist):
@@ -153,7 +198,7 @@ class ObfuscateTransformer:
             return kind
         if kind not in self.secrets:
             self.secrets.update({kind: random.randint(0, 11)})
-        name = str(kind[:3]) + str(original)
+        name = str(kind) + str(original)
         if name in self.mapping:
             return self.mapping[name]
         picked = kind[:3] + str(self.secrets[kind])
@@ -163,23 +208,48 @@ class ObfuscateTransformer:
 
     # Obfuscation of the SQL objects
     def obfuscate_schema(self, original):
-        return self.obfuscate_object(original, 'schema')
+        res = self.obfuscate_object(original, 'sch')
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE SHEMA ', original, res)
+        return res
 
     def obfuscate_table(self, original):
-        return self.obfuscate_object(original, 'table')
+        res = self.obfuscate_object(original, 'tbl')
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE TABLE ', original, res)
+        return res
 
     def obfuscate_column(self, original):
-        return self.obfuscate_object(original, 'column')
+        res = self.obfuscate_object(original, 'col')
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE COLUMN ', original, res)
+        return res
 
     def obfuscate_procedure(self, original):
-        return self.obfuscate_object(original, 'procedure')
+        res = self.obfuscate_object(original, 'proc')
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE PROCEDURE ', original, res)
+        return res
+
+    def obfuscate_file(self, original):
+        if original.startswith('tmp_'):
+            return original
+        res = self.obfuscate_object(original, 'file')
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE FILE ', original, res)
+        return res
+
 
     def obfuscate_variable(self, arg):
         # only a limited number of variables are allowed to expose their value
         original = arg['value']
         if original in ['optimizer', 'sql_debug', 'debug']:
             return original
-        return self.obfuscate_data(arg)
+        res = self.obfuscate_data(arg)
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE VARIABLE ', original, res)
+        return res
+
 
     def obfuscate_string(self, original):
         # keep the length of the string, map all non-white characters
@@ -188,11 +258,15 @@ class ObfuscateTransformer:
             random.shuffle(secret)
             self.mapping.update({'string': secret})
         if not original:
+            if ObfuscateTransformer.debug:
+                print('OBFUSCATE STRING ', original, 'None')
             return ''
         secret = self.mapping['string']
         new = ''.join([secret[ord(c) % len(secret)] for c in original])
         random.shuffle(secret)
         self.mapping.update({'string': secret})
+        if ObfuscateTransformer.debug:
+            print('OBFUSCATE STRING ', original, new)
         return new
 
     def obfuscate_data(self, arg):
