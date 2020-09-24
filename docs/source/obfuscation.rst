@@ -35,19 +35,19 @@ only holds for a single stethoscope run.
 2) Query parameter obfuscation.
 The arguments to operators that find their origin in the database are
 mapped using a one-way function
-    f_type(original) = random * original
+    f_type(original) = secret * original
 where random is different for each column/type and holds for a single stethoscope run.
 The type specific obfuscation can lead to an overflow, which renders the
 relative ordering within a range predicate meaningless.
 
-The code below is considered a default. It should be easy for the user
+The code should be easy for the user
 to replace it with partial masking or alternative obfuscation schemes.
 
 Beware, the stethoscope only sees the data presented in the queries, which
 may not even reflect an item in the database. As such, it is more about
 obfuscation of the kind of queries posed to the system at stake.
 
-WARNING the output of the obfuscation should not include recognizable 'filename' with
+WARNING for changing the obfuscation method, it not include a recognizable 'filename' with
 system paths, 'alias' with recognizable schema information, 'sql.bind' should not
 show schema information, ... values in selections and likeselect should not be
 recognizable.
