@@ -124,7 +124,7 @@ def stethoscope(args):
             # Not Implemented yet
 
             # format
-            formatter(json_object, out_file)
+            print(formatter(json_object), file=out_file)
         except api.OperationalError as oe:
             print(
                 "Got an Operational Error from the database: {}".format(oe),
