@@ -137,7 +137,7 @@ def stethoscope(args):
             # leak data we should not, and continue with the next object in the
             # stream.
             msg = json.dumps(json_object, indent=2)
-            if "obfuscate" in args.transformers or "mask" in args.transformers:
+            if "obfuscate" in args.transformer or "mask" in args.transformer:
                 msg = "***"
             print(
                 "Parse error while parsing {} ({})".format(msg, pe),
@@ -149,7 +149,7 @@ def stethoscope(args):
             # should not and attempt to continue the execution. In the worst
             # case we will fail for the rest of the stream.
             msg = json.dumps(json_object, indent=2)
-            if "obfuscate" in args.transformers or "mask" in args.transformers:
+            if "obfuscate" in args.transformer or "mask" in args.transformer:
                 msg = "***"
             print(
                 "Failed operating on {} ({})".format(msg, e),
