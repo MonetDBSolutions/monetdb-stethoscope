@@ -104,40 +104,57 @@ def stethoscope(args):
 
     while True:
         try:
-            # read object from source
+            # Read line from source
             if inputfile:
                 s = inputfile.readline()
                 if not s:
                     break
             else:
                 s = cnx.read_object()
-            # parse
+            # Parse line as a JSON object
             json_object = parse_operator(s)
 
-            # transform
+            # Apply transformers to JSON object
             for t in transformers:
                 json_object = t(json_object)
+            # Filter out keys (include/exclude key filters)
             json_object = key_filter_operator(json_object)
 
-            # filter
+            # filter objects
+            # Not Implemented yet
+
             # format
             formatter(json_object, out_file)
         except api.OperationalError as oe:
-            print("Got an Operational Error from the database: {}".format(oe),
-                  file=sys.stderr)
+            print(
+                "Got an Operational Error from the database: {}".format(oe),
+                file=sys.stderr
+            )
+            # Is this really unrecoverable?
             break
         except json.JSONDecodeError as pe:
-            print("Parse error while parsing {} ({})"
-                  .format(
-                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
-                      pe),
-                  file=sys.stderr)
+            # Could not parse json object. Inform the user, taking care not to
+            # leak data we should not, and continue with the next object in the
+            # stream.
+            msg = json.dumps(json_object, indent=2)
+            if "obfuscate" in args.transformers or "mask" in args.transformers:
+                msg = "***"
+            print(
+                "Parse error while parsing {} ({})".format(msg, pe),
+                file=sys.stderr
+            )
         except Exception as e:
-            print("Failed operating on {} ({})"
-                  .format(
-                      json.dumps(json_object, indent=2) if "obfuscate" not in args.transformers else "***",
-                      e),
-                  file=sys.stderr)
+            # An exception that we did not account for happened. Instead of
+            # crashing report it to the user, taking care not leak data we
+            # should not and attempt to continue the execution. In the worst
+            # case we will fail for the rest of the stream.
+            msg = json.dumps(json_object, indent=2)
+            if "obfuscate" in args.transformers or "mask" in args.transformers:
+                msg = "***"
+            print(
+                "Failed operating on {} ({})".format(msg, e),
+                file=sys.stderr
+            )
 
 
 def main():
