@@ -23,8 +23,13 @@ option overrides all other given options.
 Connection and filesystem options
 ---------------------------------
 
-database
-   The name of the database to connect to. This argument is mandatory.
+database (``--database/-d database``)
+   The name of the database to connect to. Either this or the ``--input`` must
+   be given.
+
+file input (``--input/-I file name``)
+   A file from which to get input. Either this or the ``--database`` must be
+   given.
 
 username (``--username/-u username``)
    The name of the user for the database connection. The default value
