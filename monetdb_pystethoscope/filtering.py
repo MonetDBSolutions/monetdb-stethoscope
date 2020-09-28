@@ -33,7 +33,6 @@ def filter_keys_include(json_object, included_keys):
 including the keys specified in the iterable `included_keys`.
 
     """
-
     ret = {k: v for (k, v) in json_object.items() if k in included_keys}
     for i in included_keys:
         if i not in ret:

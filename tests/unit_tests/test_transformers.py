@@ -7,6 +7,7 @@ from json import loads
 import pytest
 from monetdb_pystethoscope import transformers
 
+
 @pytest.fixture
 def profiler_json_objects():
     with open("./tests/data/q01_Jun2020.json") as f:
@@ -16,6 +17,7 @@ def profiler_json_objects():
         ret = list(map(loads, f))
 
     return ret
+
 
 @pytest.fixture
 def reconstructed_statements():

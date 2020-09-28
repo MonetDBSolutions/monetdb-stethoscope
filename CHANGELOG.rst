@@ -10,13 +10,23 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 Added
 -----
 - A github workflow to upload automatically to PyPI on tagging.
-- Help string for the ``transformers`` option.
+- Help string and default value (``[]``) for the ``transformers`` option.
+- Help string and default value (``raw``) for the ``formatter`` option.
+- The option to provide input from a file (``-I``) or to connect to a database
+  (``-d``).
+- A new obfuscation method (``--transformer obfuscate``). The old method has
+  been renamed to mask: ``--transformer mask``.
 
 Fixed
 -----
 - A reference to non existing arguments that prevented startup (#18).
 - A data leak under the obfuscation transformer when exceptions happened.
 - A data leak under the obfuscation transformer of UUIDs.
+
+Changed
+-------
+- Formatters now return strings instead of printing them. Printing happens on
+  the main loop.
 
 `0.2.0`_ - 2020-07-22
 =====================

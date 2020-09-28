@@ -3,7 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-"""Tests for the filtering module"""
+"""Tests for the key filtering module"""
 
 from monetdb_pystethoscope import filtering
 
