@@ -21,8 +21,8 @@ def stethoscope(args):
         try:
             inputfile = open(args.input, "r")
         except IOError as msg:
-            print(f"Could not open '{args.input}':{msg}")
-            exit(-1)
+            print("Could not open '{}':{}".format(args.input, msg))
+            exit(1)
     if not inputfile:
         cnx = api.StethoscopeProfilerConnection()
         cnx.connect(args.database, username=args.username, password=args.password,
