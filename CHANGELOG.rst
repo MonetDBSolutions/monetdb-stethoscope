@@ -16,6 +16,8 @@ Added
   (``-d``).
 - A new obfuscation method (``--transformer obfuscate``). The old method has
   been renamed to mask: ``--transformer mask``.
+- A boolean that distinguishes between development and production modes. In
+  development certain exceptions get propagated.
 
 Fixed
 -----
