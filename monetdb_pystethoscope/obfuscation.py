@@ -5,11 +5,11 @@
 
 
 import random
+from monetdb_pystethoscope import DEVELOPMENT__
 
 
 class ObfuscateTransformer:
     """The default is to replace every literal value in the plan with three asterisks."""
-    debug = False
     secrets = {}
     mapping = {}
 
@@ -42,7 +42,7 @@ class ObfuscateTransformer:
     # obfuscation is MAL instruction specific
     def __call__(self, json_object):
         rdict = dict(json_object)
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print("OBFUSCATE", rdict)
         varlist = rdict.get("args", [])
 
@@ -157,25 +157,25 @@ class ObfuscateTransformer:
     # Obfuscation of the SQL objects
     def obfuscate_schema(self, original):
         res = self.obfuscate_object(original, 'sch')
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE SHEMA ', original, res)
         return res
 
     def obfuscate_table(self, original):
         res = self.obfuscate_object(original, 'tbl')
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE TABLE ', original, res)
         return res
 
     def obfuscate_column(self, original):
         res = self.obfuscate_object(original, 'col')
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE COLUMN ', original, res)
         return res
 
     def obfuscate_procedure(self, original):
         res = self.obfuscate_object(original, 'proc')
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE PROCEDURE ', original, res)
         return res
 
@@ -188,7 +188,7 @@ class ObfuscateTransformer:
         if len(comp) == 2:
             return comp[1]
         res = self.obfuscate_object(original, 'file')
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE FILE ', original, res)
         return res
 
@@ -198,7 +198,7 @@ class ObfuscateTransformer:
         if original in ['optimizer', 'sql_debug', 'debug']:
             return original
         res = self.obfuscate_data(arg)
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE VARIABLE ', original, res)
         return res
 
@@ -209,14 +209,14 @@ class ObfuscateTransformer:
             random.shuffle(secret)
             self.mapping.update({'string': secret})
         if not original:
-            if ObfuscateTransformer.debug:
+            if DEVELOPMENT__:
                 print('OBFUSCATE STRING ', original, 'None')
             return ''
         secret = self.mapping['string']
         new = ''.join([secret[ord(c) % len(secret)] for c in original])
         random.shuffle(secret)
         self.mapping.update({'string': secret})
-        if ObfuscateTransformer.debug:
+        if DEVELOPMENT__:
             print('OBFUSCATE STRING ', original, new)
         return new
 
@@ -231,7 +231,7 @@ class ObfuscateTransformer:
 
     def obfuscate_data(self, arg):
         original = arg['value']
-        tpe = arg('type')
+        tpe = arg['type']
         if not tpe or not original:
             return '****'
         if tpe not in self.mapping:

@@ -11,6 +11,7 @@ import sys
 import argparse
 from monetdb_pystethoscope import __version__
 import monetdb_pystethoscope.api as api
+from monetdb_pystethoscope import DEVELOPMENT__
 
 
 def stethoscope(args):
@@ -104,15 +105,42 @@ def stethoscope(args):
 
     while True:
         try:
-            # Read line from source
+            # Read line from source. If an error happens while reading input
+            # bail out.
             if inputfile:
-                s = inputfile.readline()
-                if not s:
+                try:
+                    s = inputfile.readline()
+                    if not s:
+                        break
+                except IOError as ioe:
+                    print("IO error {} while reading from file".format(ioe))
                     break
             else:
-                s = cnx.read_object()
-            # Parse line as a JSON object
-            json_object = parse_operator(s)
+                try:
+                    s = cnx.read_object()
+                except api.OperationalError as oe:
+                    print(
+                        "Got an Operational Error from the database: {}".format(oe),
+                        file=sys.stderr
+                    )
+                    break
+
+            try:
+                # Parse line as a JSON object
+                json_object = parse_operator(s)
+            except json.JSONDecodeError as pe:
+                # Could not parse json object. Inform the user, taking care not to
+                # leak data we should not, and continue with the next object in the
+                # stream.
+                msg = json.dumps(json_object, indent=2)
+                if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
+                    msg = "***"
+                print(
+                    "Parse error while parsing {} ({})".format(msg, pe),
+                    file=sys.stderr
+                )
+                if DEVELOPMENT__:
+                    raise
 
             # Apply transformers to JSON object
             for t in transformers:
@@ -125,36 +153,21 @@ def stethoscope(args):
 
             # format
             print(formatter(json_object), file=out_file)
-        except api.OperationalError as oe:
-            print(
-                "Got an Operational Error from the database: {}".format(oe),
-                file=sys.stderr
-            )
-            # Is this really unrecoverable?
-            break
-        except json.JSONDecodeError as pe:
-            # Could not parse json object. Inform the user, taking care not to
-            # leak data we should not, and continue with the next object in the
-            # stream.
-            msg = json.dumps(json_object, indent=2)
-            if "obfuscate" in args.transformer or "mask" in args.transformer:
-                msg = "***"
-            print(
-                "Parse error while parsing {} ({})".format(msg, pe),
-                file=sys.stderr
-            )
         except Exception as e:
             # An exception that we did not account for happened. Instead of
             # crashing report it to the user, taking care not leak data we
-            # should not and attempt to continue the execution. In the worst
+            # should not, and attempt to continue the execution. In the worst
             # case we will fail for the rest of the stream.
             msg = json.dumps(json_object, indent=2)
-            if "obfuscate" in args.transformer or "mask" in args.transformer:
+            if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
             print(
                 "Failed operating on {} ({})".format(msg, e),
                 file=sys.stderr
             )
+            # Actually if we are in development do crash.
+            if DEVELOPMENT__:
+                raise
 
 
 def main():
