@@ -237,7 +237,7 @@ class ObfuscateTransformer:
         if tpe not in self.mapping:
             self.mapping.update({tpe: random.randint(0, 111)})
 
-        if original in ['null', 'true', 'false']:
+        if original in ['nil', 'true', 'false']:
             return original
         if tpe in ['str', 'uuid']:
             picked = self.obfuscate_string(original)
