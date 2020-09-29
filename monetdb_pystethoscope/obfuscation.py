@@ -3,7 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-
+import re
 import random
 from monetdb_pystethoscope import DEVELOPMENT__
 
@@ -46,8 +46,32 @@ class ObfuscateTransformer:
             print("OBFUSCATE", rdict)
         varlist = rdict.get("args", [])
 
+        # hunt for the alias properties and replace them everywhere
+        vl = []
+        for var in varlist:
+            # hide the table information
+            alias = var.get("alias")
+            if alias:
+                s, t, c = alias.split('.')
+                s = self.obfuscate_schema(s)
+                t = self.obfuscate_table(s)
+                c = self.obfuscate_column(s)
+                var["alias"] = '.'.join([s, t, c])
+            filename = var.get("file")
+            if filename:
+                var["file"] = self.obfuscate_file(filename)
+            vl.append(var)
+        rdict['args'] = vl
+
+        varlist = rdict.get("args", [])
+
         # map schema information, everything that comes directly from the SQL layer is suspect
         if 'module' in rdict:
+            if rdict['module'] == 'querylog' and rdict['function'] == 'define':
+                varlist[1]["value"] = self.obfuscate_sql(varlist[1].get("value"))
+                rdict['args'] = varlist
+                return rdict
+
             if rdict['module'] == 'sql' and (rdict['function'] == 'bind' or rdict['function'] == 'bind_idx'):
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
@@ -56,6 +80,7 @@ class ObfuscateTransformer:
                 return rdict
             if rdict['module'] == 'sql' and \
                     rdict['function'] in ['tid', 'append', 'delete', 'emptybindidx', 'emptybind']:
+
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 if len(varlist) > 4:
@@ -117,23 +142,6 @@ class ObfuscateTransformer:
                     vl.append(self.obfuscate_data(var))
                 rdict['args'] = vl
                 return rdict
-
-        # extend the list with other classes of MAL operations
-        vl = []
-        for var in varlist:
-            # hide the table information
-            alias = var.get("alias")
-            if alias:
-                s, t, c = alias.split('.')
-                s = self.obfuscate_schema(s)
-                t = self.obfuscate_table(s)
-                c = self.obfuscate_column(s)
-                var["alias"] = '.'.join([s, t, c])
-            filename = var.get("file")
-            if filename:
-                var["file"] = self.obfuscate_file(filename)
-            vl.append(var)
-        rdict['args'] = vl
         return rdict
 
     def obfuscate_full(self, varlist):
@@ -154,21 +162,22 @@ class ObfuscateTransformer:
         self.secrets[kind] = self.secrets[kind] + 1
         return picked
 
-    # Obfuscation of the SQL objects
     def obfuscate_schema(self, original):
-        res = self.obfuscate_object(original, 'sch')
+        if original.strip() in ['sys', '"sys"', 'tmp', '"tmp"']:
+            return original.strip()
+        res = '"' + self.obfuscate_object(original, 'sch') + '"'
         if DEVELOPMENT__:
             print('OBFUSCATE SHEMA ', original, res)
         return res
 
     def obfuscate_table(self, original):
-        res = self.obfuscate_object(original, 'tbl')
+        res = '"' + self.obfuscate_object(original, 'tbl') + '"'
         if DEVELOPMENT__:
             print('OBFUSCATE TABLE ', original, res)
         return res
 
     def obfuscate_column(self, original):
-        res = self.obfuscate_object(original, 'col')
+        res = '"' + self.obfuscate_object(original, 'col') + '"'
         if DEVELOPMENT__:
             print('OBFUSCATE COLUMN ', original, res)
         return res
@@ -226,8 +235,14 @@ class ObfuscateTransformer:
             random.shuffle(secret)
             self.mapping.update({tpe: secret})
         secret = self.mapping[tpe]
-        new = ''.join([secret[ord(c) % len(secret)] for c in original])
-        return original
+        new = []
+        for c in original:
+            if c in secret:
+                new.append(ord(c))
+            else:
+                new.append(c)
+        new = ''.join(new)
+        return new
 
     def obfuscate_data(self, arg):
         original = arg['value']
@@ -255,5 +270,12 @@ class ObfuscateTransformer:
 
     def obfuscate_sql(self, original):
         # parse the SQL statement and replace sensitive components
-        print('original', self, original)
+        original = original[1:-1]
+        # Mask all string literals
+        p = re.compile(r'[\'\"](.*?)[\'\"]')
+        picked = p.sub('***', original)
+
+        # TODO mask all except keywords and operators to retain structure
+        if DEVELOPMENT__:
+            print('OBFUSCATE QUERY ', original, picked)
         return '***'
