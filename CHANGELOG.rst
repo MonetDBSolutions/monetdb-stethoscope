@@ -18,6 +18,7 @@ Added
   been renamed to mask: ``--transformer mask``.
 - A boolean that distinguishes between development and production modes. In
   development certain exceptions get propagated.
+- Rudimentary handling for SIGINT: A friendlier message is shown.
 
 Fixed
 -----

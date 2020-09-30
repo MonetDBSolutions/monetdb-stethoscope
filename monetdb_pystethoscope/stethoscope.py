@@ -153,6 +153,9 @@ def stethoscope(args):
 
             # format
             print(formatter(json_object), file=out_file)
+        except KeyboardInterrupt as kin:
+            print("Received a keyboard interupt. Shutting down...")
+            break
         except Exception as e:
             # An exception that we did not account for happened. Instead of
             # crashing report it to the user, taking care not leak data we
