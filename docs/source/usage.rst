@@ -5,7 +5,13 @@ The general syntax to use ``pystethoscope`` is:
 
 .. code:: shell
 
-   pystethoscope [OPTIONS] DATABASE
+   pystethoscope [OPTIONS] -d DATABASE
+
+or
+
+.. code:: shell
+
+   pystethoscope [OPTIONS] -I FILE
 
 The user provides the specification of the desired pipeline using the
 following options:
@@ -14,7 +20,7 @@ following options:
    ``statement``, ``prereqs``, ``obfuscate``, ``masking``, ``dummy``, and
    ``identity``. Can be specified in any order multiple times.
 ``--formatter`` (``--formatter/-F``)
-   ``json``, ``json_pretty``, and ``line``.
+   ``json``, ``json_pretty``, ``line``, and ``raw``.
 
 Alternatively the user can specify a number of predefined pipelines using
 ``--pipeline`` (``-l``) (see section :ref:`section-predefined-pipelines`). This
@@ -122,7 +128,7 @@ line
 raw
    Sends the object as is to the output stream. This usually uses the
    default Python rendering for dictionaries. The exception to this rule
-   is the raw pipeline.
+   is the raw *pipeline* (see :ref:`section-predefined-pipelines`).
 
 .. _section-predefined-pipelines:
 
