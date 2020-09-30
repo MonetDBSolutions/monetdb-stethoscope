@@ -192,7 +192,7 @@ def main():
                             'line',
                             'raw'
                         ],
-                        default='raw',
+                        default='json',
                         help='The formatter used to display the values.')
     parser.add_argument('-t', '--transformer', nargs='*',
                         choices=[

@@ -29,6 +29,7 @@ Changed
 -------
 - Formatters now return strings instead of printing them. Printing happens on
   the main loop.
+- The JSON formatter is now the default.
 
 `0.2.0`_ - 2020-07-22
 =====================
