@@ -53,9 +53,9 @@ class ObfuscateTransformer:
             alias = var.get("alias")
             if alias:
                 s, t, c = alias.split('.')
-                s = self.obfuscate_schema(s)
-                t = self.obfuscate_table(s)
-                c = self.obfuscate_column(s)
+                s = self.obfuscate_schema(s)[1:-1]
+                t = self.obfuscate_table(s)[1:-1]
+                c = self.obfuscate_column(s)[1:-1]
                 var["alias"] = '.'.join([s, t, c])
             filename = var.get("file")
             if filename:
@@ -222,7 +222,7 @@ class ObfuscateTransformer:
                 print('OBFUSCATE STRING ', original, 'None')
             return ''
         secret = self.mapping['string']
-        new = ''.join([secret[ord(c) % len(secret)] for c in original])
+        new = '"' + '''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
         random.shuffle(secret)
         self.mapping.update({'string': secret})
         if DEVELOPMENT__:
