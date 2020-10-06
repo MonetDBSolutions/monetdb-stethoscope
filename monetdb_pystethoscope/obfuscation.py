@@ -222,7 +222,7 @@ class ObfuscateTransformer:
                 print('OBFUSCATE STRING ', original, 'None')
             return ''
         secret = self.mapping['string']
-        new = '"' + '''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
+        new = '"' + ''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
         random.shuffle(secret)
         self.mapping.update({'string': secret})
         if DEVELOPMENT__:
@@ -278,4 +278,4 @@ class ObfuscateTransformer:
         # TODO mask all except keywords and operators to retain structure
         if DEVELOPMENT__:
             print('OBFUSCATE QUERY ', original, picked)
-        return '***'
+        return "***"
