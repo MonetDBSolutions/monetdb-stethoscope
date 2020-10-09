@@ -80,7 +80,6 @@ class ObfuscateTransformer:
                 return rdict
             if rdict['module'] == 'sql' and \
                     rdict['function'] in ['tid', 'append', 'delete', 'emptybindidx', 'emptybind']:
-
                 varlist[2]["value"] = self.obfuscate_schema(varlist[2].get("value"))
                 varlist[3]["value"] = self.obfuscate_table(varlist[3].get("value"))
                 if len(varlist) > 4:
@@ -101,6 +100,10 @@ class ObfuscateTransformer:
                 return rdict
             if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
                 varlist[3]["value"] = self.obfuscate_variable(varlist[2])
+                rdict['args'] = varlist
+                return rdict
+            if rdict['module'] == 'sql' and rdict['function'] in ['copy_from', 'copy_to']:
+                varlist[-7]["value"] = self.obfuscate_string(varlist[-7])
                 rdict['args'] = varlist
                 return rdict
 
@@ -137,6 +140,12 @@ class ObfuscateTransformer:
             if rdict['module'] == 'algebra' and \
                     rdict['function'] in ['calc', 'batmmath', 'mmath', 'batstr', 'inspect'] and \
                     rdict['type'] != 'uuid':
+                vl = []
+                for var in varlist:
+                    vl.append(self.obfuscate_data(var))
+                rdict['args'] = vl
+                return rdict
+            if rdict['module'] == 'calc' and  rdict['type'] != 'uuid':
                 vl = []
                 for var in varlist:
                     vl.append(self.obfuscate_data(var))
