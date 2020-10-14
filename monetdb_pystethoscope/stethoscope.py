@@ -153,6 +153,23 @@ def stethoscope(args):
 
             # format
             print(formatter(json_object), file=out_file)
+
+            # A  limitation of the current profiler is that it only emits the
+            # start/done events of the first statement in a barrier (dataflow) block
+            # A hack is to recognize the 'done' event of a barrier block
+            # and also emit an exit statement, placing it at pc = lastpc + 1
+            # json_object['pc] = lastpc + 1
+            # json_object['barrier'] = 'exit'
+            # json_object['args']=  copy['args'][:2]
+            # json_object['fcnname'] = ''
+            # json_object['modname'] = ''
+            # json_object['state'] = 'start'
+            # print(formatter(copy), file=out_file)
+            # json_object['state'] = 'done'
+            # print(formatter(copy), file=out_file)
+            # if 'pc' in json_object:
+            #    lastpc = json_object['pc']
+
         except KeyboardInterrupt as kin:
             print("Received a keyboard interupt. Shutting down...")
             break
