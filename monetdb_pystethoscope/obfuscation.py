@@ -92,10 +92,11 @@ class ObfuscateTransformer:
                 rdict['args'] = varlist
                 return rdict
             if rdict['module'] == 'sql' and rdict['function'] == 'deltas':
-                varlist[1]["value"] = self.obfuscate_schema(varlist[1].get("value"))
-                varlist[2]["value"] = self.obfuscate_table(varlist[2].get("value"))
-                if len(varlist) > 3:
-                    varlist[3]["value"] = self.obfuscate_column(varlist[3].get("value"))
+                varlist[7]["value"] = self.obfuscate_schema(varlist[7].get("value"))
+                if len(varlist) > 7:
+                    varlist[8]["value"] = self.obfuscate_table(varlist[8].get("value"))
+                if len(varlist) > 8:
+                    varlist[9]["value"] = self.obfuscate_column(varlist[9].get("value"))
                 rdict['args'] = varlist
                 return rdict
             if rdict['module'] == 'sql' and rdict['function'] in ['setVariable', 'getVariable']:
@@ -266,9 +267,16 @@ class ObfuscateTransformer:
         if tpe in ['str', 'uuid']:
             picked = self.obfuscate_string(original)
         elif tpe in [ "bte", "sht", "int", "lng", "hge"]:
-            picked = int(original) * self.mapping[tpe]
+            # be defensive
+            try:
+                picked = int(original) * self.mapping[tpe]
+            except ValueError as msg:
+                print('ERROR', original, msg)
         elif tpe in ["flt", "dbl"]:
-            picked = float(original) * self.mapping[tpe]
+            try:
+                picked = float(original) * self.mapping[tpe]
+            except ValueError as msg:
+                print('ERROR', original, msg)
         elif tpe in ["oid", "void"]:
             picked = original
         elif tpe in ["date", "daytime", "time", "timestamp", "timezone"]:
