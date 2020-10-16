@@ -10,8 +10,31 @@ from monetdb_pystethoscope import DEVELOPMENT__
 
 class ObfuscateTransformer:
     """The default is to replace every literal value in the plan with three asterisks."""
-    secrets = {}
-    mapping = {}
+    secrets = {}    # contains the type specific secret keys
+    # we initialize the mapping with some general MonetDB specific identifiers.
+    mapping = {
+        "sys": "sys",
+        "tmp": "tmp",
+        "env": "env",
+        "gdk_dbpath": "gdk_dbpath",
+        "mapi_port": "mapi_port",
+        "sql_optimizer": "sql_optimizer",
+        "sql_debug": "sql_debug",
+        "raw_strings": "raw_strings",
+        "merovingian_uri": "merovingian_uri",
+        "map_listenaddr": "map_listenaddr",
+        "mapi_socket": "mapi_socket",
+        "monet_vault_key'": "monet_vault_key'",
+        "gdk_nr_threads": "gdk_nr_threads",
+        "mal_clients": "mal_clients",
+        "gdk_dbname": "gdk_dbname",
+        "monet_pid": "monet_pid",
+        "monet_version": "monet_version",
+        "revision": "revision",
+        "monet_release": "monet_release",
+    }
+
+    pat3 = re.compile(r'([\w_][_\w\d]*|[0-9]+|[\'\"](.*?)[\'\"]+|\W+)')
 
     def __init__(self):
         # The types which we are censoring
@@ -146,7 +169,7 @@ class ObfuscateTransformer:
                     vl.append(self.obfuscate_data(var))
                 rdict['args'] = vl
                 return rdict
-            if rdict['module'] == 'calc' and  rdict['type'] != 'uuid':
+            if rdict['module'] == 'calc':
                 vl = []
                 for var in varlist:
                     vl.append(self.obfuscate_data(var))
@@ -162,11 +185,12 @@ class ObfuscateTransformer:
     def obfuscate_object(self, original, kind):
         if not original:
             return kind
-        if kind not in self.secrets:
-            self.secrets.update({kind: random.randint(0, 11)})
-        name = str(kind) + str(original)
+        name = kind[:3] + original
         if name in self.mapping:
             return self.mapping[name]
+        if kind not in self.secrets:
+            self.secrets.update({kind: random.randint(0, 11)})
+
         picked = kind[:3] + str(self.secrets[kind])
         self.mapping[name] = picked
         self.secrets[kind] = self.secrets[kind] + 1
@@ -181,13 +205,13 @@ class ObfuscateTransformer:
         return res
 
     def obfuscate_table(self, original):
-        res = '"' + self.obfuscate_object(original, 'tbl') + '"'
+        res = self.obfuscate_object(original, 'tbl')
         if DEVELOPMENT__:
             print('OBFUSCATE TABLE ', original, res)
         return res
 
     def obfuscate_column(self, original):
-        res = '"' + self.obfuscate_object(original, 'col') + '"'
+        res = self.obfuscate_object(original, 'col')
         if DEVELOPMENT__:
             print('OBFUSCATE COLUMN ', original, res)
         return res
@@ -216,65 +240,86 @@ class ObfuscateTransformer:
         original = arg['value']
         if original in ['optimizer', 'sql_debug', 'debug']:
             return original
-        res = self.obfuscate_data(arg)
+        res = self.obfuscate_object(original, 'var')
         if DEVELOPMENT__:
             print('OBFUSCATE VARIABLE ', original, res)
         return res
 
     def obfuscate_string(self, original):
         # keep the length of the string, map all non-white characters
-        if 'string' not in self.mapping:
-            secret = list('abcdefghijklmnopqrstuvwxyz')
-            random.shuffle(secret)
-            self.mapping.update({'string': secret})
         if not original:
             if DEVELOPMENT__:
                 print('OBFUSCATE STRING ', original, 'None')
             return ''
-        secret = self.mapping['string']
-        new = '"' + ''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
-        random.shuffle(secret)
-        self.mapping.update({'string': secret})
-        if DEVELOPMENT__:
-            print('OBFUSCATE STRING ', original, new)
-        return new
+        if original in ['gdk_dbpath', 'mapi_port', 'sql_optimizer', 'sql_debug', 'raw_strings',
+                        'merovingian_uri', 'map_listenaddr', 'mapi_socket', 'monet_vault_key',
+                        'gdk_nr_threads', 'mal_clients', 'gdk_dbname', 'monet_pid', 'revision', 'monet_release']:
+            return original
+        if original in self.mapping:
+            return self.mapping[original]
 
-    def obfuscate_temporal(self, original, tpe):
-        if tpe not in self.mapping:
-            secret = list('01234567890')
+        if 'string' not in self.secrets:
+            secret = list('abcdefghijklmnopqrstuvwxyz')
             random.shuffle(secret)
-            self.mapping.update({tpe: secret})
-        secret = self.mapping[tpe]
+            self.secrets.update({'string': secret})
+
+        secret = self.secrets['string']
+        picked = '"' + ''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
+        self.mapping.update({original: picked})
+        if DEVELOPMENT__:
+            print('OBFUSCATE STRING ', original, picked)
+        return picked
+
+    # temporal element are characterwise morphed creating wrong months..days...
+    def obfuscate_temporal(self, original, tpe):
+        if original in self.mapping:
+            return self.mapping['original']
+        if tpe not in self.secrets:
+            self.secrets.update({tpe: random.randint(1, 111)})
+
+        secret = self.secrets[tpe]  % 10
         new = []
         for c in original:
-            if c in secret:
-                new.append(ord(c))
+            if c.isdigit():
+                try:
+                    m = int(c) + secret
+                    new.append("%d" % m)
+                except ValueError as msg:
+                    print('ERROR TEMPORAL', msg)
+                    new.append(c)
             else:
                 new.append(c)
         new = ''.join(new)
+        self.mapping.update({original: new})
         return new
 
     def obfuscate_data(self, arg):
         original = arg['value']
+        if original in self.mapping:
+            return self.mapping[original]
+
         tpe = arg['type']
         if not tpe or not original:
             return '****'
-        if tpe not in self.mapping:
-            self.mapping.update({tpe: random.randint(0, 111)})
+        if tpe not in self.secrets:
+            self.secrets.update({tpe: random.randint(1, 111)})
 
         if original in ['nil', 'true', 'false']:
             return original
+
+        picked = ''
         if tpe in ['str', 'uuid']:
             picked = self.obfuscate_string(original)
         elif tpe in [ "bte", "sht", "int", "lng", "hge"]:
-            # be defensive
             try:
-                picked = int(original) * self.mapping[tpe]
+                picked = int(original) * self.secrets[tpe]
+                self.mapping.update({original: picked})
             except ValueError as msg:
                 print('ERROR', original, msg)
         elif tpe in ["flt", "dbl"]:
             try:
-                picked = float(original) * self.mapping[tpe]
+                picked = float(original) * self.secrets[tpe]
+                self.mapping.update({original: picked})
             except ValueError as msg:
                 print('ERROR', original, msg)
         elif tpe in ["oid", "void"]:
@@ -285,14 +330,113 @@ class ObfuscateTransformer:
             picked = '***'
         return picked
 
-    def obfuscate_sql(self, original):
-        # parse the SQL statement and replace sensitive components
-        original = original[1:-1]
-        # Mask all string literals
-        p = re.compile(r'[\'\"](.*?)[\'\"]')
-        picked = p.sub('***', original)
+    # SQL obfuscation should be focused on all non-reserved identifiers
+    keywords = [
+        "false", "true", "ALTER", "ADD", "AND",
+        "RANK", "DENSE_RANK", "PERCENT_RANK", "CUME_DIST", "ROW_NUMBER",
+        "NTILE", "LAG", "LEAD", "FIRST_VALUE", "LAST_VALUE",
+        "NTH_VALUE", "BEST", "EFFORT", "AS", "ASC",
+        "AUTHORIZATION", "BETWEEN", "SYMMETRIC", "ASYMMETRIC", "BY",
+        "CAST", "CONVERT", "CHARACTER", "CHAR", "VARYING",
+        "VARCHAR", "BINARY", "LARGE", "OBJECT", "CLOB",
+        "BLOB", "TEXT", "TINYTEXT", "STRING", "CHECK",
+        "CLIENT", "SERVER", "COMMENT", "CONSTRAINT", "CREATE",
+        "CROSS", "COPY", "RECORDS", "DELIMITERS", "STDIN",
+        "STDOUT", "TINYINT", "SMALLINT", "INTEGER", "INT",
+        "MEDIUMINT", "BIGINT", "HUGEINT", "DEC", "DECIMAL",
+        "NUMERIC", "DECLARE", "DEFAULT", "DESC", "DISTINCT",
+        "DOUBLE", "REAL", "DROP", "ESCAPE", "EXISTS",
+        "UESCAPE", "EXTRACT", "FLOAT", "FOR", "FOREIGN",
+        "FROM", "FWF", "REFERENCES", "MATCH", "FULL",
+        "PARTIAL", "SIMPLE", "INSERT", "UPDATE", "DELETE",
+        "TRUNCATE", "MATCHED", "ACTION", "CASCADE", "RESTRICT",
+        "FIRST", "GLOBAL", "GROUP", "GROUPING", "ROLLUP",
+        "CUBE", "HAVING", "ILIKE", "IMPRINTS", "IN",
+        "INNER", "INTO", "IS", "JOIN", "KEY",
+        "LATERAL", "LEFT", "LIKE", "LIMIT", "SAMPLE",
+        "SEED", "LAST", "LOCAL", "LOCKED", "NATURAL",
+        "NOT", "NULL", "NULLS", "OFFSET", "ON",
+        "OPTIONS", "OPTION", "OR", "ORDER", "ORDERED",
+        "OUTER", "OVER", "PARTITION", "PATH", "PRECISION",
+        "PRIMARY", "USER", "RENAME", "UNENCRYPTED", "ENCRYPTED",
+        "PASSWORD", "GRANT", "REVOKE", "ROLE", "ADMIN",
+        "PRIVILEGES", "PUBLIC", "CURRENT_USER", "CURRENT_ROLE", "SESSION_USER",
+        "CURRENT_SCHEMA", "SESSION", "RIGHT", "SCHEMA", "SELECT",
+        "SET", "SETS", "AUTO_COMMIT", "ALL", "ANY",
+        "SOME", "EVERY", "COLUMN", "TABLE", "TEMPORARY",
+        "TEMP", "STREAM", "REMOTE", "MERGE", "REPLICA",
+        "TO", "UNION", "EXCEPT", "INTERSECT", "CORRESPONDING",
+        "UNIQUE", "USING", "VALUES", "VIEW", "WHERE",
+        "WITH", "DATA", "DATE", "TIME", "TIMESTAMP",
+        "INTERVAL", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_TIMEZONE",
+        "NOW", "LOCALTIME", "LOCALTIMESTAMP", "ZONE", "CENTURY",
+        "DECADE", "YEAR", "QUARTER", "MONTH", "WEEK",
+        "DOW", "DOY", "DAY", "HOUR", "MINUTE",
+        "SECOND", "EPOCH", "POSITION", "SUBSTRING", "SPLIT_PART",
+        "CASE", "WHEN", "THEN", "ELSE", "END",
+        "NULLIF", "COALESCE", "ELSEIF", "IF", "WHILE",
+        "DO", "COMMIT", "ROLLBACK", "SAVEPOINT", "RELEASE",
+        "WORK", "CHAIN", "PRESERVE", "ROWS", "NO",
+        "START", "TRANSACTION", "READ", "WRITE", "ONLY",
+        "ISOLATION", "LEVEL", "UNCOMMITTED", "COMMITTED", "REPEATABLE",
+        "SERIALIZABLE", "DIAGNOSTICS", "SIZE", "STORAGE", "TYPE",
+        "PROCEDURE", "FUNCTION", "LOADER", "REPLACE", "FILTER",
+        "AGGREGATE", "RETURNS", "EXTERNAL", "NAME", "RETURN",
+        "CALL", "LANGUAGE", "ANALYZE", "MINMAX", "EXPLAIN",
+        "PLAN", "DEBUG", "TRACE", "PREPARE", "PREP",
+        "EXECUTE", "EXEC", "DEALLOCATE", "INDEX", "SEQUENCE",
+        "RESTART", "INCREMENT", "MAXVALUE", "MINVALUE", "CYCLE",
+        "CACHE", "NEXT", "VALUE", "GENERATED", "ALWAYS",
+        "IDENTITY", "SERIAL", "BIGSERIAL", "AUTO_INCREMENT", "CONTINUE",
+        "TRIGGER", "ATOMIC", "BEGIN", "OF", "BEFORE",
+        "AFTER", "ROW", "STATEMENT", "NEW", "OLD",
+        "EACH", "REFERENCING", "RANGE", "UNBOUNDED", "PRECEDING",
+        "FOLLOWING", "CURRENT", "EXCLUDE", "OTHERS", "TIES",
+        "GROUPS", "WINDOW", "XMLCOMMENT", "XMLCONCAT", "XMLDOCUMENT",
+        "XMLELEMENT", "XMLATTRIBUTES", "XMLFOREST", "XMLPARSE", "STRIP",
+        "WHITESPACE", "XMLPI", "XMLQUERY", "PASSING", "XMLTEXT",
+        "NIL", "REF", "ABSENT", "DOCUMENT", "ELEMENT",
+        "CONTENT", "XMLNAMESPACES", "NAMESPACE", "XMLVALIDATE", "RETURNING",
+        "LOCATION",  "ACCORDING", "XMLSCHEMA", "URI",
+        "XMLAGG", "GEOMETRY", "POINT", "LINESTRING", "POLYGON",
+        "MULTIPOINT", "MULTILINESTRING", "MULTIPOLYGON", "GEOMETRYCOLLECTION", "POINTZ",
+        "LINESTRINGZ", "POLYGONZ", "MULTIPOINTZ", "MULTILINESTRINGZ", "MULTIPOLYGONZ",
+        "GEOMETRYCOLLECTIONZ", "POINTM", "LINESTRINGM", "POLYGONM", "MULTIPOINTM",
+        "MULTILINESTRINGM", "MULTIPOLYGONM", "GEOMETRYCOLLECTIONM", "POINTZM", "LINESTRINGZM",
+        "POLYGONZM", "MULTIPOINTZM", "MULTILINESTRINGZM", "MULTIPOLYGONZM", "GEOMETRYCOLLECTIONZM",
 
-        # TODO mask all except keywords and operators to retain structure
+        # Also add the main math functions
+        "POWER", "FLOOR", "CEIL", "CEILING", "SIN",
+        "COS", "TAN", "ASIN", "ACOS", "ATAN",
+        "COT", "COSH", "TANH", "SQRT", "CBRT",
+        "EXP", "LOG", "LOG10", "LOG2", "DEGRESS",
+        "RADIANS", "RAND",
+    ]
+
+    #  the property strong can be set to avoid any mapping of names/literals
+    def obfuscate_sql(self, original, strong=False):
+        #  mask all except keywords and operators to retain structure
+        # Mask all string literals
+        original =  original.strip()
+        picked = self.pat3.findall(original)
+
+        nqry = []
+        for e in picked:
+            t = e[0]
+            if t.upper() in ObfuscateTransformer.keywords:
+                nqry.append(t.upper())
+            elif t[0] == "\\n":
+                nqry.append("\\n")
+                e = e.next()
+            elif t[0] in ["'" , '*', ' ', ',', '.', ';', '(', ')', '[', ']',
+                           '+', '-', '/', '*', '%', '@', '!', '#', '$', '^', '&', ':', '|', '\\']:
+                nqry.append(t)
+            elif not strong and t in ObfuscateTransformer.mapping:
+                nqry.append(str(ObfuscateTransformer.mapping[t]))
+            else:
+                nqry.append('$$$')
+        picked = ''.join(nqry)
+
         if DEVELOPMENT__:
-            print('OBFUSCATE QUERY ', original, picked)
-        return "***"
+            print('OBFUSCATE QUERY ', original,"\n", picked)
+        return picked
