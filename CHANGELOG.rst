@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+
+`0.3.0`_ - 2020-09-30
+=====================
 Added
 -----
 - A github workflow to upload automatically to PyPI on tagging.
@@ -93,7 +96,8 @@ Added
    Predefined pipelines
       -  raw
 
-.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.2.0...HEAD
+.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.0...HEAD
+.. _0.3.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.2.0...v0.3.0
 .. _0.2.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.3...v0.2.0
 .. _0.1.3: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.2...v0.1.3
 .. _0.1.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.1...v0.1.2
