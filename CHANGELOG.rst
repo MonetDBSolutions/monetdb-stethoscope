@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Changed
+-------
+- Added functionality to the new obfuscation method.
 
 `0.3.0`_ - 2020-09-30
 =====================
