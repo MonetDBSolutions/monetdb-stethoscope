@@ -9,6 +9,7 @@ import time
 import shutil
 import os
 import json
+import signal
 
 
 class StethoscopePool:
@@ -28,13 +29,25 @@ class StethoscopePool:
         self.logdir = logdir
         self.retention = retention
         self.interval = interval
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+
+    def exit_gracefully(self, signum, frame):
+        print('Interrupt received')
+        if self.logfile:
+            self.logfile.close()
+            self.pool_cleanup()
+            self.pool_compress()
+            self.logfile = None
+        exit(0)
 
     def pool_switch(self):
         # check if the interval has passed and a new file is needed
         if not self.dbname or not self.logdir:
             raise ValueError
         lt = time.time()
-        if not self.logfile or lt >= self.timestamp + self.interval:
+        if not self.logfile or lt >= self.timestamp + self.interval * 60:
             if self.logfile:
                 self.logfile.close()
                 self.pool_cleanup()
@@ -68,3 +81,4 @@ class StethoscopePool:
         with open(self.tag, 'rb') as f_in:
             with gzip.open(self.tag + '.gz', 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
+                os.remove(self.tag)
