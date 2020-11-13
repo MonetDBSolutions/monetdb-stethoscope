@@ -8,6 +8,7 @@ import gzip
 import time
 import shutil
 import os
+import json
 
 
 class StethoscopePool:
@@ -45,11 +46,12 @@ class StethoscopePool:
             except IOError:
                 raise
 
-    def pool_record(self, json_str):
+    def pool_record(self, json_obj):
         # Move the json string to the latest log file
         self.pool_switch()
         if self.logfile:
-            self.logfile.write(json_str)
+            self.logfile.write(json.dumps(json_obj))
+            self.logfile.write('\n')
 
     def pool_cleanup(self):
         # remove all files whose retention have passed
