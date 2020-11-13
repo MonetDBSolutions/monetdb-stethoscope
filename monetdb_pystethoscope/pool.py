@@ -32,9 +32,8 @@ class StethoscopePool:
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
-
     def exit_gracefully(self, signum, frame):
-        print('Interrupt received')
+        print('Interrupt received', signum, frame)
         if self.logfile:
             self.logfile.close()
             self.pool_cleanup()
@@ -55,9 +54,9 @@ class StethoscopePool:
             self.timestamp = lt
             self.tag = self.logdir + self.dbname + '_' + time.strftime("%y-%m-%dT%H:%M:%S", time.localtime(lt))
             try:
-                self.logfile = open(self.tag, "a")
+                self.logfile = open(self.tag, "w")
             except IOError:
-                raise
+                print('Could not open the log file', self.tag)
 
     def pool_record(self, json_obj):
         # Move the json string to the latest log file
@@ -65,6 +64,7 @@ class StethoscopePool:
         if self.logfile:
             self.logfile.write(json.dumps(json_obj))
             self.logfile.write('\n')
+            # self.logfile.flush()  may be too often given the speed of events arriving
 
     def pool_cleanup(self):
         # remove all files whose retention have passed
@@ -73,7 +73,7 @@ class StethoscopePool:
         lt = lt - self.retention * 3600
         tag = self.logdir + self.dbname + '_' + time.strftime("%y-%m-%dT%H:%M:%S", time.localtime(lt))
         for f in files:
-            if f < tag:
+            if f < tag and f != self.tag:
                 print('consider %s for removal' % f)
 
     def pool_compress(self):
