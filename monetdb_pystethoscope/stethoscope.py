@@ -12,6 +12,7 @@ import argparse
 from monetdb_pystethoscope import __version__
 import monetdb_pystethoscope.api as api
 from monetdb_pystethoscope import DEVELOPMENT__
+from monetdb_pystethoscope.pool import StethoscopePool
 
 
 def stethoscope(args):
@@ -103,6 +104,11 @@ def stethoscope(args):
     if args.output != "stdout":
         out_file = open(args.output, "w")
 
+    if args.logdir:
+        pool = StethoscopePool(args.logdir, args.dbname, args.retention, args.interval)
+    else:
+        pool = None
+
     while True:
         try:
             # Read line from source. If an error happens while reading input
@@ -151,8 +157,13 @@ def stethoscope(args):
             # filter objects
             # Not Implemented yet
 
-            # format
-            print(formatter(json_object), file=out_file)
+            # save in archive
+            if pool:
+                pool.pool_record(json_object)
+            else:
+                # format
+                print(formatter(json_object), file=out_file)
+
 
             # A  limitation of the current profiler is that it only emits the
             # start/done events of the first statement in a barrier (dataflow) block
@@ -234,6 +245,10 @@ def main():
                         help="The password used to connect to the database")
     parser.add_argument('-p', '--port', default=50000,
                         help="The port on which the MonetDB server is listening.")
+    parser.add_argument('-L', '--logdir', type=str, default='./logs/',
+                        help="The directory where the logs are retained.")
+    parser.add_argument('-R', '--retention', type=int, default=1, help="Retention period for log files")
+    parser.add_argument('-I', '--interval', type=int, default=5, help="Number of minutes per interval")
 
     arguments = parser.parse_args()
     stethoscope(arguments)

@@ -49,6 +49,24 @@ output (``--output/-o filename``)
    The file where ``pystethoscope`` will write its output. If this is omitted,
    the output will be written to the standard output.
 
+Logfile archives
+----------------
+
+Since ``pystethoscope`` can generate a substantial amount of data, it is mandatory to consider a time limited cache.
+If a log directory is given, then the events are collected in separate files with a
+time interval determined at system start. Furthermore, all files are silently discarded when their retention period
+has passed.
+
+logdir (``--logdir/-L directorypath``)
+   The directory where ``pystethoscope`` will write collect the files. If this is omitted,
+   the output will be written to the standard output.
+
+retention  (``--retention/-R hourse``)
+   The stethoscope files are retained for a number of hours.
+
+interval  (``--interval/-I minutes``)
+   Each stethoscope files covers a limited number of minutes, starting at the moment the first event is written.
+
 Reading and Parsing
 -------------------
 
