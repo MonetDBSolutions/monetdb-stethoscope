@@ -105,7 +105,7 @@ def stethoscope(args):
         out_file = open(args.output, "w")
 
     if args.logdir:
-        pool = StethoscopePool(args.logdir, args.dbname, args.retention, args.interval)
+        pool = StethoscopePool(args.logdir, args.database, args.retention, args.interval)
     else:
         pool = None
 
@@ -248,7 +248,7 @@ def main():
     parser.add_argument('-L', '--logdir', type=str, default='./logs/',
                         help="The directory where the logs are retained.")
     parser.add_argument('-R', '--retention', type=int, default=1, help="Retention period for log files")
-    parser.add_argument('-I', '--interval', type=int, default=5, help="Number of minutes per interval")
+    parser.add_argument('-T', '--interval', type=int, default=5, help="Number of minutes per interval")
 
     arguments = parser.parse_args()
     stethoscope(arguments)

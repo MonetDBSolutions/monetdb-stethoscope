@@ -32,14 +32,14 @@ class StethoscopePool:
         # check if the interval has passed and a new file is needed
         if not self.dbname or not self.logdir:
             raise ValueError
-        lt = time.localtime(time.time())
-        if lt >= self.timestamp + self.interval:
+        lt = time.time()
+        if not self.logfile or lt >= self.timestamp + self.interval:
             if self.logfile:
                 self.logfile.close()
                 self.pool_cleanup()
                 self.pool_compress()
             self.timestamp = lt
-            self.tag = self.logdir + self.dbname + '_' + time.strftime("%y-%m-%dT%H:%M:%S", lt)
+            self.tag = self.logdir + self.dbname + '_' + time.strftime("%y-%m-%dT%H:%M:%S", time.localtime(lt))
             try:
                 self.logfile = open(self.tag, "a")
             except IOError:
@@ -48,7 +48,8 @@ class StethoscopePool:
     def pool_record(self, json_str):
         # Move the json string to the latest log file
         self.pool_switch()
-        self.logfile.write(json_str)
+        if self.logfile:
+            self.logfile.write(json_str)
 
     def pool_cleanup(self):
         # remove all files whose retention have passed
