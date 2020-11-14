@@ -92,5 +92,5 @@ class StethoscopePool:
 
     def pool_process(self):
         # Start compressing the latest log file in the background
-        p = Process(target=self.pool_compress, args=self.tag)
+        p = Process(target=StethoscopePool.pool_compress, args=self.tag)
         p.start()
