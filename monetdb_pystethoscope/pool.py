@@ -3,19 +3,21 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-"""Keeping a cache of stethoscope files"""
+"""Keeping a cache of stethoscope files. The files are compressed in the background and removed when the retention
+period expires"""
 import gzip
 import time
 import shutil
 import os
+from os import path
 import json
 import signal
-
+from multiprocessing import Process
 
 class StethoscopePool:
-    retention = 1   # keep the logs around for 1 hour
-    interval = 5    # create new file every so many minutes
-    logdir = "./logs/"  # directory must exist
+    retention = 1       # keep the logs around for 1 hour
+    interval = 5        # create new file every so many minutes
+    logdir = "./logs/"  # directory must exist before being used
     dbname = None
     timestamp = time.time()
     tag = None
@@ -27,6 +29,11 @@ class StethoscopePool:
             raise ValueError
         self.dbname = dbname
         self.logdir = logdir
+        # check existance of the log directory
+        if not path.exists(logdir):
+            print('Log pool directory non-existing', logdir, ' Create it first')
+            exit(0)
+        print('Using log pool interval', interval, ' seconds with file retention', retention, 'hours')
         self.retention = retention
         self.interval = interval
         signal.signal(signal.SIGINT, self.exit_gracefully)
@@ -37,7 +44,7 @@ class StethoscopePool:
         if self.logfile:
             self.logfile.close()
             self.pool_cleanup()
-            self.pool_compress()
+            self.pool_process()
             self.logfile = None
         exit(0)
 
@@ -50,7 +57,7 @@ class StethoscopePool:
             if self.logfile:
                 self.logfile.close()
                 self.pool_cleanup()
-                self.pool_compress()
+                self.pool_process()
             self.timestamp = lt
             self.tag = self.logdir + self.dbname + '_' + time.strftime("%y-%m-%dT%H:%M:%S", time.localtime(lt))
             try:
@@ -76,9 +83,14 @@ class StethoscopePool:
             if f < tag and f != self.tag:
                 print('consider %s for removal' % f)
 
-    def pool_compress(self):
-        # Start compressing the latest log file in the background
-        with open(self.tag, 'rb') as f_in:
-            with gzip.open(self.tag + '.gz', 'wb') as f_out:
+    @staticmethod
+    def pool_compress(tag):
+        with open(tag, 'rb') as f_in:
+            with gzip.open(tag + '.gz', 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
-                os.remove(self.tag)
+                os.remove(tag)
+
+    def pool_process(self):
+        # Start compressing the latest log file in the background
+        p = Process(target=self.pool_compress, args=self.tag)
+        p.start()

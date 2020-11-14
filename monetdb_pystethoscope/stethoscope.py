@@ -247,8 +247,8 @@ def main():
                         help="The port on which the MonetDB server is listening.")
     parser.add_argument('-L', '--logdir', type=str, default='./logs/',
                         help="The directory where the logs are retained.")
-    parser.add_argument('-R', '--retention', type=int, default=1, help="Retention period for log files")
-    parser.add_argument('-T', '--interval', type=int, default=5, help="Number of minutes per interval")
+    parser.add_argument('-R', '--retention', type=int, default=1, help="Retention period for log files in hours")
+    parser.add_argument('-T', '--interval', type=int, default=5, help="Number of minutes per log file")
 
     arguments = parser.parse_args()
     stethoscope(arguments)
