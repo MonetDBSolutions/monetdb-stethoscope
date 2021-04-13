@@ -109,7 +109,7 @@ arguments:
 ``--include-keys`` (``-i key1 key2 ...``)
    This transformer takes a space separated list of keys and removes all
    other keys from the JSON object.
-``--exclude-keys`` (``-e key1,key2,...``)
+``--exclude-keys`` (``-e key1 key2 ...``)
    This transformer takes a space separated list of keys and removes
    them from the JSON object.
 
