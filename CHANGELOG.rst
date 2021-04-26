@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+
+`0.3.2`_ - 2021-04-26
+=====================
 Fixed
 -----
 - A type mismatch with pymonetdb when connecting to a non-default
@@ -106,7 +109,8 @@ Added
    Predefined pipelines
       -  raw
 
-.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.1...HEAD
+.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.2...HEAD
+.. _0.3.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.1...v0.3.2
 .. _0.3.1: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.0...v0.3.1
 .. _0.3.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.2.0...v0.3.0
 .. _0.2.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.1.3...v0.2.0
