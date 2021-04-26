@@ -7,6 +7,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Fixed
+-----
+- A type mismatch with pymonetdb when connecting to a non-default
+  port.
 
 `0.3.1`_ - 2020-10-23
 =====================
