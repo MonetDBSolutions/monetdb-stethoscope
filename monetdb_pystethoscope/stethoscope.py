@@ -232,7 +232,7 @@ def main():
                         help="The hostname used to connect to the database")
     parser.add_argument('-P', '--password', default="monetdb",
                         help="The password used to connect to the database")
-    parser.add_argument('-p', '--port', default=50000,
+    parser.add_argument('-p', '--port', default=50000, type=int,
                         help="The port on which the MonetDB server is listening.")
 
     arguments = parser.parse_args()
