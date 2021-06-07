@@ -10,7 +10,7 @@ Create JSON objects containing only the fields ``pc``, ``clk`` and ``state``
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb --include-keys pc,clk,state demo
+   pystethoscope -u monetdb -P monetdb --include-keys pc clk state demo
 
 ::
 
@@ -39,7 +39,7 @@ of the execution.
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb --transformer statement --formatter line --include-keys stmt,clk,state demo
+   pystethoscope -u monetdb -P monetdb --transformer statement --formatter line --include-keys stmt clk state demo
 
 ::
 
@@ -66,7 +66,7 @@ The same as above but hide the values in the plan
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb --transformer statement --transformer obfuscate --formatter line --include-keys stmt,clk,state demo
+   pystethoscope -u monetdb -P monetdb --transformer statement --transformer obfuscate --formatter line --include-keys stmt clk state demo
 
 ::
 
