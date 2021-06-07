@@ -7,6 +7,23 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Fixed
+-----
+- The options ``--transformer (-t)``, ``--include-keys (-i)`` and
+  ``--exclude-keys (-e)`` now require at least one argument, emitting
+  an error if one is not provided.
+- A number of documentation bugs.
+
+Changed
+-------
+- The name of the executable string from ``pystethoscope`` to
+  ``stethoscope``.
+- Made the usage string more clear about arguments to
+  ``--include-keys`` and ``--exclude-keys`` being a space separated
+  list and added a suggestion if a key is not found while containing
+  the comma character.
+
+
 
 `0.3.2`_ - 2021-04-26
 =====================
