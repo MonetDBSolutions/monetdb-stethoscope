@@ -199,9 +199,9 @@ def main():
     input_options.add_argument('-I', '--input',
                                type=str,
                                help="Read previously recorded stream")
-    parser.add_argument('-i', '--include-keys', nargs='*',
+    parser.add_argument('-i', '--include-keys', nargs='+',
                         help='A space separated list of keys to keep.')
-    parser.add_argument('-e', '--exclude-keys', nargs='*',
+    parser.add_argument('-e', '--exclude-keys', nargs='+',
                         help='A space separated list of keys to exclude.')
     parser.add_argument('-l', '--pipeline', choices=['raw'],
                         help='Predefined pipelines. Overrides all other options.')
@@ -214,7 +214,7 @@ def main():
                         ],
                         default='json',
                         help='The formatter used to display the values.')
-    parser.add_argument('-t', '--transformer', nargs='*',
+    parser.add_argument('-t', '--transformer', nargs='+',
                         choices=[
                             'statement',
                             'prereqs',
