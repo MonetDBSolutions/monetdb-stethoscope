@@ -30,7 +30,7 @@ pytest-cov = "^2.9.0"
 codecov = "^2.1.3"
 
 [tool.poetry.scripts]
-pystethoscope = 'monetdb_pystethoscope.stethoscope:main'
+stethoscope = 'monetdb_pystethoscope.stethoscope:main'
 
 [build-system]
 requires = ["poetry>=0.12"]
