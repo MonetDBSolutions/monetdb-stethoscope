@@ -1,16 +1,16 @@
 Introduction
 ============
 
-``pystethoscope`` is a command line tool to filter and format the events
+``stethoscope`` is a command line tool to filter and format the events
 coming from the MonetDB profiler. This profiler emits two JSON objects,
 one at the start and one at the end of every MAL instruction executed.
-``pystethoscope`` connects to a MonetDB server process, reads the
+``stethoscope`` connects to a MonetDB server process, reads the
 objects emitted by the profiler and performs various transformations
 specified by the user.
 
 Its name is inspired by the medical device, called a stethoscope. It can
 be attached to a body to listen to the lungs and heart. The same holds
-for ``pystethoscope``. You can attach it to a running MonetDB server and
+for ``stethoscope``. You can attach it to a running MonetDB server and
 immediately see what it is doing.
 
 Conceptually the user specifies a transformation pipeline. The pipeline
@@ -19,7 +19,7 @@ following stages:
 
 Reading
    After a connection to the MonetDB server is established,
-   ``pystethoscope`` reads one string, representing a JSON object, from
+   ``stethoscope`` reads one string, representing a JSON object, from
    the connection.
 Parsing
    The string is first parsed into a Python dictionary. The user cannot

@@ -1,17 +1,17 @@
 Usage
 =====
 
-The general syntax to use ``pystethoscope`` is:
+The general syntax to use ``stethoscope`` is:
 
 .. code:: shell
 
-   pystethoscope [OPTIONS] -d DATABASE
+   stethoscope [OPTIONS] -d DATABASE
 
 or
 
 .. code:: shell
 
-   pystethoscope [OPTIONS] -I FILE
+   stethoscope [OPTIONS] -I FILE
 
 The user provides the specification of the desired pipeline using the
 following options:
@@ -46,7 +46,7 @@ password (``--password/-P password``)
    is ``monetdb``.
 
 output (``--output/-o filename``)
-   The file where ``pystethoscope`` will write its output. If this is omitted,
+   The file where ``stethoscope`` will write its output. If this is omitted,
    the output will be written to the standard output.
 
 Reading and Parsing
@@ -61,7 +61,7 @@ Transforming
 
 The user can specify a number of transformers that can change the
 content of the JSON objects. Most transformers add key-value pairs in
-objects. Currently ``pystethoscope`` implements the following
+objects. Currently ``stethoscope`` implements the following
 transformers:
 
 statement
@@ -135,12 +135,12 @@ raw
 Predefined pipelines
 --------------------
 
-The following are the predefined pipelines that ``pystethoscope``
+The following are the predefined pipelines that ``stethoscope``
 currently has:
 
 raw
    This pipeline is intended for accessing the raw output of the MonetDB
-   server's profiler. When using this pipeline ``pystethoscope`` will
+   server's profiler. When using this pipeline ``stethoscope`` will
    connect to the server, read strings, and print them to the output
    stream. No other processing happens, and specifically *no parsing
    takes place*. This is mainly useful for debugging the profiler module

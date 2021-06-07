@@ -1,14 +1,14 @@
 Developer notes
 ===============
 
-``pystethoscope`` is developed using
+``stethoscope`` is developed using
 `Poetry <https://python-poetry.org/>`__, for dependency management and
 packaging.
 
 Installation for development
 ----------------------------
 
-In order to install ``pystethoscope`` do the following:
+In order to install ``stethoscope`` do the following:
 
 .. code:: shell
 
@@ -19,13 +19,13 @@ In order to install ``pystethoscope`` do the following:
    git clone git@github.com:MonetDBSolutions/monetdb-pystethoscope.git
    cd monetdb-pystethoscope
    poetry install
-   poetry run pystethoscope --help
+   poetry run stethoscope --help
 
 On 30/04/2020 `pymonetdb
 1.3.1 <https://github.com/gijzelaerr/pymonetdb/releases/tag/1.3.1>`__
 was released, which includes a feature needed to connect transparently
 to the MonetDB server. If you have installed the development version of
-``pystethoscope``, before that date you need to update:
+``stethoscope``, before that date you need to update:
 
 .. code:: shell
 

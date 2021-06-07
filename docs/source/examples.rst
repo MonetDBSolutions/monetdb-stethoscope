@@ -10,7 +10,7 @@ Create JSON objects containing only the fields ``pc``, ``clk`` and ``state``
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb -d demo --include-keys pc clk state 
+   stethoscope -u monetdb -P monetdb -d demo --include-keys pc clk state 
 
 ::
 
@@ -39,7 +39,7 @@ of the execution.
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb -d demo --transformer statement --formatter line --include-keys stmt clk state
+   stethoscope -u monetdb -P monetdb -d demo --transformer statement --formatter line --include-keys stmt clk state
 
 ::
 
@@ -66,7 +66,7 @@ The same as above but hide the values in the plan
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb -d demo --transformer statement mask --formatter line --include-keys stmt clk state
+   stethoscope -u monetdb -P monetdb -d demo --transformer statement mask --formatter line --include-keys stmt clk state
 
 ::
 
@@ -93,7 +93,7 @@ Pretty print the JSON object after adding statements and prerequisites
 
 .. sourcecode:: shell
 
-   pystethoscope -u monetdb -P monetdb -d demo -t statement -t prereqs -F json_pretty
+   stethoscope -u monetdb -P monetdb -d demo -t statement -t prereqs -F json_pretty
 
 ::
 

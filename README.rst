@@ -3,10 +3,10 @@
 Introduction
 ============
 
-``pystethoscope`` is a command line tool to filter and format the events coming
+``stethoscope`` is a command line tool to filter and format the events coming
 from the MonetDB profiler. The profiler is part of the MonetDB server and works
 by emitting two JSON objects: one at the start and one at the end of every MAL
-instruction executed. ``pystethoscope`` connects to a MonetDB server process,
+instruction executed. ``stethoscope`` connects to a MonetDB server process,
 reads the objects emitted by the profiler and performs various transformations
 specified by the user.
 
@@ -30,14 +30,14 @@ if you are unfamiliar) for installing and using
 Developer notes
 ===============
 
-``pystethoscope`` is developed using
+``stethoscope`` is developed using
 `Poetry <https://python-poetry.org/>`__, for dependency management and
 packaging.
 
 Installation for development
 ----------------------------
 
-In order to install ``pystethoscope`` do the following:
+In order to install ``stethoscope`` do the following:
 
 .. code:: shell
 
@@ -48,7 +48,7 @@ In order to install ``pystethoscope`` do the following:
    git clone git@github.com:MonetDBSolutions/monetdb-pystethoscope.git
    cd monetdb-pystethoscope
    poetry install
-   poetry run pystethoscope --help
+   poetry run stethoscope --help
 
 Documentation
 =============
