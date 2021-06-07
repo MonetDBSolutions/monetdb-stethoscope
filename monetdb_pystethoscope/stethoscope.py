@@ -200,9 +200,9 @@ def main():
                                type=str,
                                help="Read previously recorded stream")
     parser.add_argument('-i', '--include-keys', nargs='*',
-                        help='A list of keys to keep.')
+                        help='A space separated list of keys to keep.')
     parser.add_argument('-e', '--exclude-keys', nargs='*',
-                        help='A list of keys to exclude.')
+                        help='A space separated list of keys to exclude.')
     parser.add_argument('-l', '--pipeline', choices=['raw'],
                         help='Predefined pipelines. Overrides all other options.')
     parser.add_argument('-F', '--formatter',

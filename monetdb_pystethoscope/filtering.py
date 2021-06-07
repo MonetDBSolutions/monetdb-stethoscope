@@ -38,6 +38,11 @@ including the keys specified in the iterable `included_keys`.
         if i not in ret:
             print("Key {} not found in the JSON object".format(i),
                   file=sys.stderr)
+            if ',' in i:
+                print("Key {} contains a comma character ','. "
+                      "The --include-keys transformer expects a SPACE"
+                      " separated list of keys.".format(i),
+                      file=sys.stderr())
     return ret
 
 
