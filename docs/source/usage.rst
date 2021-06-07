@@ -17,7 +17,7 @@ The user provides the specification of the desired pipeline using the
 following options:
 
 ``--transformer`` (``--transformer/-t``)
-   ``statement``, ``prereqs``, ``obfuscate``, ``masking``, ``dummy``, and
+   ``statement``, ``prereqs``, ``obfuscate``, ``mask``, ``dummy``, and
    ``identity``. Can be specified in any order multiple times.
 ``--formatter`` (``--formatter/-F``)
    ``json``, ``json_pretty``, ``line``, and ``raw``.
