@@ -5,7 +5,7 @@ Installation is done via pip:
 
 .. code:: shell
 
-   pip install monetdb-pystethoscope
+   pip install -U monetdb-pystethoscope
 
 This project is compatible with Python 3.5 or later and MonetDB server version
 Jun2020 or later.
