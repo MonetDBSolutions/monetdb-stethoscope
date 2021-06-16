@@ -13,6 +13,8 @@ Fixed
   ``--exclude-keys (-e)`` now require at least one argument, emitting
   an error if one is not provided.
 - A number of documentation bugs.
+- A bug in the statement transformer that rendered statements
+  erroneously.
 
 Changed
 -------
