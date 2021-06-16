@@ -39,7 +39,7 @@ def statement_constructor(json_object):
     for arg in json_object.get("args", []):
         var_name = arg.get("var", "undefined")
         vtype = arg.get("type", "undefined")
-        if arg.get("ret"):
+        if arg.get("ret") is not None:
             if ret_num > 0:
                 rets += ','
                 ret_type += ','
@@ -58,13 +58,13 @@ def statement_constructor(json_object):
                 args += ','
 
             if const:
-                arg_str = "{}:{}".format(value, vtype)
+                arg_str = "{}".format(value)
             elif value is not None:
-                arg_str = "{}={}:{}".format(var_name, value, vtype)
+                arg_str = "{}={}".format(var_name, value)
             elif count is None:
-                arg_str = "{}={}:{}".format(var_name, default, vtype)
+                arg_str = "{}={}".format(var_name, default)
             else:
-                arg_str = "{}=[{}]:{}".format(var_name, count, vtype).format(var_name, count, vtype)
+                arg_str = "{}=[{}]".format(var_name, count)
             args += arg_str
 
     if operator is not None:
