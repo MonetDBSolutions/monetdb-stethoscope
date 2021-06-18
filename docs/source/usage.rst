@@ -71,12 +71,23 @@ statement
 
    .. warning::
 
-      This transformer will not work with MonetDB server versions earlier than Jun2020.
+      This transformer will not work with MonetDB server versions
+      earlier than Jun2020.
+
+   .. note::
+
+      Specifying this transformer implicitly adds the key ``stmt`` to
+      the list of included keys.
 
 prereqs
    Adds the key ``prereq`` in the JSON object. Its value is a list of program
    counter values (see section :ref:`section-mal-reference`) of MAL instructions
    that need to be completed before the current instruction can start executing.
+
+   .. note::
+
+      Specifying this transformer implicitly adds the key ``prereq``
+      to the list of included keys.
 
 
 mask
@@ -85,10 +96,13 @@ mask
 
    .. warning::
 
-      This transformer will not work with MonetDB server versions earlier than Jun2020.
+      This transformer will not work with MonetDB server versions
+      earlier than Jun2020.
 
 obfuscate
-    This transformer uses one-way functions to replace numeric values, alphabet reshuffings for strings, and replaces DDL objects with dummy names.
+    This transformer uses one-way functions to replace numeric values,
+    alphabet reshuffings for strings, and replaces DDL objects with
+    dummy names.
 
 identity
    This transformer leaves the object unchanged. In itself this is not

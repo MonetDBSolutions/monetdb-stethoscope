@@ -27,34 +27,19 @@ primer <https://realpython.com/python-virtual-environments-a-primer/>`__
 if you are unfamiliar) for installing and using
 ``monetdb-pystethoscope``.
 
-Developer notes
-===============
-
-``stethoscope`` is developed using
-`Poetry <https://python-poetry.org/>`__, for dependency management and
-packaging.
-
-Installation for development
-----------------------------
-
-In order to install ``stethoscope`` do the following:
-
-.. code:: shell
-
-   pip3 install --user poetry
-   PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
-   export PATH="$PATH:$PYTHON_BIN_PATH"
-
-   git clone git@github.com:MonetDBSolutions/monetdb-pystethoscope.git
-   cd monetdb-pystethoscope
-   poetry install
-   poetry run stethoscope --help
 
 Documentation
 =============
 
 For more detailed documentation please see the documentation on `readthedocs
 <https://monetdb-pystethoscope.readthedocs.io/en/latest/>`__.
+
+Developer notes
+---------------
+
+See the `documentation
+<https://monetdb-pystethoscope.readthedocs.io/en/latest/dev_notes.html>`__
+for instructions.
 
 .. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
 .. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-pystethoscope/actions
