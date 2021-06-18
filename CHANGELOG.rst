@@ -15,6 +15,9 @@ Fixed
 - A number of documentation bugs.
 - A bug in the statement transformer that rendered statements
   erroneously.
+- A bug in the the prerequisite transformer that would prevent the
+  computation of prerequisites for subsequent queries after the
+  first.
 
 Changed
 -------
@@ -24,7 +27,8 @@ Changed
   ``--include-keys`` and ``--exclude-keys`` being a space separated
   list and added a suggestion if a key is not found while containing
   the comma character.
-
+- Specifying the transformers ``statement`` or ``prereqs`` adds the
+  corresponding keys to the included keys list.
 
 
 `0.3.2`_ - 2021-04-26
