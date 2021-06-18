@@ -110,20 +110,30 @@ class PrerequisiteTransformer:
 
     def __call__(self, json_object):
         state = json_object.get('state', 'NA')
+        rdict = dict(json_object)
 
         if state == 'done':
             pc = json_object.get('pc')
-            rdict = dict(json_object)
             rdict['prereq'] = self._resolved_prereqs.get(pc, [])
             return rdict
-        elif state != 'start':
+        elif state == 'start':
+            pc = json_object.get('pc', -1)
+            if pc == 0:
+                # Reset symbol table at the start of a query (pc==0 &&
+                # state=='start').
+                self._var_to_pc = dict()
+                self._resolved_prereqs = dict()
+                rdict['prereq'] = list()
+                return rdict
+        else:
             print("PrerequisiteTransformer cannot handle state {}"
                   .format(state), file=sys.stderr)
             return json_object
 
         op = json_object.get('operator')
         if op and op in self._ignore_ops:
-            return json_object
+            rdict['prereq'] = list()
+            return rdict
 
         self.install_return_values(json_object)
         return self.find_prerequisites(json_object)
@@ -183,7 +193,7 @@ class PrerequisiteTransformer:
         if prereqs:
             pc = json_object.get('pc')
             self._resolved_prereqs[pc] = prereqs
-            rdict["prereq"] = prereqs
+        rdict["prereq"] = prereqs
 
         return rdict
 
