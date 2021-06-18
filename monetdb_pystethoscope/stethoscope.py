@@ -126,6 +126,9 @@ def stethoscope(args):
                     break
 
             try:
+                # Ignore empty lines
+                if len(s) == 0:
+                    continue
                 # Parse line as a JSON object
                 json_object = parse_operator(s)
             except json.JSONDecodeError as pe:
