@@ -40,6 +40,7 @@ def stethoscope(args):
     transformers = list()
 
     stmt = False
+    prereqs = False
     idx = 0
     for t in args.transformer:
         if t == 'statement':
@@ -48,6 +49,7 @@ def stethoscope(args):
             transformers.append(api.statement_constructor)
         elif t == 'prereqs':
             transformers.append(api.PrerequisiteTransformer())
+            prereqs = True
         elif t == 'dummy':
             transformers.append(api.dummy_constructor)
         elif t == 'identity':
@@ -69,6 +71,10 @@ def stethoscope(args):
         idx += 1
 
     if args.include_keys:
+        if stmt:
+            args.include_keys.append("stmt")
+        if prereqs:
+            args.include_keys.append("prereq")
         key_filter_operator = api.include_filter(args.include_keys)
     elif args.exclude_keys:
         key_filter_operator = api.exclude_filter(args.exclude_keys)
