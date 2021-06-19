@@ -243,6 +243,7 @@ def main():
                         help="The password used to connect to the database")
     parser.add_argument('-p', '--port', default=50000, type=int,
                         help="The port on which the MonetDB server is listening.")
+    parser.add_argument('-v', '--version', action='version', version=desc)
 
     arguments = parser.parse_args()
     stethoscope(arguments)
