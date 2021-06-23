@@ -42,6 +42,7 @@ def stethoscope(args):
     stmt = False
     prereqs = False
     idx = 0
+    stmt_idx = 0
     for t in args.transformer:
         if t == 'statement':
             stmt = True
@@ -109,47 +110,28 @@ def stethoscope(args):
     if args.output != "stdout":
         out_file = open(args.output, "w")
 
+    s = ""
     while True:
         try:
             # Read line from source. If an error happens while reading input
             # bail out.
             if inputfile:
-                try:
-                    s = inputfile.readline()
-                    if not s:
-                        break
-                except IOError as ioe:
-                    print("IO error {} while reading from file".format(ioe))
+                s = inputfile.readline()
+                if not s:
                     break
+            elif cnx is not None:
+                s = cnx.read_object()
             else:
-                try:
-                    s = cnx.read_object()
-                except api.OperationalError as oe:
-                    print(
-                        "Got an Operational Error from the database: {}".format(oe),
-                        file=sys.stderr
-                    )
-                    break
+                print("Invalid connection AND input file. How did this happen?",
+                        file=sys.stderr)
+                s = ""
+                break
 
-            try:
-                # Ignore empty lines
-                if len(s) == 0:
-                    continue
-                # Parse line as a JSON object
-                json_object = parse_operator(s)
-            except json.JSONDecodeError as pe:
-                # Could not parse json object. Inform the user, taking care not to
-                # leak data we should not, and continue with the next object in the
-                # stream.
-                msg = json.dumps(json_object, indent=2)
-                if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
-                    msg = "***"
-                print(
-                    "Parse error while parsing {} ({})".format(msg, pe),
-                    file=sys.stderr
-                )
-                if DEVELOPMENT__:
-                    raise
+            # Ignore empty lines
+            if len(s) == 0:
+                continue
+            # Parse line as a JSON object
+            json_object = parse_operator(s)
 
             # Apply transformers to JSON object
             for t in transformers:
@@ -179,7 +161,31 @@ def stethoscope(args):
             # if 'pc' in json_object:
             #    lastpc = json_object['pc']
 
-        except KeyboardInterrupt as kin:
+        except IOError as ioe:
+            print("IO error {} while reading from file".format(ioe))
+            break
+        except api.OperationalError as oe:
+            print(
+                "Got an Operational Error from the database: {}".format(oe),
+                file=sys.stderr
+            )
+            break
+        except json.JSONDecodeError as pe:
+            # Could not parse json object. Inform the user, taking care not to
+            # leak data we should not, and continue with the next object in the
+            # stream.
+            msg = s
+            if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
+                msg = "***"
+            print(
+                "Parse error while parsing {} ({})".format(msg, pe),
+                file=sys.stderr
+            )
+            if DEVELOPMENT__:
+                raise
+            else:
+                continue
+        except KeyboardInterrupt:
             print("Received a keyboard interupt. Shutting down...")
             break
         except Exception as e:
@@ -187,7 +193,7 @@ def stethoscope(args):
             # crashing report it to the user, taking care not leak data we
             # should not, and attempt to continue the execution. In the worst
             # case we will fail for the rest of the stream.
-            msg = json.dumps(json_object, indent=2)
+            msg = s
             if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
             print(
