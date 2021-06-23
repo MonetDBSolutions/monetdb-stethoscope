@@ -6,7 +6,11 @@
 """Tools for changing (adding information) the profiler objects."""
 
 import json
+import logging
 import sys
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def statement_constructor(json_object):
@@ -126,8 +130,7 @@ class PrerequisiteTransformer:
                 rdict['prereq'] = list()
                 return rdict
         else:
-            print("PrerequisiteTransformer cannot handle state {}"
-                  .format(state), file=sys.stderr)
+            LOGGER.error("PrerequisiteTransformer cannot handle state %s", state)
             return json_object
 
         op = json_object.get('operator')
@@ -141,17 +144,14 @@ class PrerequisiteTransformer:
     def lookup(self, variable):
         pc = self._var_to_pc.get(variable)
         if pc is None:
-            print("Variable {} not found in lookup table".format(variable),
-                  file=sys.stderr)
+            LOGGER.error("Variable %s not found in lookup table", variable)
 
         return pc
 
     def install(self, variable, pc):
         if variable in self._var_to_pc:
-            print("Variable {} already in lookup table: pc={}"
-                  .format(variable, self._var_to_pc[variable]),
-                  file=sys.stderr)
-            print("This will produce incorrect prerequisites!", file=sys.stderr)
+            LOGGER.error("Variable %s already in lookup table: pc=%s", variable, self._var_to_pc[variable])
+            LOGGER.error("This will produce incorrect prerequisites!")
         self._var_to_pc[variable] = pc
 
     def install_return_values(self, json_object):
@@ -166,10 +166,8 @@ class PrerequisiteTransformer:
             if pc and vname:
                 self.install(vname, pc)
             else:
-                print("pc or return variable undefined in {}"
-                      .format(json_object),
-                      file=sys.stderr)
-                print("Ignoring", file=sys.stderr)
+                LOGGER.error("pc or return variable undefined in %s", json_object)
+                LOGGER.error("Ignoring", file=sys.stderr)
                 return
 
     def find_prerequisites(self, json_object):
@@ -186,9 +184,8 @@ class PrerequisiteTransformer:
             if pc:
                 prereqs.append(pc)
             else:
-                print("Variable {} not in lookup table: {}"
-                      .format(var, json.dumps(json_object, indent=2)),
-                      file=sys.stderr)
+                LOGGER.error("Variable %s not in lookup table: %s",
+                        var, json.dumps(json_object, indent=2))
 
         if prereqs:
             pc = json_object.get('pc')

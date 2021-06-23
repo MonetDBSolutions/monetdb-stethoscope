@@ -3,9 +3,13 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
+import logging
 import re
 import random
 from monetdb_pystethoscope import DEVELOPMENT__
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class ObfuscateTransformer:
@@ -66,7 +70,7 @@ class ObfuscateTransformer:
     def __call__(self, json_object):
         rdict = dict(json_object)
         if DEVELOPMENT__:
-            print("OBFUSCATE", rdict)
+            LOGGER.debug("OBFUSCATE %s", rdict)
         varlist = rdict.get("args", [])
 
         # hunt for the alias properties and replace them everywhere
@@ -201,25 +205,25 @@ class ObfuscateTransformer:
             return original.strip()
         res = '"' + self.obfuscate_object(original, 'sch') + '"'
         if DEVELOPMENT__:
-            print('OBFUSCATE SHEMA ', original, res)
+            LOGGER.debug('OBFUSCATE SHEMA %s %s', original, res)
         return res
 
     def obfuscate_table(self, original):
         res = self.obfuscate_object(original, 'tbl')
         if DEVELOPMENT__:
-            print('OBFUSCATE TABLE ', original, res)
+            LOGGER.debug('OBFUSCATE TABLE %s %s', original, res)
         return res
 
     def obfuscate_column(self, original):
         res = self.obfuscate_object(original, 'col')
         if DEVELOPMENT__:
-            print('OBFUSCATE COLUMN ', original, res)
+            LOGGER.debug('OBFUSCATE COLUMN ', original, res)
         return res
 
     def obfuscate_procedure(self, original):
         res = self.obfuscate_object(original, 'proc')
         if DEVELOPMENT__:
-            print('OBFUSCATE PROCEDURE ', original, res)
+            LOGGER.debug('OBFUSCATE PROCEDURE ', original, res)
         return res
 
     def obfuscate_file(self, original):
@@ -232,7 +236,7 @@ class ObfuscateTransformer:
             return comp[1]
         res = self.obfuscate_object(original, 'file')
         if DEVELOPMENT__:
-            print('OBFUSCATE FILE ', original, res)
+            LOGGER.debug('OBFUSCATE FILE ', original, res)
         return res
 
     def obfuscate_variable(self, arg):
@@ -242,14 +246,14 @@ class ObfuscateTransformer:
             return original
         res = self.obfuscate_object(original, 'var')
         if DEVELOPMENT__:
-            print('OBFUSCATE VARIABLE ', original, res)
+            LOGGER.debug('OBFUSCATE VARIABLE ', original, res)
         return res
 
     def obfuscate_string(self, original):
         # keep the length of the string, map all non-white characters
         if not original:
             if DEVELOPMENT__:
-                print('OBFUSCATE STRING ', original, 'None')
+                LOGGER.debug('OBFUSCATE STRING ', original, 'None')
             return ''
         if original in ['gdk_dbpath', 'mapi_port', 'sql_optimizer', 'sql_debug', 'raw_strings',
                         'merovingian_uri', 'map_listenaddr', 'mapi_socket', 'monet_vault_key',
@@ -267,7 +271,7 @@ class ObfuscateTransformer:
         picked = '"' + ''.join([secret[ord(c) % len(secret)] for c in original]) + '"'
         self.mapping.update({original: picked})
         if DEVELOPMENT__:
-            print('OBFUSCATE STRING ', original, picked)
+            LOGGER.debug('OBFUSCATE STRING ', original, picked)
         return picked
 
     # temporal element are characterwise morphed creating wrong months..days...
@@ -285,7 +289,7 @@ class ObfuscateTransformer:
                     m = int(c) + secret
                     new.append("%d" % m)
                 except ValueError as msg:
-                    print('ERROR TEMPORAL', msg)
+                    LOGGER.error('ERROR TEMPORAL %s', msg)
                     new.append(c)
             else:
                 new.append(c)
@@ -315,13 +319,13 @@ class ObfuscateTransformer:
                 picked = int(original) * self.secrets[tpe]
                 self.mapping.update({original: picked})
             except ValueError as msg:
-                print('ERROR', original, msg)
+                LOGGER.error('ERROR %s %s', original, msg)
         elif tpe in ["flt", "dbl"]:
             try:
                 picked = float(original) * self.secrets[tpe]
                 self.mapping.update({original: picked})
             except ValueError as msg:
-                print('ERROR', original, msg)
+                LOGGER.error('ERROR %s %s', original, msg)
         elif tpe in ["oid", "void"]:
             picked = original
         elif tpe in ["date", "daytime", "time", "timestamp", "timezone"]:
@@ -438,5 +442,5 @@ class ObfuscateTransformer:
         picked = ''.join(nqry)
 
         if DEVELOPMENT__:
-            print('OBFUSCATE QUERY ', original,"\n", picked)
+            LOGGER.debug('OBFUSCATE QUERY %s\n%s', original, picked)
         return picked

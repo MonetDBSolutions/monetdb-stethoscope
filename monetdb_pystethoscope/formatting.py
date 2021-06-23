@@ -5,8 +5,8 @@
 
 """Utilities for formatting and outputting records."""
 
-import json
 import io
+import json
 
 
 def line_formatter(dct):
@@ -19,7 +19,7 @@ Values in `dct` are written one after the other, separated by the string
     output = io.StringIO()
     print("[", end="", file=output)
     first = True
-    for k, v in dct.items():
+    for v in dct.values():
         if first:
             print("{}".format(v), end="", file=output)
             first = False

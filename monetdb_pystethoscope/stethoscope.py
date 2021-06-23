@@ -6,12 +6,16 @@
 """This is the implementation of stethoscope, a tool to interact with MonetDB
 profiler streams."""
 
-import json
-import sys
 import argparse
+import json
+import logging
+import logging.config
+import sys
 from monetdb_pystethoscope import __version__
 import monetdb_pystethoscope.api as api
 from monetdb_pystethoscope import DEVELOPMENT__
+
+LOGGER = logging.getLogger(__name__)
 
 
 def stethoscope(args):
@@ -22,13 +26,14 @@ def stethoscope(args):
         try:
             inputfile = open(args.input, "r")
         except IOError as msg:
-            print("Could not open '{}':{}".format(args.input, msg))
+            LOGGER.error("Could not open '%s':%s", args.input, msg)
             exit(1)
     if not inputfile:
         cnx = api.StethoscopeProfilerConnection()
         cnx.connect(args.database, username=args.username, password=args.password,
                     hostname=args.hostname, port=args.port, heartbeat=0)
-        print("Connected to the database: {}".format(args.database), file=sys.stderr)
+        # Do not use the logger here. The user needs to see this.
+        print("Connected to database:", args.database, file=sys.stderr)
     else:
         cnx = None
 
@@ -67,7 +72,7 @@ def stethoscope(args):
             if stmt:
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         else:
-            print("Unknown transformer {}. Ignoring.", file=sys.stderr)
+            LOGGER.warning("Unknown transformer %s. Ignoring.", t)
             continue
         idx += 1
 
@@ -93,14 +98,11 @@ def stethoscope(args):
 
     if args.pipeline == 'raw':
         if args.include_keys or args.exclude_keys:
-            print("Ignoring key filter operation because --raw was specified",
-                  file=sys.stderr)
+            LOGGER.warning("Ignoring key filter operation because --raw was specified")
         if args.formatter:
-            print("Ignoring formatter because --raw was specified",
-                  file=sys.stderr)
+            LOGGER.warning("Ignoring formatter because --raw was specified")
         if transformers:
-            print("Ignoring transformers because --raw was specified",
-                  file=sys.stderr)
+            LOGGER.warning("Ignoring transformers because --raw was specified")
 
         transformers = list()
         key_filter_operator = api.identity_filter()
@@ -122,14 +124,13 @@ def stethoscope(args):
             elif cnx is not None:
                 s = cnx.read_object()
             else:
-                print("Invalid connection AND input file. How did this happen?",
-                        file=sys.stderr)
-                s = ""
+                LOGGER.error("Invalid connection AND input file. How did this happen?")
                 break
 
             # Ignore empty lines
             if len(s) == 0:
                 continue
+
             # Parse line as a JSON object
             json_object = parse_operator(s)
 
@@ -162,13 +163,10 @@ def stethoscope(args):
             #    lastpc = json_object['pc']
 
         except IOError as ioe:
-            print("IO error {} while reading from file".format(ioe))
+            LOGGER.error("IO error %s while reading from file", ioe)
             break
         except api.OperationalError as oe:
-            print(
-                "Got an Operational Error from the database: {}".format(oe),
-                file=sys.stderr
-            )
+            LOGGER.error("Got an Operational Error from the database: %s", oe)
             break
         except json.JSONDecodeError as pe:
             # Could not parse json object. Inform the user, taking care not to
@@ -177,16 +175,13 @@ def stethoscope(args):
             msg = s
             if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
-            print(
-                "Parse error while parsing {} ({})".format(msg, pe),
-                file=sys.stderr
-            )
+            LOGGER.error( "Parse error while parsing %s (%s)", msg, pe)
             if DEVELOPMENT__:
                 raise
-            else:
-                continue
         except KeyboardInterrupt:
-            print("Received a keyboard interupt. Shutting down...")
+            # Do not log, notify user.
+            print("Received a keyboard interupt. Shutting down...",
+                    file=sys.stderr)
             break
         except Exception as e:
             # An exception that we did not account for happened. Instead of
@@ -196,10 +191,7 @@ def stethoscope(args):
             msg = s
             if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
-            print(
-                "Failed operating on {} ({})".format(msg, e),
-                file=sys.stderr
-            )
+            LOGGER.error("Failed operating on %s (%s)", msg, e)
             # Actually if we are in development do crash.
             if DEVELOPMENT__:
                 raise
@@ -249,9 +241,40 @@ def main():
                         help="The password used to connect to the database")
     parser.add_argument('-p', '--port', default=50000, type=int,
                         help="The port on which the MonetDB server is listening.")
+    parser.add_argument('-V', '--verbose', action='store_true',
+                        help='Show more warnings/error messages')
     parser.add_argument('-v', '--version', action='version', version=desc)
 
     arguments = parser.parse_args()
+
+    logger_configuration = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'precise'
+            },
+            'file': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': 'stethoscope.log',
+                'maxBytes': 10*1024*1024,
+                'backupCount': 3,
+                'formatter': 'precise'
+            },
+        },
+       'formatters': {
+            'precise': {
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            }
+        },
+        'root': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+        },
+    }
+    logging.config.dictConfig(logger_configuration)
+
     stethoscope(arguments)
 
 

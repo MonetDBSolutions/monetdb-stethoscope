@@ -6,8 +6,12 @@
 """Tools used for parsing the MonetDB profiler output"""
 
 import json
-import sys
+import logging
+
 from monetdb_pystethoscope.utilities import identity_function
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def parser_wrapper(json_str):
@@ -15,8 +19,7 @@ def parser_wrapper(json_str):
     try:
         return json.loads(json_str)
     except Exception as e:
-        print("Parsing failed for {} ({})".format(json_str, e),
-              file=sys.stderr)
+        LOGGER.error("Parsing failed for %s (%s)", json_str, e)
         return dict()
 
 
