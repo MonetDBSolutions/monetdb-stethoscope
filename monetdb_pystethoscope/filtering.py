@@ -6,7 +6,6 @@
 "Tools useful for filtering JSON objects based on keys."
 
 import logging
-import sys
 from monetdb_pystethoscope.utilities import identity_function
 
 
@@ -40,11 +39,13 @@ including the keys specified in the iterable `included_keys`.
     ret = {k: v for (k, v) in json_object.items() if k in included_keys}
     for i in included_keys:
         if i not in ret:
-            LOGGER.warning("Key '{}' not found in the JSON object".format(i))
+            LOGGER.warning("Key '%s' not found in the JSON object", i, 
+                           extra={'id': 'key-not-found {}'.format(i)})
             if ',' in i:
-                LOGGER.warning("Key {} contains a comma character ','. "
+                LOGGER.warning("Key '%s' contains a comma character ','. "
                                "The --include-keys transformer expects a SPACE"
-                               " separated list of keys.".format(i))
+                               " separated list of keys.",i,
+                               extra={'id': 'key-contains-comma {}'.format(i)})
     return ret
 
 

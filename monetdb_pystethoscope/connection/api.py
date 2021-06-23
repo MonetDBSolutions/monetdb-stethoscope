@@ -27,14 +27,14 @@ class StethoscopeProfilerConnection(object):
 
     def _command(self, operation):
         if self._mapi.state != mapi.STATE_READY:
-            raise (ProgrammingError, "Not connected")
+            raise ProgrammingError("Not connected")
         self._mapi._putblock(operation)
 
     def _response(self):
         r = self._mapi._getblock()
 
         if not r or len(r) == 0:
-            pass # nothing to do
+            pass  # nothing to do
         elif r.startswith("{") and len(self._buffer) == 0:
             self._buffer = r
         else:
@@ -48,7 +48,7 @@ class StethoscopeProfilerConnection(object):
         try:
             self._command("profiler.openstream();\n")
             self._response()
-        except OperationalError as e:
+        except OperationalError:
             # We might be talking to an older version of MonetDB. Try connecting
             # the old way.
             # LOGGER.warning("Connection failed. Attempting to connect using the old API.")

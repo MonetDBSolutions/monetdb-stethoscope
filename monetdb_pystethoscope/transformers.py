@@ -184,8 +184,7 @@ class PrerequisiteTransformer:
             if pc:
                 prereqs.append(pc)
             else:
-                LOGGER.error("Variable %s not in lookup table: %s",
-                        var, json.dumps(json_object, indent=2))
+                LOGGER.error("Variable %s not in lookup table: %s", var, json.dumps(json_object, indent=2))
 
         if prereqs:
             pc = json_object.get('pc')

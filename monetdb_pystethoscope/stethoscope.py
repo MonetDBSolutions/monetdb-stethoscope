@@ -33,7 +33,7 @@ def stethoscope(args):
         cnx.connect(args.database, username=args.username, password=args.password,
                     hostname=args.hostname, port=args.port, heartbeat=0)
         # Do not use the logger here. The user needs to see this.
-        print("Connected to database:", args.database, file=sys.stderr)
+        LOGGER.info("Connected to database: %s", args.database)
     else:
         cnx = None
 
@@ -175,13 +175,12 @@ def stethoscope(args):
             msg = s
             if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
-            LOGGER.error( "Parse error while parsing %s (%s)", msg, pe)
+            LOGGER.error("Parse error while parsing %s (%s)", msg, pe)
             if DEVELOPMENT__:
                 raise
         except KeyboardInterrupt:
             # Do not log, notify user.
-            print("Received a keyboard interupt. Shutting down...",
-                    file=sys.stderr)
+            LOGGER.info("Received a keyboard interupt. Shutting down...")
             break
         except Exception as e:
             # An exception that we did not account for happened. Instead of
@@ -196,12 +195,69 @@ def stethoscope(args):
             if DEVELOPMENT__:
                 raise
 
+class NvFilter(logging.Filter):
+    """A filter to show each warning only once"""
+    def __init__(self):
+        self.already_shown = set()
+
+    def filter(self, record):
+        ret = True
+        rid = record.__dict__.get("id")
+        if rid is not None:
+            ret = not rid in self.already_shown
+            self.already_shown.add(rid)
+
+        return ret
+
+def logging_configuration(args):
+    logger_configuration = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'non-verbose-filter': {
+                '()': NvFilter,
+
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'precise',
+                'filters': []
+            },
+            'file': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': 'stethoscope.log',
+                'maxBytes': 10 * 1024 * 1024,
+                'backupCount': 3,
+                'formatter': 'precise',
+                'filters': []
+            },
+        },
+        'formatters': {
+            'precise': {
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            }
+        },
+        'root': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+        },
+    }
+
+    logger_configuration['root']['level'] = args.log_level.upper()
+    if not args.verbose:
+        logger_configuration['handlers']['console']['filters'].append('non-verbose-filter')
+
+    logging.config.dictConfig(logger_configuration)
+
 
 def main():
     desc = "MonetDB profiling tool\n{} version {}".format(sys.argv[0], __version__)
     parser = argparse.ArgumentParser(description=desc)
     input_options = parser.add_mutually_exclusive_group(required=True)
     input_options.add_argument('-d', '--database',
+                               type=str,
                                help='The database to connect to')
     input_options.add_argument('-I', '--input',
                                type=str,
@@ -243,37 +299,20 @@ def main():
                         help="The port on which the MonetDB server is listening.")
     parser.add_argument('-V', '--verbose', action='store_true',
                         help='Show more warnings/error messages')
+    parser.add_argument('-L', '--log-level',
+                        choices=[
+                            'debug',
+                            'info',
+                            'warning',
+                            'error',
+                            'critical',
+                        ], default='info',
+                        help='The logging level')
+    parser.add_argument('-c', '--console', action='store_true', default=True)
     parser.add_argument('-v', '--version', action='version', version=desc)
 
     arguments = parser.parse_args()
-
-    logger_configuration = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'precise'
-            },
-            'file': {
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': 'stethoscope.log',
-                'maxBytes': 10*1024*1024,
-                'backupCount': 3,
-                'formatter': 'precise'
-            },
-        },
-       'formatters': {
-            'precise': {
-                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            }
-        },
-        'root': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-        },
-    }
-    logging.config.dictConfig(logger_configuration)
+    logging_configuration(arguments)
 
     stethoscope(arguments)
 
