@@ -6,7 +6,7 @@
 "Tools useful for filtering JSON objects based on keys."
 
 import logging
-from monetdb_pystethoscope.utilities import identity_function
+from stethoscope.utilities import identity_function
 
 
 LOGGER = logging.getLogger(__name__)

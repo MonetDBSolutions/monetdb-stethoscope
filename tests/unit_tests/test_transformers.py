@@ -5,7 +5,7 @@
 
 from json import loads
 import pytest
-from monetdb_pystethoscope import transformers
+from stethoscope import transformers
 
 
 @pytest.fixture
