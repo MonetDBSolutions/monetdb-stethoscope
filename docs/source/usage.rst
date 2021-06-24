@@ -49,6 +49,30 @@ output (``--output/-o filename``)
    The file where ``stethoscope`` will write its output. If this is omitted,
    the output will be written to the standard output.
 
+Logging and reporting options
+-----------------------------
+
+During the processing of JSON objects errors and warnings might be
+reported. Normally these are handled and emitted separately for each
+object, but in order to reduce noise, stethoscope by default will
+dispaly the message just the first time it is emitted.
+
+The default configuration outputs events through the python logging
+framework. By default it uses the the console logger. The following
+options contol the behavior of logging.
+
+``--verbose/-V``
+    Show all error and warnings.
+
+``--no-console/-C``
+    Disable logging to the console.
+
+``--log-file/-O filename``
+    Write log events to ``filename``. Logging in a file logs all the
+    events.
+
+
+
 Reading and Parsing
 -------------------
 
