@@ -7,6 +7,12 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Added
+-----
+- A ``--version`` option.
+- Switches for controlling logging: ``--verbose``, ``--no-console``
+  and ``--log-file``.
+
 Fixed
 -----
 - The options ``--transformer (-t)``, ``--include-keys (-i)`` and
@@ -29,7 +35,8 @@ Changed
   the comma character.
 - Specifying the transformers ``statement`` or ``prereqs`` adds the
   corresponding keys to the included keys list.
-
+- Errors and warnings are now reported using the ``logging`` package from the
+  python standard library.
 
 `0.3.2`_ - 2021-04-26
 =====================
@@ -88,6 +95,7 @@ Fixed
 -----
 - A bug in the statement constructor (`#13
   <https://github.com/MonetDBSolutions/monetdb-pystethoscope/issues/13>`__)
+
 Added
 -----
 - An API for connecting to the MonetDB server profiler.
