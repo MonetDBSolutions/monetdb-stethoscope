@@ -233,6 +233,9 @@ def logging_configuration(args):
                 'formatter': 'precise',
                 'filters': []
             },
+            'null': {
+                'class': 'logging.NullHandler',
+            },
         },
         'formatters': {
             'precise': {
@@ -240,14 +243,22 @@ def logging_configuration(args):
             }
         },
         'root': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console', 'null'],
             'level': 'WARNING',
         },
     }
 
     logger_configuration['root']['level'] = args.log_level.upper()
+    if args.log_file:
+        logger_configuration['root']['handlers'].append('file')
+        logger_configuration['handlers']['file']['filename'] = args.log_file
+
+    if args.no_console:
+        logger_configuration['root']['handlers'].remove('console')
+
     if not args.verbose:
         logger_configuration['handlers']['console']['filters'].append('non-verbose-filter')
+
 
     logging.config.dictConfig(logger_configuration)
 
@@ -308,7 +319,9 @@ def main():
                             'critical',
                         ], default='info',
                         help='The logging level')
-    parser.add_argument('-c', '--console', action='store_true', default=True)
+    parser.add_argument('-C', '--no-console', action='store_true', default=False,
+                        help='')
+    parser.add_argument('-O', '--log-file', help='The file where logging output will be written.')
     parser.add_argument('-v', '--version', action='version', version=desc)
 
     arguments = parser.parse_args()
