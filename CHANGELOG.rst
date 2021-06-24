@@ -12,6 +12,11 @@ Added
 - A ``--version`` option.
 - Switches for controlling logging: ``--verbose``, ``--no-console``
   and ``--log-file``.
+- Support for Python 3.9.
+
+Removed
+-------
+- Support for Python 3.5.
 
 Fixed
 -----
@@ -37,6 +42,8 @@ Changed
   corresponding keys to the included keys list.
 - Errors and warnings are now reported using the ``logging`` package from the
   python standard library.
+- The name of the python package from ``monetdb_pystethoscope`` to
+  ``stethoscope``.
 
 `0.3.2`_ - 2021-04-26
 =====================
