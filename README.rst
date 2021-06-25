@@ -17,9 +17,9 @@ Installation is done via pip:
 
 .. code:: shell
 
-   pip install -U monetdb-pystethoscope
+   pip install -U monetdb-stethoscope
 
-This project is compatible with Python 3.5 or later and with MonetDB server
+This project is compatible with Python 3.6 or later and with MonetDB server
 version Jun2020 or later.
 
 We recommend the use of virtual environments (see `this
@@ -47,5 +47,5 @@ for instructions.
 .. _DocsBadge: https://monetdb-pystethoscope.readthedocs.io/en/latest/?badge=latest
 .. |CoverageBadge| image:: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope/branch/master/graph/badge.svg
 .. _CoverageBadge: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope
-.. |PyPIBadge| image:: https://img.shields.io/pypi/v/monetdb-pystethoscope.svg
-.. _PyPIBadge: https://pypi.org/project/monetdb-pystethoscope/
+.. |PyPIBadge| image:: https://img.shields.io/pypi/v/monetdb-stethoscope.svg
+.. _PyPIBadge: https://pypi.org/project/monetdb-stethoscope/
