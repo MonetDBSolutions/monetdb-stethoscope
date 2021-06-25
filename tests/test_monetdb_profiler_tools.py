@@ -3,7 +3,7 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
-from stethoscope import __version__
+from monetdb_stethoscope import __version__
 
 
 def test_version():

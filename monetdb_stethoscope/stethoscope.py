@@ -11,10 +11,9 @@ import json
 import logging
 import logging.config
 import sys
-from stethoscope import __version__
-import stethoscope.api as api
-from stethoscope import DEVELOPMENT__
-
+from monetdb_stethoscope import __version__
+import monetdb_stethoscope.api as api
+from monetdb_stethoscope import DEVELOPMENT__
 
 LOGGER = logging.getLogger(__name__)
 

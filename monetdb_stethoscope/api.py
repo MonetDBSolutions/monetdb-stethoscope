@@ -7,13 +7,13 @@
 
 You can use this module to import any part of the API. For example in order to
 import the function ``json_parser`` you would do
-``from stethoscope.api import json_parser``.
+``from monetdb_stethoscope.api import json_parser``.
 
 """
 
-from stethoscope.connection.api import *
-from stethoscope.parsing import *
-from stethoscope.filtering import *
-from stethoscope.transformers import *
-from stethoscope.formatting import *
-from stethoscope.obfuscation import *
+from monetdb_stethoscope.connection.api import *
+from monetdb_stethoscope.parsing import *
+from monetdb_stethoscope.filtering import *
+from monetdb_stethoscope.transformers import *
+from monetdb_stethoscope.formatting import *
+from monetdb_stethoscope.obfuscation import *

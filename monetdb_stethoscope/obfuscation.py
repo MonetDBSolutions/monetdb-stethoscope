@@ -6,7 +6,7 @@
 import logging
 import re
 import random
-from stethoscope import DEVELOPMENT__
+from monetdb_stethoscope import DEVELOPMENT__
 
 
 LOGGER = logging.getLogger(__name__)

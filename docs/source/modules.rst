@@ -3,34 +3,34 @@ Modules
 
 API
 ---
-.. automodule:: stethoscope.api
+.. automodule:: monetdb_stethoscope.api
 
 Connection
 ----------
-.. automodule:: stethoscope.connection.api
+.. automodule:: monetdb_stethoscope.connection.api
     :members:
 
 Filtering
 ---------
-.. automodule:: stethoscope.filtering
+.. automodule:: monetdb_stethoscope.filtering
     :members:
 
 Formatting
 ----------
-.. automodule:: stethoscope.formatting
+.. automodule:: monetdb_stethoscope.formatting
     :members:
 
 Parsing
 -------
-.. automodule:: stethoscope.parsing
+.. automodule:: monetdb_stethoscope.parsing
     :members:
 
 Transformers
 ------------
-.. automodule:: stethoscope.transformers
+.. automodule:: monetdb_stethoscope.transformers
     :members:
 
 Utilities
 ---------
-.. automodule:: stethoscope.utilities
+.. automodule:: monetdb_stethoscope.utilities
     :members:
