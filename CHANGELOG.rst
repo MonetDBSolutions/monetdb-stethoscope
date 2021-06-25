@@ -43,7 +43,7 @@ Changed
 - Errors and warnings are now reported using the ``logging`` package from the
   python standard library.
 - The name of the python package from ``monetdb_pystethoscope`` to
-  ``stethoscope``.
+  ``monetdb_stethoscope``.
 
 `0.3.2`_ - 2021-04-26
 =====================
