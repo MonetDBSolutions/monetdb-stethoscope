@@ -21,8 +21,7 @@ jobs:
         poetry install
     - name: Publish on PyPI
       env:
-        # PYPI_TOKEN: ${{ secrets.PYPI_PYSTETHOSCOPE_PUBLISH_TOKEN }}
-        PYPI_TOKEN: ${{ secrets.PYPI_NEW_PROJECT }}
+        PYPI_TOKEN: ${{ secrets.PYPI_MONETDB_STETHOSCOPE }}
         TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
       run: |
         poetry config repositories.testpypi https://test.pypi.org/legacy/
