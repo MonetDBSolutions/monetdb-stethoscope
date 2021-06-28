@@ -32,7 +32,7 @@ Documentation
 =============
 
 For more detailed documentation please see the documentation on `readthedocs
-<https://monetdb-solutions-monetdb-stethoscope.readthedocs.io/en/latest/>`__.
+<https://monetdb-solutions-monetdb-stethoscope.readthedocs-hosted.com/en/latest/>`__.
 
 Developer notes
 ---------------
@@ -43,8 +43,8 @@ for instructions.
 
 .. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-stethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
 .. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-stethoscope/actions
-.. |DocsBadge| image:: https://readthedocs.org/projects/monetdb-stethoscope/badge/?version=latest
-.. _DocsBadge: https://monetdb-stethoscope.readthedocs.io/en/latest/?badge=latest
+.. |DocsBadge| image:: https://readthedocs.com/projects/monetdb-solutions-monetdb-stethoscope/badge/?version=latest&token=c659c74db0e19ebd763adc2d217404f48588e223dcc84b24583446a1f86fcc83
+.. _DocsBadge: https://monetdb-solutions-monetdb-stethoscope.readthedocs-hosted.com/en/latest/?badge=latest
 .. |CoverageBadge| image:: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope/branch/master/graph/badge.svg
 .. _CoverageBadge: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope
 .. |PyPIBadge| image:: https://img.shields.io/pypi/v/monetdb-stethoscope.svg
