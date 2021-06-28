@@ -4,7 +4,7 @@ version = "0.4.0"
 description = "MonetDB profiler connection tool"
 readme = "README.rst"
 authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
-repository = "https://github.com/MonetDBSolutions/monetdb-pystethoscope"
+repository = "https://github.com/MonetDBSolutions/monetdb-stethoscope"
 
 [tool.poetry.dependencies]
 python = "^3.5"

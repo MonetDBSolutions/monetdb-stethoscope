@@ -25,26 +25,26 @@ version Jun2020 or later.
 We recommend the use of virtual environments (see `this
 primer <https://realpython.com/python-virtual-environments-a-primer/>`__
 if you are unfamiliar) for installing and using
-``monetdb-pystethoscope``.
+``monetdb-stethoscope``.
 
 
 Documentation
 =============
 
 For more detailed documentation please see the documentation on `readthedocs
-<https://monetdb-pystethoscope.readthedocs.io/en/latest/>`__.
+<https://monetdb-solutions-monetdb-stethoscope.readthedocs.io/en/latest/>`__.
 
 Developer notes
 ---------------
 
 See the `documentation
-<https://monetdb-pystethoscope.readthedocs.io/en/latest/dev_notes.html>`__
+<https://monetdb-solutions-monetdb-stethoscope.readthedocs-hosted.com/en/latest/>`__
 for instructions.
 
-.. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-pystethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
-.. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-pystethoscope/actions
-.. |DocsBadge| image:: https://readthedocs.org/projects/monetdb-pystethoscope/badge/?version=latest
-.. _DocsBadge: https://monetdb-pystethoscope.readthedocs.io/en/latest/?badge=latest
+.. |ActionsBadge| image:: https://github.com/MonetDBSolutions/monetdb-stethoscope/workflows/Test%20pystethoscope/badge.svg?branch=master
+.. _ActionsBadge: https://github.com/MonetDBSolutions/monetdb-stethoscope/actions
+.. |DocsBadge| image:: https://readthedocs.org/projects/monetdb-stethoscope/badge/?version=latest
+.. _DocsBadge: https://monetdb-stethoscope.readthedocs.io/en/latest/?badge=latest
 .. |CoverageBadge| image:: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope/branch/master/graph/badge.svg
 .. _CoverageBadge: https://codecov.io/gh/MonetDBSolutions/monetdb-pystethoscope
 .. |PyPIBadge| image:: https://img.shields.io/pypi/v/monetdb-stethoscope.svg

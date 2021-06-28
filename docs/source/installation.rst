@@ -13,4 +13,4 @@ Jun2020 or later.
 We recommend the use of virtual environments (see `this
 primer <https://realpython.com/python-virtual-environments-a-primer/>`__
 if you are unfamiliar) for installing and using
-``monetdb-pystethoscope``.
+``monetdb-stethoscope``.

@@ -16,8 +16,8 @@ In order to install ``stethoscope`` do the following:
    PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
    export PATH="$PATH:$PYTHON_BIN_PATH"
 
-   git clone git@github.com:MonetDBSolutions/monetdb-pystethoscope.git
-   cd monetdb-pystethoscope
+   git clone git@github.com:MonetDBSolutions/monetdb-stethoscope.git
+   cd monetdb-stethoscope
    poetry install
    poetry run stethoscope --help
 
@@ -29,6 +29,6 @@ to the MonetDB server. If you have installed the development version of
 
 .. code:: shell
 
-   cd monetdb-pystethoscope
+   cd monetdb-stethoscope
    git pull
    poetry update
