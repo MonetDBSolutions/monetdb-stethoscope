@@ -17,8 +17,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'pystethoscope'
-copyright = '2020, MonetDB Solutions'
+project = 'monetdb-stethoscope'
+copyright = '2020-2021, MonetDB Solutions'
 author = 'Panagiotis Koutsourakis'
 
 # The full version, including alpha/beta/rc tags

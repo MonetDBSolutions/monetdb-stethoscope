@@ -1,4 +1,4 @@
-Welcome to pystethoscope's documentation!
+Welcome to stethoscope's documentation!
 =========================================
 
 .. toctree::
