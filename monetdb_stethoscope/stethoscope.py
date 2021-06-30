@@ -144,7 +144,8 @@ def stethoscope(args):
             # Not Implemented yet
 
             # format
-            print(formatter(json_object), file=out_file)
+            print(formatter(json_object), file=out_file,
+                  flush=args.flush)
 
             # A  limitation of the current profiler is that it only emits the
             # start/done events of the first statement in a barrier (dataflow) block
@@ -320,8 +321,10 @@ def main():
                         ], default='info',
                         help='The logging level')
     parser.add_argument('-C', '--no-console', action='store_true', default=False,
-                        help='')
+                        help='Do not log errors and warnings to the console.')
     parser.add_argument('-O', '--log-file', help='The file where logging output will be written.')
+    parser.add_argument('-U', '--flush', action='store_true',
+                        help='Flush immediatelly to the output stream.')
     parser.add_argument('-v', '--version', action='version', version=desc)
 
     arguments = parser.parse_args()
