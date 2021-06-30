@@ -49,6 +49,9 @@ output (``--output/-o filename``)
    The file where ``stethoscope`` will write its output. If this is omitted,
    the output will be written to the standard output.
 
+flush (``--flush/-U``)
+   Immediatelly flush the output stream.
+
 Logging and reporting options
 -----------------------------
 
