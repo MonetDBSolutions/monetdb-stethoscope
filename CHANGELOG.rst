@@ -7,6 +7,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Added
+-----
+- A switch ``--flush`` to instruct stethoscope to immediatelly flush
+  the output stream.
 
 `0.4.0`_ - 2021-06-25
 =====================
