@@ -11,6 +11,7 @@ Added
 -----
 - A switch ``--flush`` to instruct stethoscope to immediatelly flush
   the output stream.
+- A signal handler for SIGTERM that just exits with status code 0.
 
 `0.4.0`_ - 2021-06-25
 =====================
