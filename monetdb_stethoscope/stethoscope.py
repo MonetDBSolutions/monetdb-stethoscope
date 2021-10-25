@@ -10,7 +10,9 @@ import argparse
 import json
 import logging
 import logging.config
+import signal
 import sys
+
 from monetdb_stethoscope import __version__
 import monetdb_stethoscope.api as api
 from monetdb_stethoscope import DEVELOPMENT__
@@ -264,7 +266,13 @@ def logging_configuration(args):
     logging.config.dictConfig(logger_configuration)
 
 
+def sigterm_handler(snum, frame):
+    LOGGER.info("Caught term signal. Exiting.")
+    exit(0)
+
+
 def main():
+    signal.signal(signal.SIGTERM, sigterm_handler)
     desc = "MonetDB profiling tool\n{} version {}".format(sys.argv[0], __version__)
     parser = argparse.ArgumentParser(description=desc)
     input_options = parser.add_mutually_exclusive_group(required=True)
