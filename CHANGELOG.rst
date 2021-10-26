@@ -7,6 +7,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+Fixed
+-----
+- A bug when reading from the server messages larger than one block,
+  that would cause stethoscope to hang.
 
 `0.4.1`_ - 2021-10-25
 =====================
