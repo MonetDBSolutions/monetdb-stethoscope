@@ -58,8 +58,6 @@ class StethoscopeProfilerConnection(object):
     def read_object(self):
         if len(self._buffer) == 0:
             self._buffer = self._mapi._getblock()
-        while not self._buffer.endswith("}\n"):
-            self._buffer += self._mapi._getblock()
 
         r = self._buffer[:-1]
         self._buffer = ""
