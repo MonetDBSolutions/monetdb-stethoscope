@@ -7,6 +7,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
 `Unreleased`_
 =============
+
+`0.4.2`_ - 2021-10-27
+=====================
 Fixed
 -----
 - A bug when reading from the server messages larger than one block,
@@ -162,7 +165,8 @@ Added
    Predefined pipelines
       -  raw
 
-.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.1...HEAD
+.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.2...HEAD
+.. _0.4.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.1...v0.4.2
 .. _0.4.1: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.0...v0.4.1
 .. _0.4.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.2...v0.4.0
 .. _0.3.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.1...v0.3.2
