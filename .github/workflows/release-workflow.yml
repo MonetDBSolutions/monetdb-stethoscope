@@ -26,7 +26,3 @@ jobs:
       run: |
         poetry config repositories.testpypi https://test.pypi.org/legacy/
         poetry publish --build -u __token__ -p $PYPI_TOKEN
-        sed -i 's/DEVELOPMENT__ = False/DEVELOPMENT__ = True/' monetdb_stethoscope/__init__.py
-        git add monetdb_stethoscope/__init__.py
-        git commit -m'Post build commit'
-        git push
