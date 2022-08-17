@@ -19,11 +19,12 @@ class StethoscopeProfilerConnection(object):
     A connection to the MonetDB profiler.
     """
 
-    def __init__(self):
+    def __init__(self, minimal):
         self._mapi = mapi.Connection()
         self._heartbeat = 0
         self._buffer = ""
         self._objects = list()
+        self._minimal = minimal
 
     def _command(self, operation):
         if self._mapi.state != mapi.STATE_READY:
@@ -46,7 +47,10 @@ class StethoscopeProfilerConnection(object):
         self._command("profiler.setheartbeat(%d);\n" % heartbeat)
         self._response()
         try:
-            self._command("profiler.openstream();\n")
+            if (self._minimal):
+                self._command("profiler.openstream(\"min\");\n")
+            else:
+                self._command("profiler.openstream();\n")
             self._response()
         except OperationalError:
             # We might be talking to an older version of MonetDB. Try connecting

@@ -31,7 +31,7 @@ def stethoscope(args):
             LOGGER.error("Could not open '%s':%s", args.input, msg)
             exit(1)
     if not inputfile:
-        cnx = api.StethoscopeProfilerConnection()
+        cnx = api.StethoscopeProfilerConnection(args.minimal)
         cnx.connect(args.database, username=args.username, password=args.password,
                     hostname=args.hostname, port=args.port, heartbeat=0)
         # Do not use the logger here. The user needs to see this.
@@ -282,6 +282,8 @@ def main():
     input_options.add_argument('-I', '--input',
                                type=str,
                                help="Read previously recorded stream")
+    parser.add_argument('-m', '--minimal', action='store_true', default=False,
+                        help='Inform server that we want minimal events.')
     parser.add_argument('-i', '--include-keys', nargs='+',
                         help='A space separated list of keys to keep.')
     parser.add_argument('-e', '--exclude-keys', nargs='+',
