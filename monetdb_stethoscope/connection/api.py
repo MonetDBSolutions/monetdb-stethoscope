@@ -48,15 +48,15 @@ class StethoscopeProfilerConnection(object):
         self._response()
         try:
             if (self._minimal):
-                self._command("profiler.openstream(\"min\");\n")
+                self._command("profiler.openstream(4);\n")
             else:
-                self._command("profiler.openstream();\n")
+                self._command("profiler.openstream(0);\n")
             self._response()
         except OperationalError:
             # We might be talking to an older version of MonetDB. Try connecting
             # the old way.
             # LOGGER.warning("Connection failed. Attempting to connect using the old API.")
-            self._command("profiler.openstream(3);\n")
+            self._command("profiler.openstream();\n")
             self._response()
 
     def read_object(self):
