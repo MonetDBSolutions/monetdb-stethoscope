@@ -22,7 +22,7 @@ mccabe = "^0.6.1"
 pycodestyle = "^2.5"
 pydocstyle = "^4.0"
 yapf = "^0.28.0"
-python-language-server = {extras = ["all"], version = "^0.34.1"}
+python-language-server = {extras = ["all"], version = "^0.36.2"}
 sphinx = "^3.0.3"
 bump2version = "^1.0.0"
 ipython = {version = "^7.31.1", python="^3.7"}
