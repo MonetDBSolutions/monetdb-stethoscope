@@ -16,4 +16,3 @@ from monetdb_stethoscope.parsing import *
 from monetdb_stethoscope.filtering import *
 from monetdb_stethoscope.transformers import *
 from monetdb_stethoscope.formatting import *
-from monetdb_stethoscope.obfuscation import *

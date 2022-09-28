@@ -8,6 +8,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 `Unreleased`_
 =============
 
+Removed
+-------
+- Obfuscation transformer
+
 `0.4.2`_ - 2021-10-27
 =====================
 Fixed
