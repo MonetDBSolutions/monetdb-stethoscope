@@ -9,6 +9,7 @@ import json
 import logging
 import sys
 
+from monetdb_stethoscope.utilities import check_phase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -114,11 +115,7 @@ class PrerequisiteTransformer:
 
     def __call__(self, json_object):
         # Nothing to do for phases other than mal_engine
-        phase = json_object.get('phase', 'NA')
-        if phase != 'mal_engine':
-            if phase == 'NA':
-                LOGGER.warning("'phase' key not found in the json object.")
-                LOGGER.warning("You should be using version 0.5.0 of stethoscope with MonetDB server version Sep2022 or later.")
+        if not check_phase(json_object):
             return json_object
 
         rdict = dict(json_object)
