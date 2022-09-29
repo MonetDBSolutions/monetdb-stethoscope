@@ -69,6 +69,10 @@ def stethoscope(args):
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
+        elif t == 'obfuscate':
+            transformers.append(api.ObfuscateTransformer())
+            if stmt:
+                (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
         else:
             LOGGER.warning("Unknown transformer %s. Ignoring.", t)
             continue
@@ -172,7 +176,7 @@ def stethoscope(args):
             # leak data we should not, and continue with the next object in the
             # stream.
             msg = s
-            if "mask" in args.transformer and not DEVELOPMENT__:
+            if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
             LOGGER.error("Parse error while parsing %s (%s)", msg, pe)
             if DEVELOPMENT__:
@@ -187,7 +191,7 @@ def stethoscope(args):
             # should not, and attempt to continue the execution. In the worst
             # case we will fail for the rest of the stream.
             msg = s
-            if "mask" in args.transformer and not DEVELOPMENT__:
+            if ("obfuscate" in args.transformer or "mask" in args.transformer) and not DEVELOPMENT__:
                 msg = "***"
             LOGGER.error("Failed operating on %s (%s)", msg, e)
             # Actually if we are in development do crash.
@@ -300,6 +304,7 @@ def main():
                             'statement',
                             'prereqs',
                             'mask',
+                            'obfuscate',
                             'dummy',
                             'identity'
                         ],

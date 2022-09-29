@@ -9,6 +9,7 @@ Welcome to stethoscope's documentation!
    installation
    usage
    mal_reference
+   obfuscation
    examples
    dev_notes
    authors
