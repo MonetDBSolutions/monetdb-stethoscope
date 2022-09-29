@@ -17,6 +17,9 @@ LOGGER = logging.getLogger(__name__)
 def statement_constructor(json_object):
     """Reconstruct a MAL statement from the given profiler object."""
 
+    if not check_phase(json_object):
+        return json_object
+
     module = json_object.get("module")
     function = json_object.get("function")
 
@@ -63,7 +66,10 @@ def statement_constructor(json_object):
                 args += ','
 
             if const:
-                arg_str = "{}".format(value)
+                if vtype == "str":
+                    arg_str = '"{}"'.format(value)
+                else:
+                    arg_str = "{}".format(value)
             elif value is not None:
                 arg_str = "{}={}".format(var_name, value)
             elif count is None:
