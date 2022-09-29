@@ -113,25 +113,26 @@ class PrerequisiteTransformer:
         self._ignore_ops = ['function', 'end']
 
     def __call__(self, json_object):
-        state = json_object.get('state', 'NA')
+        # Nothing to do for phases other than mal_engine
+        phase = json_object.get('phase', 'NA')
+        if phase != 'mal_engine':
+            if phase == 'NA':
+                LOGGER.warning("'phase' key not found in the json object.")
+                LOGGER.warning("You should be using version 0.5.0 of stethoscope with MonetDB server version Sep2022 or later.")
+            return json_object
+
         rdict = dict(json_object)
 
-        if state == 'done':
-            pc = json_object.get('pc')
-            rdict['prereq'] = self._resolved_prereqs.get(pc, [])
+
+        pc = json_object.get('pc')
+        rdict['prereq'] = self._resolved_prereqs.get(pc, [])
+        if pc == 0:
+            # Reset symbol table at the start of a query (pc==0 &&
+            # state=='start').
+            self._var_to_pc = dict()
+            self._resolved_prereqs = dict()
+            rdict['prereq'] = list()
             return rdict
-        elif state == 'start':
-            pc = json_object.get('pc', -1)
-            if pc == 0:
-                # Reset symbol table at the start of a query (pc==0 &&
-                # state=='start').
-                self._var_to_pc = dict()
-                self._resolved_prereqs = dict()
-                rdict['prereq'] = list()
-                return rdict
-        else:
-            LOGGER.error("PrerequisiteTransformer cannot handle state %s", state)
-            return json_object
 
         op = json_object.get('operator')
         if op and op in self._ignore_ops:
@@ -176,7 +177,7 @@ class PrerequisiteTransformer:
 
         for v in json_object.get("args", []):
             # no need to handle return values and constants
-            if v.get("ret") or v.get('const') == 1:
+            if v.get("ret") is not None or v.get('const') == 1:
                 continue
 
             var = v.get("var")

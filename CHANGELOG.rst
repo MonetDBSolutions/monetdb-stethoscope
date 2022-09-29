@@ -8,6 +8,18 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 `Unreleased`_
 =============
 
+Fixed
+-----
+- Adjusted the prerequisites transformer to the Sep2022 stream. It is
+  now incompatible with older versions of MonetDB server and will emit
+  warnings.
+- A bug in the prerequisites transformer that would output every
+  instruction as a prerequisite of itself.
+
+Removed
+-------
+- The obfuscation transformer now falls back to the masking transformer.
+
 `0.4.2`_ - 2021-10-27
 =====================
 Fixed
