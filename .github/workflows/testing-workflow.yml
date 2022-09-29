@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - release0.4.0
+      - renovation
   pull_request:
     branches:
       - master
