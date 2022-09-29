@@ -8,6 +8,10 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 `Unreleased`_
 =============
 
+Added
+----
+- Support for Python 3.10
+
 Fixed
 -----
 - Adjusted the prerequisites transformer to the Sep2022 stream. It is
@@ -21,7 +25,9 @@ Fixed
 
 Removed
 -------
-- The obfuscation transformer now falls back to the masking transformer.
+- The obfuscation transformer now falls back to the masking
+  transformer.
+- Support for Python 3.6.
 
 `0.4.2`_ - 2021-10-27
 =====================
