@@ -63,16 +63,14 @@ def stethoscope(args):
         elif t == 'identity':
             # Do nothing
             continue
-        elif t == 'mask':
+        elif t == 'mask' or t == 'obfuscate':
             transformers.append(api.ValueObfuscateTransformer())
             if stmt:
                 # To prevent a data leak exchange the obfuscate with the
                 # statement transformer.
                 (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
-        elif t == 'obfuscate':
-            transformers.append(api.ObfuscateTransformer())
-            if stmt:
-                (transformers[stmt_idx], transformers[idx]) = (transformers[idx], transformers[stmt_idx])
+            if t == 'obfuscate':
+                LOGGER.warning("The 'obfuscate' transformer is deprecated. Falling back to 'mask' transformer")
         else:
             LOGGER.warning("Unknown transformer %s. Ignoring.", t)
             continue
