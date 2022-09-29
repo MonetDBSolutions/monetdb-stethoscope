@@ -6,7 +6,7 @@
 "Tools useful for filtering JSON objects based on keys."
 
 import logging
-from monetdb_stethoscope.utilities import identity_function
+from monetdb_stethoscope.utilities import identity_function, check_phase
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,6 +36,9 @@ def filter_keys_include(json_object, included_keys):
 including the keys specified in the iterable `included_keys`.
 
     """
+    if not check_phase(json_object):
+        return json_object
+
     ret = {k: v for (k, v) in json_object.items() if k in included_keys}
     for i in included_keys:
         if i not in ret:
@@ -55,4 +58,7 @@ keys specified in the iterable `excluded_keys`.
 
     """
     # We do not need to log anything here, since we are excluding keys
+    if not check_phase(json_object):
+        return json_object
+
     return {k: v for (k, v) in json_object.items() if k not in excluded_keys}

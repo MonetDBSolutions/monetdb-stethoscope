@@ -15,6 +15,9 @@ Fixed
   warnings.
 - A bug in the prerequisites transformer that would output every
   instruction as a prerequisite of itself.
+- Adjusted the key filters to the Sep2022 stream. They are now
+  incompatible with older versions of MonetDB server and will emit
+  warnings.
 
 Removed
 -------
