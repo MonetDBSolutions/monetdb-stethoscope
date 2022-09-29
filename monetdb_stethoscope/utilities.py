@@ -3,6 +3,10 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
 
 def identity_function(input_object):
     """Returns the argument as is."""
