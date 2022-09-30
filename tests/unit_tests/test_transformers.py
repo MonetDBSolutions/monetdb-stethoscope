@@ -29,7 +29,6 @@ def reconstructed_statements():
 
 def test_stmt_constructor(profiler_json_objects, reconstructed_statements):
     for obj, stmt in zip(profiler_json_objects, reconstructed_statements):
-        print(stmt)
         if obj.get('phase', 'NA') == 'mal_engine':
             assert transformers.statement_constructor(obj)['stmt'] == stmt.strip()
 
