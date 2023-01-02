@@ -5,6 +5,8 @@
 #
 # Copyright 1997 - July 2008 CWI, August 2008 - 2022 MonetDB B.V.
 
+# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+
 """Tools for changing (adding information) the profiler objects."""
 
 import json

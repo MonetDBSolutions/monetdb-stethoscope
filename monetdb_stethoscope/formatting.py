@@ -5,6 +5,8 @@
 #
 # Copyright 1997 - July 2008 CWI, August 2008 - 2022 MonetDB B.V.
 
+# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+
 """Utilities for formatting and outputting records."""
 
 import io

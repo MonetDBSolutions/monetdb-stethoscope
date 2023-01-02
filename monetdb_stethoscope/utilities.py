@@ -9,6 +9,8 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+
 
 def identity_function(input_object):
     """Returns the argument as is."""
