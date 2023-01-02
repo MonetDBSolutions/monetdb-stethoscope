@@ -3,6 +3,8 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
+# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+
 """This module collects all the public classes and functions in one module.
 
 You can use this module to import any part of the API. For example in order to

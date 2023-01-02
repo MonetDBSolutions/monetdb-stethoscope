@@ -3,6 +3,8 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 
+# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+
 from json import loads
 import pytest
 from monetdb_stethoscope import transformers
