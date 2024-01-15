@@ -99,7 +99,7 @@ statement
    .. warning::
 
       This transformer will not work with MonetDB server versions
-      earlier than Jun2020.
+      earlier than Jun2020 (11.37.7).
 
    .. note::
 
@@ -124,9 +124,15 @@ mask
    .. warning::
 
       This transformer will not work with MonetDB server versions
-      earlier than Jun2020.
+      earlier than Jun2020 (11.37.7).
 
 obfuscate
+   .. warning::
+
+      This transformer is deprecated and will not work with MonetDB
+      server versions Sep2022 (11.45.7) and LATER. At stethoscope
+      version 0.5.0 and later it falls back to the mask transformer.
+
     This transformer uses one-way functions to replace numeric values,
     alphabet reshuffings for strings, and replaces DDL objects with
     dummy names.

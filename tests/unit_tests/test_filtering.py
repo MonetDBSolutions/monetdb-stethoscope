@@ -11,7 +11,7 @@ from monetdb_stethoscope import filtering
 
 
 def test_filter_keys_include():
-    dct1 = {'a': 1, 'b': 2, 'c': 3}
+    dct1 = {'a': 1, 'b': 2, 'c': 3, 'phase': 'mal_engine'}
 
     included_keys = ["a"]
     dct_filtered = filtering.filter_keys_include(dct1, included_keys)
@@ -23,7 +23,7 @@ def test_filter_keys_include():
 
 
 def test_filter_keys_exclude():
-    dct1 = {'a': 1, 'b': 2, 'c': 3}
+    dct1 = {'a': 1, 'b': 2, 'c': 3, 'phase': 'mal_engine'}
 
     excluded_keys = ["a"]
     dct_filtered = filtering.filter_keys_exclude(dct1, excluded_keys)

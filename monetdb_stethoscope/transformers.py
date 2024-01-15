@@ -11,12 +11,16 @@ import json
 import logging
 import sys
 
+from monetdb_stethoscope.utilities import check_phase
 
 LOGGER = logging.getLogger(__name__)
 
 
 def statement_constructor(json_object):
     """Reconstruct a MAL statement from the given profiler object."""
+
+    if not check_phase(json_object):
+        return json_object
 
     module = json_object.get("module")
     function = json_object.get("function")
@@ -64,7 +68,10 @@ def statement_constructor(json_object):
                 args += ','
 
             if const:
-                arg_str = "{}".format(value)
+                if vtype == "str":
+                    arg_str = '"{}"'.format(value)
+                else:
+                    arg_str = "{}".format(value)
             elif value is not None:
                 arg_str = "{}={}".format(var_name, value)
             elif count is None:
@@ -115,25 +122,22 @@ class PrerequisiteTransformer:
         self._ignore_ops = ['function', 'end']
 
     def __call__(self, json_object):
-        state = json_object.get('state', 'NA')
+        # Nothing to do for phases other than mal_engine
+        if not check_phase(json_object):
+            return json_object
+
         rdict = dict(json_object)
 
-        if state == 'done':
-            pc = json_object.get('pc')
-            rdict['prereq'] = self._resolved_prereqs.get(pc, [])
+
+        pc = json_object.get('pc')
+        rdict['prereq'] = self._resolved_prereqs.get(pc, [])
+        if pc == 0:
+            # Reset symbol table at the start of a query (pc==0 &&
+            # state=='start').
+            self._var_to_pc = dict()
+            self._resolved_prereqs = dict()
+            rdict['prereq'] = list()
             return rdict
-        elif state == 'start':
-            pc = json_object.get('pc', -1)
-            if pc == 0:
-                # Reset symbol table at the start of a query (pc==0 &&
-                # state=='start').
-                self._var_to_pc = dict()
-                self._resolved_prereqs = dict()
-                rdict['prereq'] = list()
-                return rdict
-        else:
-            LOGGER.error("PrerequisiteTransformer cannot handle state %s", state)
-            return json_object
 
         op = json_object.get('operator')
         if op and op in self._ignore_ops:
@@ -178,7 +182,7 @@ class PrerequisiteTransformer:
 
         for v in json_object.get("args", []):
             # no need to handle return values and constants
-            if v.get("ret") or v.get('const') == 1:
+            if v.get("ret") is not None or v.get('const') == 1:
                 continue
 
             var = v.get("var")

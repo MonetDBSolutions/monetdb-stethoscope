@@ -6,4 +6,4 @@
 # Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
 
 __version__ = '0.4.2'
-DEVELOPMENT__ = False
+DEVELOPMENT__ = True

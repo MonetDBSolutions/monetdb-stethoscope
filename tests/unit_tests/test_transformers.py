@@ -12,7 +12,7 @@ from monetdb_stethoscope import transformers
 
 @pytest.fixture
 def profiler_json_objects():
-    with open("./tests/data/q01_Jun2020.json") as f:
+    with open("./tests/data/q01_Sep2022.json") as f:
         # This cannot be simply a map because the file is closed outside of this
         # block, therefore IO will fail. Is there a way to make this work
         # lazily?
@@ -23,13 +23,14 @@ def profiler_json_objects():
 
 @pytest.fixture
 def reconstructed_statements():
-    with open("./tests/data/q01_Jun2020_statements.txt") as f:
+    with open("./tests/data/q01_Sep2022_statements.txt") as f:
         return f.readlines()
 
 
 def test_stmt_constructor(profiler_json_objects, reconstructed_statements):
     for obj, stmt in zip(profiler_json_objects, reconstructed_statements):
-        assert transformers.statement_constructor(obj)['stmt'] == stmt.strip()
+        if obj.get('phase', 'NA') == 'mal_engine':
+            assert transformers.statement_constructor(obj)['stmt'] == stmt.strip()
 
 
 def test_dummy_transformer(profiler_json_objects):
