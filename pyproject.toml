@@ -7,7 +7,7 @@
 
 [tool.poetry]
 name = "monetdb_stethoscope"
-version = "0.4.2"
+version = "0.5.0"
 description = "MonetDB profiler connection tool"
 readme = "README.rst"
 authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]

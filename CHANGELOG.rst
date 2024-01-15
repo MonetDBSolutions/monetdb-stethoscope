@@ -8,6 +8,9 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 `Unreleased`_
 =============
 
+`0.5.0`_ - 2024-01-15
+=====================
+
 Added
 ----
 - Support for Python 3.10
@@ -186,7 +189,8 @@ Added
    Predefined pipelines
       -  raw
 
-.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.2...HEAD
+.. _Unreleased: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.5.0...HEAD
+.. _0.5.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.2...v0.5.0
 .. _0.4.2: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.1...v0.4.2
 .. _0.4.1: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.4.0...v0.4.1
 .. _0.4.0: https://github.com/MonetDBSolutions/monetdb-pystethoscope/compare/v0.3.2...v0.4.0

@@ -29,7 +29,7 @@ copyright = '2020-2021, MonetDB Solutions'
 author = 'Panagiotis Koutsourakis'
 
 # The full version, including alpha/beta/rc tags
-release = '0.4.2'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
