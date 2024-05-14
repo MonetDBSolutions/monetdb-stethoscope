@@ -8,12 +8,17 @@ Versioning <https://semver.org/spec/v2.0.0.html>`__.
 `Unreleased`_
 =============
 
+Added
+----
+- Support for Python 3.12
+
 `0.5.0`_ - 2024-01-15
 =====================
 
 Added
 ----
 - Support for Python 3.10
+- Minimal events flag for reduced output
 
 Fixed
 -----

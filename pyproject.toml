@@ -3,42 +3,41 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 #
-# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+# Copyright 2024 MonetDB Foundation
+# Copyright August 2008 - 2023 MonetDB B.V.
+# Copyright 1997 - July 2008 CWI
 
 [tool.poetry]
 name = "monetdb_stethoscope"
 version = "0.5.0"
 description = "MonetDB profiler connection tool"
 readme = "README.rst"
-authors = ["Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
+authors = ["Lucas Pereira <lrp@monetdbsolutions.com>", "Panagiotis Koutsourakis <kutsurak@monetdbsolutions.com>"]
 repository = "https://github.com/MonetDBSolutions/monetdb-stethoscope"
 
 [tool.poetry.dependencies]
 python = "^3.7"
 pymonetdb = "^1.6.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
 pytest-runner = "^5.2"
-tox = "^3.14"
-flake8 = "^3.7"
+pytest-cov = "^2.9.0"
 coverage = "^4.5"
-rope = "^0.14.0"
-pyflakes = "^2.1"
-mccabe = "^0.6.1"
+codecov = "^2.1.3"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^3.0.3"
+
+[tool.poetry.group.dev.dependencies]
 pycodestyle = "^2.5"
 pydocstyle = "^4.0"
-yapf = "^0.28.0"
-python-language-server = {extras = ["all"], version = "^0.36.2"}
-sphinx = "^3.0.3"
+flake8 = "^3.7"
 bump2version = "^1.0.0"
-ipython = {version = "^7.31.1", python="^3.7"}
-pytest-cov = "^2.9.0"
-codecov = "^2.1.3"
 
 [tool.poetry.scripts]
 stethoscope = 'monetdb_stethoscope.stethoscope:main'
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.2.0"]
 build-backend = "poetry.masonry.api"

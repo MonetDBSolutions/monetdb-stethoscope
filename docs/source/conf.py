@@ -3,7 +3,9 @@
 # distributed with this file, You can obtain one at
 # https://mozilla.org/MPL/2.0/.
 #
-# Copyright 1997 - July 2008 CWI, August 2008 - 2023 MonetDB B.V.
+# Copyright 2024 MonetDB Foundation
+# August 2008 - 2023 MonetDB B.V.
+# Copyright 1997 - July 2008 CWI
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -25,7 +27,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'monetdb-stethoscope'
-copyright = '2020-2021, MonetDB Solutions'
+copyright = '2020-2024, MonetDB Solutions'
 author = 'Panagiotis Koutsourakis'
 
 # The full version, including alpha/beta/rc tags

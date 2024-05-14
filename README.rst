@@ -19,7 +19,7 @@ Installation is done via pip:
 
    pip install -U monetdb-stethoscope
 
-This project is compatible with Python 3.6 or later and with MonetDB server
+This project is compatible with Python 3.7 or later and with MonetDB server
 version Jun2020 or later.
 
 We recommend the use of virtual environments (see `this
